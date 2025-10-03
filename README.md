@@ -70,4 +70,4 @@ It follows an **Agile Software Development** process, with an evolving **SRS doc
 ---
 
 ## License
-This project is submitted for academic evaluation under the Classic Control Engineering course. Do not reuse without permission.
+This project is submitted for academic evaluation under the Software Engineering course. Do not reuse without permission.
