@@ -1,6 +1,6 @@
-# 🍔 Order Management System
+# Order Management System
 
-## 📌 Overview
+## Overview
 The **GIU Order Management System** is a web-based application that streamlines food ordering on campus.  
 It allows students and staff to place and schedule orders, reducing long waiting times during class breaks.  
 Food-truck operators benefit from an intuitive interface to manage and update orders in real-time.
@@ -10,7 +10,7 @@ It follows an **Agile Software Development** process, with an evolving **SRS doc
 
 ---
 
-## 🎯 Features
+## Features
 - User registration and login (students/staff, providers).
 - Browse menus and add items to a cart.
 - Select preferred pick-up time slots.
@@ -19,7 +19,7 @@ It follows an **Agile Software Development** process, with an evolving **SRS doc
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 - **Frontend:** HTML, CSS, JavaScript (or React/Vue if used)
 - **Backend:** Node.js (REST API)
 - **Database:** PostgreSQL
@@ -28,7 +28,7 @@ It follows an **Agile Software Development** process, with an evolving **SRS doc
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 ├── docs/ # Documentation (SRS, diagrams, etc.)
 ├── frontend/ # Frontend code
 ├── backend/ # Backend code
@@ -37,14 +37,37 @@ It follows an **Agile Software Development** process, with an evolving **SRS doc
 
 ---
 
-## 📖 Documentation
-- 📄 [SRS Document](docs/SRS.pdf) 
+## Documentation
+- [SRS Document](docs/SRS.pdf) 
 - UML diagrams and architecture sketches are included in the `/docs` folder.
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
+## Prerequisites
 - Node.js >= 18.x
 - Git
+
+---
+
+## Team: Sleepers
+- Hassan Yousef
+- Sara Adel
+- Hana Yasser
+- Mohamed Walid
+- Omar Hani 
+- Abdelhamid ElSharnouby
+- Hanin Mohamed
+- Khaled khaled
+
+---
+
+## Future Scope
+- Integration with university authentication.
+- Payment gateway support.
+- Push notifications for order updates.
+- Mobile app version.
+
+---
+
+## License
+This project is submitted for academic evaluation under the Classic Control Engineering course. Do not reuse without permission.
