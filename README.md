@@ -28,7 +28,13 @@ It follows an **Agile Software Development** process, with an evolving **SRS doc
 
 ---
 
-<pre> ## Repository Structure ``` ├── docs/ # Documentation (SRS, diagrams, etc.) ├── frontend/ # Frontend code ├── backend/ # Backend code ├── database/ # DB schema, migrations └── README.md # Project overview ``` </pre>
+## Repository Structure
+├── docs/         # Documentation (SRS, diagrams, etc.)  
+├── frontend/     # Frontend code  
+├── backend/      # Backend code  
+├── database/     # DB schema, migrations  
+└── README.md     # Project overview  
+
 ---
 
 ## Documentation
