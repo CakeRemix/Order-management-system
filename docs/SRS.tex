@@ -1,0 +1,159 @@
+\documentclass[12pt,a4paper]{article}
+
+% ---------------- Packages ----------------
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{titlesec}
+
+% ---------------- Formatting ----------------
+\geometry{margin=1in}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% ---------------- Document Info ----------------
+\title{
+    \vspace{2cm}
+    \textbf{Software Requirements Specification (SRS)} \\[0.5em]
+    \large{\textit{Living Document – Agile Approach}} \\[2cm]
+}
+
+\author{
+    \textbf{Team Sleepers} \\[1em]
+    Hassan Yousef \quad 13006567 \\ 
+    Sara Adel \quad 14003723 \\
+    Hana Yasser \quad 13003628 \\
+    Mohamed Walid \quad 13006513 \\
+    Omar Hani \quad 13007515 \\
+    Abdelhamid ElSharnouby \quad 13006294 \\
+    Hanin Mohamed \quad 13007010 \\
+    Khaled Khaled \quad 14001048 \\[2em]
+    \textbf{German International University (GIU)} \\[3em]
+    \textbf{Supervised by:} \\[0.5em]
+    Dr.~Iman Awaad \\ 
+    Eng.~Amir Haytham
+}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+\newpage
+
+
+
+% ---------------- Section 1: Introduction ----------------
+\section{Introduction}
+\subsection{Purpose}
+Helping students and staff at GIU to easily order food from campus food trucks and pick it up without waiting too long. This project aims To make getting food easier and faster, especially during busy times.
+
+\subsection{Intended Audience}
+\begin{itemize}[itemsep=10pt, parsep=5pt]
+  \item \textbf{project team:} Hassan Yousef, Sara Adel, Hana Yasser, Mohamed Walid, Omar Hany, Abdelhamid ElSharnouby, Hanin Mohamed, Khaled Khaled.
+  \item \textbf{developers and testers:} Project team members.
+  \item \textbf{product owner:} Doctor Iman Awaad.
+  \item \textbf{instructors:}  Dr. Iman Awaad, Eng ~Amir Haytham and Eng Ahmad Sherif
+\end{itemize}
+
+
+\subsection{Scope}
+\small The Food-truck System is a website that helps students and staff at GIU order food from the food trucks on campus. People can open the menus of different food trucks to see what food and drinks are available. They can then choose the items they want and make their order online. The system lets them pick up their food in a specific time, so they don’t have to wait in long lines. This makes it easier for everyone to get their food, especially during busy times between classes. The system also helps the food trucks manage orders better, making sure everything runs smoothly for both customers and service providers. In general, the goal is to save time and make ordering food on campus simple and comfortable for the entire  community.
+
+\subsection{Overview}
+\begin{itemize}[itemsep=10pt, parsep=5pt]
+  \item \textbf{Product Vision and Scope:} Describe high-level goals of the system, list features this version will include and what will be postponed
+  \item \textbf{High-Level Architecture:} Provide a diagram for frontend, backend, database.
+  \item \textbf{Functional Requirements:} what the system should do, including user stories and use case diagrams
+  \item \textbf{Non-Functional Requirements:} Describes how the system should work such as response times, security, user capacity.
+  \item \textbf{Interface Requirements:} Specifies how the system will interact with other systems but till now there is no external systems.
+  \item \textbf{Constraints:} Lists limitations or restrictions that might affect how the system is built.
+  \item \textbf{Future Scope of the Project:} Suggests features or improvements plans for later versions
+\end{itemize}
+
+
+% ---------------- Section 2: Product Vision & Scope ----------------
+\section{Product Vision and Scope}
+\subsection{Product Vision}
+Describe the high-level goals of the system and its value.
+
+\subsection{In Scope}
+List the features this version will include.
+
+\subsection{Out of Scope}
+List what is explicitly excluded (or postponed).
+
+% ---------------- Section 3: High-Level Architecture ----------------
+\section{High-Level Architecture}
+Provide a conceptual diagram if available (frontend, backend, database).  
+
+% ---------------- Section 4: Functional Requirements ----------------
+\section{Functional Requirements}
+
+\subsection{User Stories}
+
+\textbf{A Food Truck User Story:}
+\begin{itemize}
+    \item A student schedules their lunch order in advance, receives notifications when preparation begins, and is alerted when the order is ready.
+    \item As a customer, I want to browse all the food trucks available on campus, see all options.
+    
+\end{itemize}
+
+\textbf{A Food Truck Service Provider User Story:}
+\begin{itemize}
+    \item Staff receive new orders through the system, update order status in real time, manage inventory levels, and communicate completion to the customer.
+    \item As a food truck owner, I want to create my menu with items, prices, and cooking times.
+\end{itemize}
+
+\textbf{A Food Truck Admin User Story:}
+\begin{itemize}
+    \item As an administrator, I add or remove food trucks.
+\end{itemize}
+
+\subsection{Use Case Diagrams}
+Include diagrams showing user interactions (e.g. registration, login, ordering).
+
+
+% ---------------- Section 5: Non-Functional Requirements ----------------
+\section{Non-Functional Requirements}
+\begin{itemize}
+    \item \textbf{Response Time:} Page load times under three seconds.
+    \item \textbf{Concurrent Users:} Support for at least 500 simultaneous users.
+    \item \textbf{API Security:} Rate limiting and input validation.
+    \item \textbf{Backup \& Recovery:} Automated daily backups with disaster recovery plan.
+    \item \textbf{System Operating Hours:} for Food Service Providers: ????
+    \item \textbf{System Operating Hours:} for Food-truck Patrons: ????
+\end{itemize}
+
+
+% ---------------- Section 6: Interface Requirements ----------------
+\section{Interface Requirements}
+Currently, no external integrations (e.g. credit card, external authentication).
+
+% ---------------- Section 7: Constraints ----------------
+\section{Constraints}
+\begin{itemize}
+    \item describe any limitations or restrictions on design, development, or
+ implementation.
+\end{itemize}
+
+% ---------------- Section 8: Future Scope ----------------
+\section{Future Scope of the Project}
+Potential features for future versions:
+\begin{itemize}
+    \item Integration with university authentication.
+    \item Push notifications for order updates.
+    \item Mobile app version.
+    \item Payment gateway support.
+\end{itemize}
+
+% ---------------- Notes ----------------
+\section*{Notes}
+\begin{itemize}
+    \item This is a \textbf{living document}. It evolves with project development.
+    \item At the end, this document may be retitled as “Project Documentation.”
+\end{itemize}
+
+\end{document}
