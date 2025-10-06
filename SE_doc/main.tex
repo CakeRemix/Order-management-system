@@ -1,0 +1,333 @@
+\documentclass[12pt,a4paper]{article}
+
+% ---------------- Packages ----------------
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{parskip}
+
+% ---------------- Color Scheme ----------------
+\definecolor{primaryblue}{RGB}{0, 102, 204}
+\definecolor{secondaryblue}{RGB}{51, 153, 255}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+
+% ---------------- Formatting ----------------
+\geometry{margin=1in, headheight=15pt}
+
+% Section formatting
+\titleformat{\section}
+  {\Large\bfseries\color{primaryblue}}
+  {\thesection}{1em}{}
+  [\titlerule]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{secondaryblue}}
+  {\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries}
+  {\thesubsubsection}{1em}{}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Food Truck Order Management System}}
+\fancyhead[R]{\small\textit{SRS - Team Sleepers}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+% Table of Contents formatting
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforesecskip}{8pt}
+
+% Hyperlink colors
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryblue,
+    urlcolor=secondaryblue,
+    citecolor=primaryblue
+}
+
+% Custom box for user stories
+\newtcolorbox{storybox}{
+    colback=lightgray,
+    colframe=primaryblue,
+    boxrule=0.5pt,
+    arc=3pt,
+    left=10pt,
+    right=10pt,
+    top=8pt,
+    bottom=8pt
+}
+
+% ---------------- Document Info ----------------
+\title{
+    \vspace{1.5cm}
+    {\Huge\bfseries\color{primaryblue} Software Requirements Specification} \\[0.8em]
+    {\LARGE Food Truck Order Management System} \\[0.5em]
+    \rule{\textwidth}{1.5pt} \\[0.5em]
+    {\large\textit{Living Document – Agile Approach}} \\[1.5cm]
+}
+
+\author{
+    {\Large\textbf{Team Sleepers}} \\[1.5em]
+    \begin{tabular}{ll}
+        Hassan Yousef & 13006567 \\ 
+        Sara Adel & 14003723 \\
+        Hana Yasser & 13003628 \\
+        Mohamed Walid & 13006513 \\
+        Omar Hani & 13007515 \\
+        Abdelhamid ElSharnouby & 13006294 \\
+        Hanin Mohamed & 13007010 \\
+        Khaled Khaled & 14001048 \\
+    \end{tabular} \\[2em]
+    {\large\textbf{German International University (GIU)}} \\[2em]
+    {\large\textbf{Supervised by:}} \\[0.5em]
+    Dr.~Iman Awaad \\ 
+    Eng.~Amir Haytham
+}
+
+\date{\large\today}
+
+\begin{document}
+
+% ---------------- Title Page ----------------
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% ---------------- Table of Contents ----------------
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+% Reset page numbering
+\setcounter{page}{1}
+
+% ---------------- Section 1: Introduction ----------------
+\section{Introduction}
+
+\subsection{Purpose}
+Helping students and staff at GIU to easily order food from campus food trucks and pick it up without waiting too long. This project aims to make getting food easier and faster, especially during busy times.
+
+\subsection{Intended Audience}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+  \item \textbf{Project Team:} Hassan Yousef, Sara Adel, Hana Yasser, Mohamed Walid, Omar Hany, Abdelhamid ElSharnouby, Hanin Mohamed, Khaled Khaled.
+  \item \textbf{Developers and Testers:} Project team members.
+  \item \textbf{Product Owner:} Doctor Iman Awaad.
+  \item \textbf{Instructors:} Dr. Iman Awaad, Eng.~Amir Haytham and Eng.~Ahmad Sherif
+\end{itemize}
+
+\subsection{Scope}
+The Food-truck System is a website that helps students and staff at GIU order food from the food trucks on campus. People can open the menus of different food trucks to see what food and drinks are available. They can then choose the items they want and make their order online. The system lets them pick up their food in a specific time, so they don't have to wait in long lines. This makes it easier for everyone to get their food, especially during busy times between classes. The system also helps the food trucks manage orders better, making sure everything runs smoothly for both customers and service providers. In general, the goal is to save time and make ordering food on campus simple and comfortable for the entire community.
+
+\newpage
+
+% ---------------- Section 2: Product Vision & Scope ----------------
+\section{Product Vision and Scope}
+
+\subsection{Product Vision}
+
+The \textbf{Food Truck Order Management System} envisions a seamless, digital-first campus dining experience that minimizes waiting time and optimizes operations for both customers and vendors. The system will serve as a centralized web platform connecting GIU students, staff, and food truck operators through a real-time, data-driven ordering process.
+
+From a user perspective, the vision is to eliminate the inefficiency of physical queues by allowing users to browse menus, place customized orders, and schedule pickups in advance. For food truck operators, the platform provides a unified dashboard to manage incoming orders, track preparation progress, and analyze sales performance. Administrators will be able to manage participating vendors, monitor overall platform activity, and ensure service quality across all trucks.
+
+The long-term vision is to transform how on-campus food services operate — creating a scalable digital ecosystem that supports real-time communication, predictive demand analytics, and an integrated payment experience. Ultimately, this system aims to enhance convenience, transparency, and satisfaction for the GIU community while providing actionable insights to vendors and administrators for continuous operational improvement.
+.
+
+\subsection{In Scope}
+The system includes the following features as part of its core functionality, categorized by user role.
+
+\subsubsection{Customer Features}
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{User Authentication:} Customers can register and log in using email and password.
+    \item \textbf{Menu Browsing:} Users can browse their menu.
+    \item \textbf{Online Ordering:} Customers can place orders and select pickup times.
+    \item \textbf{Estimated Preparation Time:} The system displays estimated time before confirming an order.
+    \item \textbf{Order Status Tracking:} Customers can track order progress (Pending, In Progress, Ready).
+    \item \textbf{Edit or Cancel Orders:} Orders can be edited or cancelled only if still in \textit{Pending} status.
+    \item \textbf{6-Digit Pickup Code:} A unique 6-digit code is generated to verify the customer at pickup.
+    \item \textbf{Busy Mode Notification:} Customers are notified if a vendor is currently too busy to accept new orders.
+    \item \textbf{Bestseller Items Display:} Popular items are highlighted based on order frequency.
+    \item \textbf{Leave Reviews:} Customers can write reviews after order completion.
+\end{itemize}
+
+\subsubsection{Vendor Features}
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{View and Manage Orders:} Vendors can view incoming orders and update their statuses.
+    \item \textbf{Menu Management:} Vendors can add, edit, or remove menu items.
+    \item \textbf{Activate Busy Mode:} Vendors can temporarily stop accepting new orders.
+    \item \textbf{Track Popular Items:} Vendors can view which items are bestsellers.
+    \item \textbf{View Customer Feedback:} Vendors can see customer reviews for insights and improvement.
+\end{itemize}
+
+\subsubsection{Admin Features}
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Inventory Monitoring:} Admin can track stock and remove out-of-stock items.
+    \item \textbf{Account Suspension:} Admin has the authority to suspend vendor accounts if needed.
+    \item \textbf{Platform Analytics:} Admin can view statistics related to orders, vendors, and system usage.
+\end{itemize}
+
+
+
+\subsection{Out of Scope}
+The following features are explicitly excluded from the current system scope :
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Mobile Application:} The system will only be accessible via web browsers; no Android or iOS apps are included in this release.
+    \item \textbf{Online Payment Integration:} Users will not be able to pay online. All transactions will be handled offline or through existing university methods.
+    \item \textbf{Delivery Services:} Food delivery is not supported. Customers must pick up their orders from the food trucks in person.
+    \item \textbf{University Authentication System Integration:} The system does not connect to GIU's single sign-on or internal authentication infrastructure.
+    \item \textbf{Push Notifications:} Real-time push notifications (e.g., mobile or browser alerts) are not supported in this release.
+\item \textbf{Multiple Language Support:} The system will only support English in its initial release. Support for other languages is excluded from scope.
+    \item \textbf{Live Chat or Messaging:} No communication feature (e.g., chat with vendors or support) is included.
+ \item \textbf{Real-Time Communication :} The system will use simple periodic refresh or polling to check order updates. Advanced real-time communication technologies are not included in this version.
+
+\newpage
+
+% ---------------- Section 3: High-Level Architecture ----------------
+\section{High-Level Architecture}
+Provide a conceptual diagram if available (frontend, backend, database).  
+
+\newpage
+
+% ---------------- Section 4: Functional Requirements ----------------
+\section{Functional Requirements}
+
+\subsection{User Stories}
+
+\subsubsection{Food Truck Customer User Stories}
+\begin{storybox}
+\begin{itemize}[leftmargin=1em, itemsep=6pt]
+    \item A student schedules their lunch order in advance, receives notifications when preparation begins, and is alerted when the order is ready.
+    \item As a customer, I want to browse all the food trucks available on campus, see all options.
+\end{itemize}
+\end{storybox}
+
+\vspace{1em}
+
+\subsubsection{Food Truck Service Provider User Stories}
+\begin{storybox}
+\begin{itemize}[leftmargin=1em, itemsep=6pt]
+    \item Staff receive new orders through the system, update order status in real time, manage inventory levels, and communicate completion to the customer.
+    \item As a food truck owner, I want to create my menu with items, prices, and cooking times.
+\end{itemize}
+\end{storybox}
+
+\vspace{1em}
+
+\subsubsection{Food Truck Admin User Stories}
+\begin{storybox}
+\begin{itemize}[leftmargin=1em, itemsep=6pt]
+    \item As an administrator, I add or remove food trucks.
+\end{itemize}
+\end{storybox}
+
+\subsection{Use Case Diagrams}
+Include diagrams showing user interactions (e.g. registration, login, ordering).
+
+\newpage
+
+% ---------------- Section 5: Non-Functional Requirements ----------------
+\section{Non-Functional Requirements}
+
+\begin{description}[leftmargin=2em, itemsep=10pt, style=nextline]
+    \item[\textbf{Response Time:}] Page load times under three seconds.
+    \item[\textbf{Concurrent Users:}] Support for at least 500 simultaneous users.
+    \item[\textbf{API Security:}] Rate limiting and input validation.
+    \item[\textbf{Backup \& Recovery:}] Automated daily backups with disaster recovery plan.
+    \item[\textbf{System Operating Hours (Food Service Providers):}] 7:00 AM - 5:00 PM, Saturday to Thursday.
+    \item[\textbf{System Operating Hours (Food-truck Patrons):}] 8:00 AM - 4:40 PM, Saturday to Thursday.
+\end{description}
+
+\newpage
+
+% ---------------- Section 6: Interface Requirements ----------------
+\section{Interface Requirements}
+Currently, no external integrations (e.g. credit card, external authentication).
+
+% ---------------- Section 7: Constraints ----------------
+% ---------------- Section 7: Constraints ----------------
+\section{Constraints}
+
+\subsection{Technical Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Web-Based Platform:} The system must be accessible via standard web browsers (Chrome, Firefox, Safari, Edge) without requiring native mobile applications in the initial release.
+    \item \textbf{Technology Stack:} Development is limited to technologies and frameworks approved by GIU's IT infrastructure and familiar to the development team.
+    \item \textbf{Database Management:} Must utilize a relational database system compatible with university hosting environments.
+    \item \textbf{No External Payment Integration:} The initial version will not integrate third-party payment gateways; transactions will be handled offline or through existing university payment systems.
+    \item \textbf{Campus Network Dependency:} Optimal performance is guaranteed only within GIU campus network infrastructure.
+\end{itemize}
+
+\subsection{Operational Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Operating Hours:} System functionality is limited to food truck operational hours (7:00 AM - 5:00 PM for providers, 8:00 AM - 4:40 PM for customers, Saturday to Thursday).
+    \item \textbf{Physical Pickup Required:} Orders must be physically collected from food trucks; no delivery service is provided.
+    \item \textbf{Campus-Only Service:} The system serves only GIU campus food trucks and is geographically restricted to on-campus operations.
+    \item \textbf{Manual Order Fulfillment:} Food preparation and handoff processes remain manual; the system only manages digital ordering and tracking.
+\end{itemize}
+
+\subsection{Resource Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Development Timeline:} The project must be completed within the academic semester timeframe as defined by the course requirements.
+    \item \textbf{Team Size:} Development is limited to an 8-member student team with varying levels of experience.
+    \item \textbf{Budget Limitations:} No dedicated budget for premium third-party services, APIs, or cloud infrastructure beyond what GIU provides.
+    \item \textbf{Hardware Infrastructure:} Dependent on existing GIU server infrastructure and food truck operator devices (smartphones, tablets, or PCs).
+\end{itemize}
+
+\subsection{Regulatory and Policy Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Data Privacy Compliance:} Must adhere to GIU's data protection policies and student information privacy guidelines.
+    \item \textbf{University Authentication:} Initial version will not integrate with GIU's central authentication system (planned for future releases).
+    \item \textbf{Food Safety Standards:} The system does not enforce or monitor food safety regulations; responsibility remains with food truck operators.
+    \item \textbf{Vendor Agreements:} Participation of food trucks is subject to approval and agreements with GIU administration.
+\end{itemize}
+
+\subsection{User and Usability Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Internet Connectivity:} Users must have stable internet connection to access the system; no offline functionality is provided.
+    \item \textbf{Device Requirements:} Users need devices with modern web browsers; minimum screen size recommendations apply for optimal experience.
+    \item \textbf{Digital Literacy:} Assumes basic computer and smartphone literacy among students, staff, and food truck operators.
+    \item \textbf{Language Support:} Initial release supports English only; Arabic language support planned for future versions.
+\end{itemize}
+
+\subsection{Design and Architectural Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Scalability Scope:} System designed for GIU campus scale (approximately 500 concurrent users); not architected for multi-campus deployment in initial version.
+    \item \textbf{Real-Time Requirements:} Order status updates operate on polling or periodic refresh mechanisms, not true real-time WebSocket connections.
+    \item \textbf{Legacy System Integration:} No integration with existing GIU administrative systems (student information, financial systems) in the initial release.
+    \item \textbf{Responsive Design Mandatory:} Must function across desktop, tablet, and mobile screen sizes despite being web-only.
+\end{itemize}
+
+% ---------------- Section 8: Future Scope ----------------
+\section{Future Scope of the Project}
+Potential features for future versions:
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item Integration with university authentication.
+    \item Push notifications for order updates.
+    \item Mobile app version.
+    \item Payment gateway support.
+\end{itemize}
+
+\newpage
+
+% ---------------- Notes ----------------
+\section*{Notes}
+\addcontentsline{toc}{section}{Notes}
+\begin{tcolorbox}[colback=yellow!10, colframe=orange!75!black, title=Important Note]
+\begin{itemize}[leftmargin=1em]
+    \item This is a \textbf{living document}. It evolves with project development.
+    \item At the end, this document may be retitled as "Project Documentation."
+\end{itemize}
+\end{tcolorbox}
+
+\end{document}
