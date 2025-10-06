@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.5.22)  6 OCT 2025 12:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.5.22)  6 OCT 2025 15:04
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -516,27 +516,57 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package hyperref Info: Link coloring ON on input line 101.
+ (SRS.out) (SRS.out)
 \@outlinefile=\write4
 \openout4 = `SRS.out'.
 
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <14.4> on input line 105.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 105.
+ [1
 
-c:/Users/20100/Desktop/UnsortedFiles/My-GitHub/Order-management-system/docs/SRS.tex:101: I can't write on file `SRS.pdf'.
-(Press Enter to retry, or Control-C to exit; default file extension is `.pdf')
-Please type another file name for output
-c:/Users/20100/Desktop/UnsortedFiles/My-GitHub/Order-management-system/docs/SRS.tex:101: Emergency stop.
+{C:/Users/20100/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] (SRS.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 1.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 1.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 1.
+)
+\tf@toc=\write5
+\openout5 = `SRS.toc'.
+
+ [2]
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
-                   \edef 
-l.101 \begin{document}
-                      
-*** (job aborted, file error in nonstop mode)
-
- 
+                   \relax 
+l.133 \newpage
+               [1]
+pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.153 \newpage
+               [2] [3] [4] [5] [6] [7] (SRS.aux)
+ ***********
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-04>
+ ***********
+Package rerunfilecheck Info: File `SRS.out' has not changed.
+(rerunfilecheck)             Checksum: AF65073E17C3A4D96804EB79027D9922;2986.
+ ) 
 Here is how much of TeX's memory you used:
- 20090 strings out of 474486
- 381589 string characters out of 5743755
- 1924542 words of memory out of 5000000
- 42095 multiletter control sequences out of 15000+600000
- 558367 words of font info for 37 fonts, out of 8000000 for 9000
+ 20304 strings out of 474486
+ 385821 string characters out of 5743755
+ 1933542 words of memory out of 5000000
+ 42259 multiletter control sequences out of 15000+600000
+ 565173 words of font info for 59 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 83i,0n,87p,572b,90s stack positions out of 10000i,1000n,20000p,200000b,200000s
-c:/Users/20100/Desktop/UnsortedFiles/My-GitHub/Order-management-system/docs/SRS.tex:101:  ==> Fatal error occurred, no output PDF file produced!
+ 83i,12n,87p,1268b,467s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\20100\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/20100/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/20100/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/20100/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/20100/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/20100/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on SRS.pdf (9 pages, 108964 bytes).
+PDF statistics:
+ 181 PDF objects out of 1000 (max. 8388607)
+ 27 named destinations out of 1000 (max. 500000)
+ 173 words of extra memory for PDF output out of 10000 (max. 10000000)
+
