@@ -16,5 +16,16 @@
 \contentsline {section}{\numberline {5}Non-Functional Requirements}{5}{section.5}%
 \contentsline {section}{\numberline {6}Interface Requirements}{6}{section.6}%
 \contentsline {section}{\numberline {7}Constraints}{6}{section.7}%
+<<<<<<< HEAD
 \contentsline {section}{\numberline {8}Future Scope of the Project}{6}{section.8}%
 \contentsline {section}{Notes}{7}{section.8}%
+=======
+\contentsline {subsection}{\numberline {7.1}Technical Constraints}{6}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Operational Constraints}{6}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Resource Constraints}{6}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Regulatory and Policy Constraints}{7}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}User and Usability Constraints}{7}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Design and Architectural Constraints}{7}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Future Scope of the Project}{8}{section.8}%
+\contentsline {section}{Notes}{9}{section.8}%
+>>>>>>> 3815a01582c5b5dc4266baebcb677cc286c9d871

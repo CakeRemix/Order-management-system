@@ -214,9 +214,56 @@ Include diagrams showing user interactions (e.g. registration, login, ordering).
 Currently, no external integrations (e.g. credit card, external authentication).
 
 % ---------------- Section 7: Constraints ----------------
+% ---------------- Section 7: Constraints ----------------
 \section{Constraints}
+
+\subsection{Technical Constraints}
 \begin{itemize}[leftmargin=2em, itemsep=8pt]
-    \item Describe any limitations or restrictions on design, development, or implementation.
+    \item \textbf{Web-Based Platform:} The system must be accessible via standard web browsers (Chrome, Firefox, Safari, Edge) without requiring native mobile applications in the initial release.
+    \item \textbf{Technology Stack:} Development is limited to technologies and frameworks approved by GIU's IT infrastructure and familiar to the development team.
+    \item \textbf{Database Management:} Must utilize a relational database system compatible with university hosting environments.
+    \item \textbf{No External Payment Integration:} The initial version will not integrate third-party payment gateways; transactions will be handled offline or through existing university payment systems.
+    \item \textbf{Campus Network Dependency:} Optimal performance is guaranteed only within GIU campus network infrastructure.
+\end{itemize}
+
+\subsection{Operational Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Operating Hours:} System functionality is limited to food truck operational hours (7:00 AM - 5:00 PM for providers, 8:00 AM - 4:40 PM for customers, Saturday to Thursday).
+    \item \textbf{Physical Pickup Required:} Orders must be physically collected from food trucks; no delivery service is provided.
+    \item \textbf{Campus-Only Service:} The system serves only GIU campus food trucks and is geographically restricted to on-campus operations.
+    \item \textbf{Manual Order Fulfillment:} Food preparation and handoff processes remain manual; the system only manages digital ordering and tracking.
+\end{itemize}
+
+\subsection{Resource Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Development Timeline:} The project must be completed within the academic semester timeframe as defined by the course requirements.
+    \item \textbf{Team Size:} Development is limited to an 8-member student team with varying levels of experience.
+    \item \textbf{Budget Limitations:} No dedicated budget for premium third-party services, APIs, or cloud infrastructure beyond what GIU provides.
+    \item \textbf{Hardware Infrastructure:} Dependent on existing GIU server infrastructure and food truck operator devices (smartphones, tablets, or PCs).
+\end{itemize}
+
+\subsection{Regulatory and Policy Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Data Privacy Compliance:} Must adhere to GIU's data protection policies and student information privacy guidelines.
+    \item \textbf{University Authentication:} Initial version will not integrate with GIU's central authentication system (planned for future releases).
+    \item \textbf{Food Safety Standards:} The system does not enforce or monitor food safety regulations; responsibility remains with food truck operators.
+    \item \textbf{Vendor Agreements:} Participation of food trucks is subject to approval and agreements with GIU administration.
+\end{itemize}
+
+\subsection{User and Usability Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Internet Connectivity:} Users must have stable internet connection to access the system; no offline functionality is provided.
+    \item \textbf{Device Requirements:} Users need devices with modern web browsers; minimum screen size recommendations apply for optimal experience.
+    \item \textbf{Digital Literacy:} Assumes basic computer and smartphone literacy among students, staff, and food truck operators.
+    \item \textbf{Language Support:} Initial release supports English only; Arabic language support planned for future versions.
+\end{itemize}
+
+\subsection{Design and Architectural Constraints}
+\begin{itemize}[leftmargin=2em, itemsep=8pt]
+    \item \textbf{Scalability Scope:} System designed for GIU campus scale (approximately 500 concurrent users); not architected for multi-campus deployment in initial version.
+    \item \textbf{Real-Time Requirements:} Order status updates operate on polling or periodic refresh mechanisms, not true real-time WebSocket connections.
+    \item \textbf{Legacy System Integration:} No integration with existing GIU administrative systems (student information, financial systems) in the initial release.
+    \item \textbf{Responsive Design Mandatory:} Must function across desktop, tablet, and mobile screen sizes despite being web-only.
 \end{itemize}
 
 % ---------------- Section 8: Future Scope ----------------
