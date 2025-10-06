@@ -137,18 +137,30 @@ The Food-truck System is a website that helps students and staff at GIU order fo
 
 \subsection{Product Vision}
 
-The \textbf{Food Truck Order Management System} envisions a seamless, digital-first campus dining experience that minimizes waiting time and optimizes operations for both customers and vendors. The system will serve as a centralized web platform connecting GIU students, staff, and food truck operators through a real-time, data-driven ordering process.
+The \textbf{Food Truck Order Management System} envisions a seamless, digital-first campus dining experience that minimizes waiting time and optimizes operations for both customers and vendors. The system will serve as a centralized web platform connecting GIU students, staff, and food truck operators through a polling-based ordering process.
 
 From a user perspective, the vision is to eliminate the inefficiency of physical queues by allowing users to browse menus, place customized orders, and schedule pickups in advance. For food truck operators, the platform provides a unified dashboard to manage incoming orders and track preparation progress. Administrators will be able to manage participating vendors, monitor overall platform activity, and ensure service quality across all trucks.
 
-The long-term vision is to transform how on-campus food services operate — creating a scalable digital ecosystem that supports real-time communication, predictive demand analytics, and an integrated payment experience. Ultimately, this system aims to enhance convenience, transparency, and satisfaction for the GIU community while providing actionable insights to vendors and administrators for continuous operational improvement.
-.
+The long-term vision is to transform how on-campus food services operate — creating a scalable digital ecosystem that supports automated order tracking, predictive demand analytics, and an integrated payment experience. Ultimately, this system aims to enhance convenience, transparency, and satisfaction for the GIU community while providing actionable insights to vendors and administrators for continuous operational improvement.
 
 \subsection{In Scope}
 List the features this version will include.
 
 \subsection{Out of Scope}
-List what is explicitly excluded (or postponed).
+The following features are explicitly excluded from the current system scope:
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Mobile Application:} The system will only be accessible via web browsers; no Android or iOS apps are included in this release.
+    \item \textbf{Online Payment Integration:} Users will not be able to pay online. All transactions will be handled offline or through existing university methods.
+    \item \textbf{Delivery Services:} Food delivery is not supported. Customers must pick up their orders from the food trucks in person.
+    \item \textbf{University Authentication System Integration:} The system does not connect to GIU's single sign-on or internal authentication infrastructure.
+    \item \textbf{Push Notifications:} Real-time push notifications (e.g., mobile or browser alerts) are not supported in this release. Users must track their orders through the website interface.
+    \item \textbf{Multiple Language Support:} The system will only support English in its initial release. Support for other languages is excluded from scope.
+    \item \textbf{Live Chat or Messaging:} No communication feature (e.g., chat with vendors or support) is included.
+    \item \textbf{Advanced Real-Time Communication:} The system will use simple periodic refresh or polling to check order updates. Advanced real-time communication technologies (WebSockets, Server-Sent Events) are not included in this version.
+    \item \textbf{Third-Party Integrations:} No integration with external services (e.g., social media, third-party APIs) is planned.
+    \item \textbf{Advanced Analytics:} The system will not include complex analytics or reporting features for vendors or administrators.
+\end{itemize}
 
 \newpage
 
@@ -166,7 +178,7 @@ Provide a conceptual diagram if available (frontend, backend, database).
 \subsubsection{Food Truck Customer User Stories}
 \begin{storybox}
 \begin{itemize}[leftmargin=1em, itemsep=6pt]
-    \item A student schedules their lunch order in advance, receives notifications when preparation begins, and is alerted when the order is ready.
+    \item As a customer, I want to schedule my lunch order in advance so that I can check the order status through the website and know when my order is ready for pickup.
     \item As a customer, I want to browse all the food trucks available on campus, see all options.
 \end{itemize}
 \end{storybox}
@@ -176,7 +188,7 @@ Provide a conceptual diagram if available (frontend, backend, database).
 \subsubsection{Food Truck Service Provider User Stories}
 \begin{storybox}
 \begin{itemize}[leftmargin=1em, itemsep=6pt]
-    \item Staff receive new orders through the system, update order status in real time, manage inventory levels, and communicate completion to the customer.
+    \item As a food truck staff member, I want to receive new orders through the system, update order status (received, preparing, ready), manage inventory levels, so customers can track their orders via polling.
     \item As a food truck owner, I want to create my menu with items, prices, and cooking times.
 \end{itemize}
 \end{storybox}
@@ -203,7 +215,7 @@ Include diagrams showing user interactions (e.g. registration, login, ordering).
     \item[\textbf{Concurrent Users:}] Support for at least 500 simultaneous users.
     \item[\textbf{API Security:}] Rate limiting and input validation.
     \item[\textbf{Backup \& Recovery:}] Automated daily backups with disaster recovery plan.
-    \item[\textbf{System Operating Hours (Food Service Providers):}] 7:00 AM - 5:00 PM, Saturday to Thursday.
+    \item[\textbf{System Operating Hours (Food Service Providers):}] 7:00 AM - 5:00 PM, Saturday to Thursday. This allows providers to prepare before customer ordering begins and complete cleanup after customer hours end.
     \item[\textbf{System Operating Hours (Food-truck Patrons):}] 8:00 AM - 4:40 PM, Saturday to Thursday.
 \end{description}
 
@@ -213,7 +225,8 @@ Include diagrams showing user interactions (e.g. registration, login, ordering).
 \section{Interface Requirements}
 Currently, no external integrations (e.g. credit card, external authentication).
 
-% ---------------- Section 7: Constraints ----------------
+\newpage
+
 % ---------------- Section 7: Constraints ----------------
 \section{Constraints}
 
@@ -228,7 +241,7 @@ Currently, no external integrations (e.g. credit card, external authentication).
 
 \subsection{Operational Constraints}
 \begin{itemize}[leftmargin=2em, itemsep=8pt]
-    \item \textbf{Operating Hours:} System functionality is limited to food truck operational hours (7:00 AM - 5:00 PM for providers, 8:00 AM - 4:40 PM for customers, Saturday to Thursday).
+    \item \textbf{Operating Hours:} System functionality is limited to food truck operational hours (7:00 AM - 5:00 PM for providers, 8:00 AM - 4:40 PM for customers, Saturday to Thursday). The extended provider hours allow for preparation before service and cleanup after service.
     \item \textbf{Physical Pickup Required:} Orders must be physically collected from food trucks; no delivery service is provided.
     \item \textbf{Campus-Only Service:} The system serves only GIU campus food trucks and is geographically restricted to on-campus operations.
     \item \textbf{Manual Order Fulfillment:} Food preparation and handoff processes remain manual; the system only manages digital ordering and tracking.
@@ -261,10 +274,12 @@ Currently, no external integrations (e.g. credit card, external authentication).
 \subsection{Design and Architectural Constraints}
 \begin{itemize}[leftmargin=2em, itemsep=8pt]
     \item \textbf{Scalability Scope:} System designed for GIU campus scale (approximately 500 concurrent users); not architected for multi-campus deployment in initial version.
-    \item \textbf{Real-Time Requirements:} Order status updates operate on polling or periodic refresh mechanisms, not true real-time WebSocket connections.
+    \item \textbf{Polling-Based Updates:} Order status updates operate on polling or periodic refresh mechanisms, not true real-time WebSocket connections.
     \item \textbf{Legacy System Integration:} No integration with existing GIU administrative systems (student information, financial systems) in the initial release.
     \item \textbf{Responsive Design Mandatory:} Must function across desktop, tablet, and mobile screen sizes despite being web-only.
 \end{itemize}
+
+\newpage
 
 % ---------------- Section 8: Future Scope ----------------
 \section{Future Scope of the Project}
