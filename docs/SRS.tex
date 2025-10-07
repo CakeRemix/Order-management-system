@@ -71,16 +71,16 @@
 
 % ---------------- Document Info ----------------
 \title{
-    \vspace{1.5cm}
-    {\Huge\bfseries\color{primaryblue} Software Requirements Specification} \\[0.8em]
-    {\LARGE Food Truck Order Management System} \\[0.5em]
-    \rule{\textwidth}{1.5pt} \\[0.5em]
-    {\large\textit{Living Document – Agile Approach}} \\[1.5cm]
+    \vspace{2cm}
+    {\Huge\bfseries\color{primaryblue} Software Requirements Specification} \\[1em]
+    {\LARGE Food Truck Order Management System} \\[0.8em]
+    \rule{\textwidth}{1.5pt} \\[0.8em]
+    {\large\textit{Living Document – Agile Approach}} \\[2cm]
 }
 
 \author{
     {\Large\textbf{Team Sleepers}} \\[1.5em]
-    \begin{tabular}{ll}
+    \begin{tabular}{p{6cm}p{3cm}}
         Hassan Yousef & 13006567 \\ 
         Sara Adel & 14003723 \\
         Hana Yasser & 13003628 \\
@@ -89,9 +89,9 @@
         Abdelhamid ElSharnouby & 13006294 \\
         Hanin Mohamed & 13007010 \\
         Khaled Khaled & 14001048 \\
-    \end{tabular} \\[2em]
-    {\large\textbf{German International University (GIU)}} \\[2em]
-    {\large\textbf{Supervised by:}} \\[0.5em]
+    \end{tabular} \\[2.5em]
+    {\large\textbf{German International University (GIU)}} \\[2.5em]
+    {\large\textbf{Supervised by:}} \\[0.8em]
     Dr.~Iman Awaad \\ 
     Eng.~Amir Haytham
 }
@@ -117,39 +117,77 @@
 \section{Introduction}
 
 \subsection{Purpose}
-Helping students and staff at GIU to easily order food from campus food trucks and pick it up without waiting too long. This project aims to make getting food easier and faster, especially during busy times.
+
+\begin{tcolorbox}[colback=primaryblue!5, colframe=primaryblue, boxrule=1pt, arc=4pt, left=12pt, right=12pt, top=10pt, bottom=10pt]
+{\large\textbf{Problem Statement:}}
+
+\vspace{0.3em}
+
+Students and staff at GIU face significant challenges during peak hours when ordering food from campus food trucks. Long waiting lines, unclear preparation times, and lack of order visibility create frustration and time loss, especially between classes when time is limited.
+
+\vspace{0.8em}
+
+{\large\textbf{Solution:}}
+
+\vspace{0.3em}
+
+The GIU Food Truck Order Management System is a comprehensive web-based application designed to enable the members of the GIU community to reserve menu items from specific food trucks on campus for pick-up within a given time window, thus alleviating the problem with long waiting times for food and beverage items during peak periods in between classes. 
+
+\vspace{0.5em}
+
+This system enables seamless menu browsing, order placement, and order management for food truck customers as well as providing a similarly intuitive, efficient, and scalable solution for food service providers.
+\end{tcolorbox}
 
 \subsection{Intended Audience}
 \begin{itemize}[leftmargin=2em, itemsep=8pt]
   \item \textbf{Project Team:} Hassan Yousef, Sara Adel, Hana Yasser, Mohamed Walid, Omar Hany, Abdelhamid ElSharnouby, Hanin Mohamed, Khaled Khaled.
   \item \textbf{Developers and Testers:} Project team members.
   \item \textbf{Product Owner:} Doctor Iman Awaad.
-  \item \textbf{Instructors:} Dr. Iman Awaad, Eng.~Amir Haytham and Eng.~Ahmad Sherif
+  \item \textbf{Instructors:} Dr.~Iman Awaad, Eng.~Amir Haytham and Eng.~Ahmad Sherif
 \end{itemize}
 
 \subsection{Scope}
 The Food-truck System is a website that helps students and staff at GIU order food from the food trucks on campus. People can open the menus of different food trucks to see what food and drinks are available. They can then choose the items they want and make their order online. The system lets them pick up their food in a specific time, so they don't have to wait in long lines. This makes it easier for everyone to get their food, especially during busy times between classes. The system also helps the food trucks manage orders better, making sure everything runs smoothly for both customers and service providers. In general, the goal is to save time and make ordering food on campus simple and comfortable for the entire community.
-\subsection{Overview}
-\small The Food Truck Order Management System is a simple website for ordering food from the food trucks on the GIU campus. It helps to reduce waiting in lines by letting users place orders before going to the truck.
 
-\textbf{Who uses it:}
-\begin{itemize}[leftmargin=1.8em,itemsep=4pt]
-  \item \textbf{Students and Staff (Customers):} \small Browse trucks, view menus, select items, place an order, choose (or accept) a pickup time, and check the order status (received, preparing, ready) on the website.
-  \item \textbf{Food Truck Staff:}\small See incoming orders, update each order’s status, manage menu items (add, edit, mark unavailable).
-  \item \textbf{Administrator:}\small Add or remove food trucks and oversee basic platform usage.
+\subsection{Overview}
+
+\begin{tcolorbox}[colback=lightgray, colframe=secondaryblue, boxrule=0.8pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
+
+The Food Truck Order Management System is a simple website for ordering food from the food trucks on the GIU campus. It helps to reduce waiting in lines by letting users place orders before going to the truck.
+
+\vspace{0.5em}
+
+{\bfseries\color{secondaryblue} Who uses it:}
+\begin{itemize}[leftmargin=1.8em,itemsep=5pt, topsep=6pt]
+  \item \textbf{Students and Staff (Customers):} Browse trucks, view menus, select items, place an order, choose (or accept) a pickup time, and check the order status (received, preparing, ready) on the website.
+  \item \textbf{Food Truck Staff:} See incoming orders, update each order's status, manage menu items (add, edit, mark unavailable).
+  \item \textbf{Administrator:} Add or remove food trucks and oversee basic platform usage.
 \end{itemize}
 
-\textbf{How order tracking works:} The page refreshes (or auto-checks) every short interval to show updated order status. It does not use push notifications or advanced real-time technology.
+\vspace{0.3em}
 
-\textbf{What it does NOT include:} No delivery, no online payment, no mobile app, no live chat, no push notifications, no multi-language (English only), no external integrations.
+{\bfseries\color{secondaryblue} How order tracking works:} The page refreshes (or auto-checks) every short interval to show updated order status. It does not use push notifications or advanced real-time technology.
 
-\textbf{Why provider hours are longer:} Food truck staff have extra time (before and after customer hours) to prepare ingredients and clean up.
+\vspace{0.3em}
 
-\textbf{Main goal:} Save time, make ordering clearer and easier, and help trucks manage orders better.
+{\bfseries\color{secondaryblue} What it does NOT include:} No delivery, no online payment, no mobile app, no live chat, no push notifications, no multi-language (English only), no external integrations.
 
-\textbf{Other notes:} Works in a normal web browser on phones, tablets, and laptops. Designed for up to about 500 users at once.
+\vspace{0.3em}
+
+{\bfseries\color{secondaryblue} Why provider hours are longer:} Food truck staff have extra time (before and after customer hours) to prepare ingredients and clean up.
+
+\vspace{0.3em}
+
+{\bfseries\color{secondaryblue} Main goal:} Save time, make ordering clearer and easier, and help trucks manage orders better.
+
+\vspace{0.3em}
+
+{\bfseries\color{secondaryblue} Other notes:} Works in a normal web browser on phones, tablets, and laptops. Designed for up to about 500 users at once.
+
+\end{tcolorbox}
 
 \newpage
+
 % ---------------- Section 2: Product Vision & Scope ----------------
 \section{Product Vision and Scope}
 
@@ -162,12 +200,36 @@ From a user perspective, the vision is to eliminate the inefficiency of physical
 The long-term vision is to transform how on-campus food services operate — creating a scalable digital ecosystem that supports automated order tracking, predictive demand analytics, and an integrated payment experience. Ultimately, this system aims to enhance convenience, transparency, and satisfaction for the GIU community while providing actionable insights to vendors and administrators for continuous operational improvement.
 
 \subsection{In Scope}
-List the features this version will include.
+The system includes the following features as part of its core functionality, categorized by user role.
+
+\subsubsection{Customer Features}
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{User Authentication:} Customers can register and log in using email and password.
+    \item \textbf{Menu Browsing:} Users can browse a list of food trucks, then view each truck's menu of food items.
+    \item \textbf{Online Ordering:} Customers can place orders and select pickup times.
+    \item \textbf{Estimated Preparation Time:} The system displays estimated time before confirming an order.
+    \item \textbf{Order Status Tracking:} Customers can track order progress (Pending, In Progress, Ready).
+    \item \textbf{Busy Mode on menu:} Customers can see if a vendor is currently too busy to accept new orders.
+\end{itemize}
+
+\subsubsection{Vendor Features}
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{View and Manage Orders:} Vendors can view incoming orders and update their statuses.
+    \item \textbf{Menu Management:} Vendors can add or remove menu items.
+    \item \textbf{Activate Busy Mode:} Vendors can temporarily stop accepting new orders.
+\end{itemize}
+
+\subsubsection{Admin Features}
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Food truck management:} Admin can add or remove food trucks.
+\end{itemize}
 
 \subsection{Out of Scope}
 The following features are explicitly excluded from the current system scope:
 
 \begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Restaurant Rating:} Users cannot rate or review food trucks or individual menu items. No feedback mechanism or star rating system is included in this release.
+    \item \textbf{Bestsellers Menu:} The system does not track or display popular items, trending dishes, or "most ordered" recommendations. No sales analytics or item popularity features are provided.
     \item \textbf{Mobile Application:} The system will only be accessible via web browsers; no Android or iOS apps are included in this release.
     \item \textbf{Online Payment Integration:} Users will not be able to pay online. All transactions will be handled offline or through existing university methods.
     \item \textbf{Delivery Services:} Food delivery is not supported. Customers must pick up their orders from the food trucks in person.
@@ -185,14 +247,16 @@ The following features are explicitly excluded from the current system scope:
 % ---------------- Section 3: High-Level Architecture ----------------
 \section{High-Level Architecture}
 
-\begin{itemize}[leftmargin=2em, itemsep=8pt]
-    \item \textbf{Front End:} Modern HTML, CSS, JavaScript, and JQuery. Or JavaScript Framework  
+\begin{tcolorbox}[colback=primaryblue!5, colframe=primaryblue, boxrule=1pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
+\begin{itemize}[leftmargin=2em, itemsep=10pt]
+    \item \textbf{Front End:} Modern HTML, CSS, JavaScript, and jQuery. Or JavaScript Framework  
     \item \textbf{Back End:} RESTful API using Node.js
     \item \textbf{Database:} Relational (PostgreSQL)
-    \item \textbf{Authentication:}  currently, none
-    \item \textbf{Payement:}  currently, none
-    \item \textbf{Hosting:}  currently, none
+    \item \textbf{Authentication:} Email/password authentication (no external OAuth)
+    \item \textbf{Payment:} Currently, none (offline transactions only)
+    \item \textbf{Hosting:} To be determined (university servers or cloud provider)
 \end{itemize}
+\end{tcolorbox}
 
 \newpage
 
@@ -214,7 +278,7 @@ The following features are explicitly excluded from the current system scope:
 \subsubsection{Food Truck Service Provider User Stories}
 \begin{storybox}
 \begin{itemize}[leftmargin=1em, itemsep=6pt]
-    \item As a food truck staff member, I want to receive new orders through the system, update order status (received, preparing, ready), manage inventory levels, so customers can track their orders via polling.
+    \item As a food truck staff member, I want to receive new orders through the system and update order status (received, preparing, ready) so customers can track their orders via polling.
     \item As a food truck owner, I want to create my menu with items, prices, and cooking times.
 \end{itemize}
 \end{storybox}
@@ -232,31 +296,32 @@ The following features are explicitly excluded from the current system scope:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[height=15cm]{cuc.png}
-    \caption{Client Use Case}
+    \fbox{\includegraphics[height=14cm]{cuc.png}}
+    \caption{\textbf{Client Use Case Diagram}}
+    \label{fig:client-usecase}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[height=15cm]{ruc.png}
-    \caption{Restaurant Use Case}
+    \fbox{\includegraphics[height=14cm]{ruc.png}}
+    \caption{\textbf{Restaurant Use Case Diagram}}
+    \label{fig:restaurant-usecase}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[height=15cm]{auc.png}
-    \caption{Admin Use Case}
+    \fbox{\includegraphics[height=14cm]{auc.png}}
+    \caption{\textbf{Admin Use Case Diagram}}
+    \label{fig:admin-usecase}
 \end{figure}
-
-
-
 
 \newpage
 
 % ---------------- Section 5: Non-Functional Requirements ----------------
 \section{Non-Functional Requirements}
 
-\begin{description}[leftmargin=2em, itemsep=10pt, style=nextline]
+\begin{tcolorbox}[colback=lightgray, colframe=primaryblue, boxrule=0.8pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
+\begin{description}[leftmargin=2em, itemsep=12pt, style=nextline]
     \item[\textbf{Response Time:}] Page load times under three seconds.
     \item[\textbf{Concurrent Users:}] Support for at least 500 simultaneous users.
     \item[\textbf{API Security:}] Rate limiting and input validation.
@@ -264,6 +329,7 @@ The following features are explicitly excluded from the current system scope:
     \item[\textbf{System Operating Hours (Food Service Providers):}] 7:00 AM - 5:00 PM, Saturday to Thursday. This allows providers to prepare before customer ordering begins and complete cleanup after customer hours end.
     \item[\textbf{System Operating Hours (Food-truck Patrons):}] 8:00 AM - 4:40 PM, Saturday to Thursday.
 \end{description}
+\end{tcolorbox}
 
 \newpage
 
@@ -335,6 +401,8 @@ Potential features for future versions:
     \item Push notifications for order updates.
     \item Mobile app version.
     \item Payment gateway support.
+    \item \textbf{Rating and Review System:} Allow customers to rate food trucks and menu items, providing feedback and helping others make informed choices.
+    \item \textbf{Inventory Management:} Enable vendors to track stock levels, receive low-stock alerts, and automatically mark items as unavailable when ingredients run out.
 \end{itemize}
 
 \newpage
@@ -342,11 +410,40 @@ Potential features for future versions:
 % ---------------- Notes ----------------
 \section*{Notes}
 \addcontentsline{toc}{section}{Notes}
+
 \begin{tcolorbox}[colback=yellow!10, colframe=orange!75!black, title=Important Note]
 \begin{itemize}[leftmargin=1em]
     \item This is a \textbf{living document}. It evolves with project development.
     \item At the end, this document may be retitled as "Project Documentation."
 \end{itemize}
+\end{tcolorbox}
+
+\vspace{1.5em}
+
+\begin{tcolorbox}[colback=primaryblue!10, colframe=primaryblue, boxrule=1pt, arc=4pt, title=How the System Solves the Problem]
+
+\textbf{The Challenge:} Students and staff waste valuable time standing in long queues at food trucks during peak hours, with no visibility into wait times or order status.
+
+\vspace{0.5em}
+
+\textbf{Our Solution:}
+
+\begin{enumerate}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Pre-ordering eliminates queues:} Users browse menus and place orders online before arriving at the truck, eliminating the need to wait in physical lines.
+    
+    \item \textbf{Time visibility reduces uncertainty:} The system displays estimated preparation times and allows users to select pickup windows, helping them plan their schedule.
+    
+    \item \textbf{Order tracking provides transparency:} Customers can check their order status (Pending → In Progress → Ready) through polling-based updates on the website, knowing exactly when to pick up their food.
+    
+    \item \textbf{Busy mode prevents overload:} Vendors can activate busy mode when overwhelmed, preventing new orders and managing capacity effectively.
+    
+    \item \textbf{Centralized platform streamlines operations:} Both customers and vendors access a single unified system, reducing confusion and improving coordination.
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Result:} Students and staff save time, avoid frustration, and enjoy a smoother campus dining experience, while food truck operators manage orders more efficiently and serve customers better.
+
 \end{tcolorbox}
 
 \end{document}

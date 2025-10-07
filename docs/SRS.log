@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.5)  7 OCT 2025 21:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.5)  7 OCT 2025 22:42
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -575,41 +575,46 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.146 \textbf{Why provider hours are longer:}
-                                              Food truck staff have extra ti... [1]
+l.188 
+       [1]
 
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.152 \newpage
+l.189 \newpage
                [2]
+Overfull \hbox (0.26213pt too wide) in paragraph at lines 211--212
+[]\OT1/cmr/bx/n/12 Order Sta-tus Track-ing: \OT1/cmr/m/n/12 Cus-tomers can track or-der progress (Pend-ing, In Progress,
+ []
+
+
 
 [3]
 
 [4]
 
 [5]
-<cuc.png, id=177, 1104.125pt x 853.1875pt>
+<cuc.png, id=189, 1104.125pt x 853.1875pt>
 File: cuc.png Graphic file (type png)
 <use cuc.png>
-Package pdftex.def Info: cuc.png  used on input line 235.
-(pdftex.def)             Requested size: 552.3307pt x 426.79134pt.
+Package pdftex.def Info: cuc.png  used on input line 299.
+(pdftex.def)             Requested size: 515.50192pt x 398.33858pt.
 
-Overfull \hbox (99.36281pt too wide) in paragraph at lines 235--236
+Overfull \hbox (69.33401pt too wide) in paragraph at lines 299--300
  [][] 
  []
 
 
 
 [6]
-<ruc.png, id=183, 1104.125pt x 853.1875pt>
+<ruc.png, id=195, 1104.125pt x 853.1875pt>
 File: ruc.png Graphic file (type png)
 <use ruc.png>
-Package pdftex.def Info: ruc.png  used on input line 241.
-(pdftex.def)             Requested size: 552.3307pt x 426.79134pt.
+Package pdftex.def Info: ruc.png  used on input line 306.
+(pdftex.def)             Requested size: 515.50192pt x 398.33858pt.
 
-Overfull \hbox (99.36281pt too wide) in paragraph at lines 241--242
+Overfull \hbox (69.33401pt too wide) in paragraph at lines 306--307
  [][] 
  []
 
@@ -619,15 +624,15 @@ Overfull \hbox (99.36281pt too wide) in paragraph at lines 241--242
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.244 
+l.310 
        <./cuc.png>]
-<auc.png, id=190, 1104.125pt x 853.1875pt>
+<auc.png, id=202, 1104.125pt x 853.1875pt>
 File: auc.png Graphic file (type png)
 <use auc.png>
-Package pdftex.def Info: auc.png  used on input line 247.
-(pdftex.def)             Requested size: 552.3307pt x 426.79134pt.
+Package pdftex.def Info: auc.png  used on input line 313.
+(pdftex.def)             Requested size: 515.50192pt x 398.33858pt.
 
-Overfull \hbox (99.36281pt too wide) in paragraph at lines 247--248
+Overfull \hbox (69.33401pt too wide) in paragraph at lines 313--314
  [][] 
  []
 
@@ -637,24 +642,19 @@ Overfull \hbox (99.36281pt too wide) in paragraph at lines 247--248
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.250 
+l.317 
        <./ruc.png>]
 
 [9
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.254 \newpage
+l.318 \newpage
                <./auc.png>]
 
 [10]
 
 [11]
-Overfull \hbox (5.29837pt too wide) in paragraph at lines 281--282
-[]\OT1/cmr/bx/n/10.95 Web-Based Plat-form: \OT1/cmr/m/n/10.95 The sys-tem must be ac-ces-si-ble via stan-dard web browsers (Chrome,
- []
-
-
 
 [12]
 
@@ -668,20 +668,20 @@ LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-09-02>
  ***********
 Package rerunfilecheck Info: File `SRS.out' has not changed.
-(rerunfilecheck)             Checksum: 76A4F39F4635E84B97460FFC76665182;4283.
+(rerunfilecheck)             Checksum: B22911AF774686773909A7F0A98DDD12;4726.
  ) 
 Here is how much of TeX's memory you used:
- 22924 strings out of 468130
- 446736 string characters out of 5430633
- 839643 words of memory out of 5000000
- 51168 multiletter control sequences out of 15000+600000
- 634578 words of font info for 65 fonts, out of 8000000 for 9000
+ 22948 strings out of 468130
+ 447201 string characters out of 5430633
+ 840801 words of memory out of 5000000
+ 51186 multiletter control sequences out of 15000+600000
+ 633929 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 98i,13n,101p,1261b,591s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\hassa\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1095.pk> <C:\Users\hassa\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on SRS.pdf (17 pages, 340622 bytes).
+ 98i,14n,101p,1261b,595s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\hassa\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on SRS.pdf (17 pages, 307762 bytes).
 PDF statistics:
- 279 PDF objects out of 1000 (max. 8388607)
- 45 named destinations out of 1000 (max. 500000)
- 244 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 286 PDF objects out of 1000 (max. 8388607)
+ 53 named destinations out of 1000 (max. 500000)
+ 268 words of extra memory for PDF output out of 10000 (max. 10000000)
 
