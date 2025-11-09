@@ -8,8 +8,8 @@ const db = require('./backend/config/db');
 // Import middleware
 const { errorHandler } = require('./middleware');
 
-// Import routes (to be created)
-// const authRoutes = require('./backend/routes/authRoutes');
+// Import routes
+const authRoutes = require('./backend/routes/authRoutes');
 // const orderRoutes = require('./backend/routes/orderRoutes');
 // const productRoutes = require('./backend/routes/productRoutes');
 
@@ -47,8 +47,8 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// API Routes (uncomment when routes are created)
-// app.use('/api/auth', authRoutes);
+// API Routes
+app.use('/api/auth', authRoutes);
 // app.use('/api/orders', orderRoutes);
 // app.use('/api/products', productRoutes);
 
