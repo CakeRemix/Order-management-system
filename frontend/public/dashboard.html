@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Order Management System</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>Order Management System</h1>
+            <div class="user-info">
+                <span id="userEmail"></span>
+                <button id="logoutButton" class="button button-secondary">Logout</button>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <div id="alert" class="alert" style="display: none;"></div>
+            
+            <div class="dashboard-welcome">
+                <h2>Welcome to your Dashboard</h2>
+                <p>Here you can manage your orders and view your account information.</p>
+            </div>
+
+            <!-- Placeholder for order management features -->
+            <div class="dashboard-content">
+                <div class="section">
+                    <h3>Recent Orders</h3>
+                    <div id="ordersList" class="orders-list">
+                        <p class="placeholder-text">No orders found.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Check authentication
+                const isAuthenticated = await checkAuth();
+                if (!isAuthenticated) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                // Get and display user info
+                const user = getUserInfo();
+                if (user && user.email) {
+                    document.getElementById('userEmail').textContent = user.email;
+                }
+
+                // Handle logout
+                document.getElementById('logoutButton').addEventListener('click', async () => {
+                    await logout();
+                    window.location.href = '/login.html';
+                });
+
+            } catch (error) {
+                const alert = document.getElementById('alert');
+                alert.className = 'alert alert-error';
+                alert.textContent = error.message || 'An error occurred';
+                alert.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
