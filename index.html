@@ -10,14 +10,20 @@
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <button class="menu-toggle">
-          <span class="material-icons">menu</span>
-        </button>
-        <a class="brand" href="#">Store</a>
+        <div class="brand" id="brandMenu">
+          <button class="brand-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="material-icons">restaurant_menu</span>
+          </button>
+          <div class="brand-menu" role="menu">
+            <a href="track.html" class="brand-menu-item">Track Order</a>
+            <a href="#" id="logoutBtn" class="brand-menu-item">Log out</a>
+          </div>
+        </div>
         <div class="search-container">
-          <input type="search" placeholder="Search" />
-          <button class="search-btn"
-            <span class="material-icons">search</span>
+          <span class="material-icons search-icon">search</span>
+          <input type="search" placeholder="Search for food trucks..." />
+          <button class="search-btn">
+            <span class="material-icons">arrow_forward</span>
           </button>
         </div>
         <button class="cart-toggle" id="cartToggle">
@@ -30,27 +36,33 @@
     <main>
       <section class="breadcrumb">
         <div class="container">
-          <p>Store > Food web</p>
+        <p> Khaled Refaat > 14001048</p>
         </div>
       </section>
 
       <section class="page-header">
         <div class="container">
-          <h1>Food web</h1>
-          <p>Fresh & Healthy food recipe</p>
-          
-          <div class="stats">
-            <div class="stat-item">
-              <span class="number">24</span>
-              <span class="label">Total item</span>
+          <div class="header-content">
+            <div class="title-section">
+              <h1>CampusEats</h1>
+              <p>Order from your favorite campus food trucks — quick and fresh!</p>
             </div>
-            <div class="stat-item">
-              <span class="number">09</span>
-              <span class="label">Category</span>
-            </div>
-            <div class="stat-item">
-              <span class="number">04</span>
-              <span class="label">Outlate</span>
+            
+            <div class="stats-bar">
+              <div class="stat-item">
+                <span class="number">24</span>
+                <span class="label">Active Trucks</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <span class="number">09</span>
+                <span class="label">Menu Items</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <span class="number">04</span>
+                <span class="label">New Added Items</span>
+              </div>
             </div>
           </div>
         </div>
@@ -59,25 +71,50 @@
       <section class="categories">
         <div class="container">
           <div class="category-grid">
-            <a href="#" class="category-item">
-              <img src="./images/burger.png" alt="Burger category" />
-              <span>Burger</span>
+            <a href="restaurant.html?truck=Demeshq" class="category-item" data-status="open">
+              <div class="category-icon">
+                <span class="icon-text">Demeshq</span>
+              </div>
+              <div class="truck-status" data-status="open">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Open</span>
+              </div>
             </a>
-            <a href="#" class="category-item active">
-              <img src="./images/salad.png" alt="Salad category" />
-              <span>Salad</span>
+            <a href="restaurant.html?truck=Container" class="category-item" data-status="busy">
+              <div class="category-icon">
+                <span class="icon-text">Container</span>
+              </div>
+              <div class="truck-status" data-status="busy">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Busy</span>
+              </div>
             </a>
-            <a href="#" class="category-item">
-              <img src="./images/pizza.png" alt="Pizza category" />
-              <span>Pizza</span>
+            <a href="restaurant.html?truck=Essens" class="category-item" data-status="closed">
+              <div class="category-icon">
+                <span class="icon-text">Essens</span>
+              </div>
+              <div class="truck-status" data-status="closed">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Closed</span>
+              </div>
             </a>
-            <a href="#" class="category-item">
-              <img src="./images/drinks.png" alt="Drinks category" />
-              <span>Drinks</span>
+            <a href="restaurant.html?truck=Ftar%20w%20Asha" class="category-item" data-status="open">
+              <div class="category-icon">
+                <span class="icon-text">Ftar w Asha</span>
+              </div>
+              <div class="truck-status" data-status="open">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Open</span>
+              </div>
             </a>
-            <a href="#" class="category-item">
-              <img src="./images/steak.png" alt="Steak Meats category" />
-              <span>Steak Meats</span>
+            <a href="restaurant.html?truck=Loaded" class="category-item" data-status="busy">
+              <div class="category-icon">
+                <span class="icon-text">Loaded</span>
+              </div>
+              <div class="truck-status" data-status="busy">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Busy</span>
+              </div>
             </a>
           </div>
         </div>
@@ -87,11 +124,11 @@
         <div class="container">
           <div class="feature-card">
             <div class="feature-image">
-              <img src="./images/veggie-pizza.png" alt="Healthy veggie pizza" />
+              <img src="./images/images (3).jpeg" alt="Healthy veggie pizza" />
             </div>
             <div class="feature-content">
-              <h2>Your Health is Our First Priority!</h2>
-              <p>Vegan and Vegetarian pizzas can be healthy! The primary ingredient that makes traditional pizza unhealthy is the processed meat that is normally on top. When you order a veggie pizza or several veggies on a pizza with cheese sauce, you get a cheese pizza or several veggies on the pie.</p>
+              <h2>Hungry on Campus? We’ve Got You Covered!</h2>
+              <p>Order from your favorite food trucks around campus. Fresh, fast, and delivered to your spot!</p>
             </div>
           </div>
         </div>
@@ -112,17 +149,21 @@
       <div class="cart-footer">
         <div class="cart-total">
           <span>Total</span>
-          <span class="total-amount">$0.00</span>
-        </div>
-        <div class="cart-tax">
-          <span>GST</span>
-          <span>12%</span>
+          <span class="total-amount">L.E 0.00</span>
         </div>
         <div class="cart-grand-total">
           <span>Grand Total</span>
-          <span class="grand-total-amount">$0.00</span>
+          <span class="grand-total-amount">L.E 0.00</span>
         </div>
-        <button class="proceed-btn">Proceed</button>
+        <div class="cart-estimate">
+          <span>Estimated time</span>
+          <span class="estimated-time">--</span>
+        </div>
+        <div class="schedule-pickup" id="schedulePickup">
+          <label for="pickupTime">Schedule Pickup:</label>
+          <input type="datetime-local" id="pickupTime" class="pickup-input" />
+        </div>
+        <button class="proceed-btn" id="proceedBtn">Proceed</button>
       </div>
     </aside>
 

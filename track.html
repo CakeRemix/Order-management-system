@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Track Order</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html">
+          <span class="material-icons">arrow_back</span>
+        </a>
+        <div class="restaurant-title">Track Order</div>
+        <div style="width:48px"></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="track-section">
+        <div class="container">
+          <div id="trackContent" class="track-content">
+            <!-- Order info will be inserted here -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function(){
+        const trackContent = document.getElementById('trackContent');
+        let currentOrder = null;
+
+        // Load order from localStorage
+        try {
+          currentOrder = JSON.parse(localStorage.getItem('currentOrder') || 'null');
+        } catch (e) {
+          currentOrder = null;
+        }
+
+        if (!currentOrder || currentOrder.status !== 'processing') {
+          trackContent.innerHTML = `
+            <div class="track-card">
+              <p class="muted">No active orders.</p>
+              <a href="index.html" style="margin-top: 1rem; display: inline-block; color: #22c55e; text-decoration: none;">← Back to Home</a>
+            </div>
+          `;
+          return;
+        }
+
+        // Display order status
+        const createdAt = new Date(currentOrder.createdAt);
+        const now = new Date();
+        const elapsedMs = now - createdAt;
+        const elapsedMin = Math.floor(elapsedMs / 60000);
+
+        let pickupDisplay = 'ASAP';
+        let remainingTime = '';
+
+        if (currentOrder.pickupTime) {
+          const pickupDate = new Date(currentOrder.pickupTime);
+          pickupDisplay = pickupDate.toLocaleString();
+          const remainingMs = pickupDate - now;
+          if (remainingMs > 0) {
+            const remainingMin = Math.ceil(remainingMs / 60000);
+            remainingTime = `<p style="margin-top: 0.5rem; color: #ea580c;">Time remaining: <strong>${remainingMin} minutes</strong></p>`;
+          } else {
+            remainingTime = '<p style="margin-top: 0.5rem; color: #ef4444;">Pickup time has passed.</p>';
+          }
+        } else {
+          remainingTime = `<p style="margin-top: 0.5rem; color: #64748b;">Estimated time: ${10 + (10 * 3)} - ${20 + (10 * 3)} minutes</p>`;
+        }
+
+        // Build HTML
+        let itemsHtml = currentOrder.items.map(item => `
+          <tr>
+            <td>${item.quantity} x ${item.name}</td>
+            <td>L.E ${(item.quantity * item.price).toFixed(2)}</td>
+          </tr>
+        `).join('');
+
+        trackContent.innerHTML = `
+          <div class="track-card">
+            <div class="track-status">
+              <div class="status-icon">✓</div>
+              <h2>Order Confirmed</h2>
+              <p style="color: #64748b; margin: 0;">Status: <strong>Processing</strong></p>
+            </div>
+
+            <div class="track-info">
+              <h3>Order Details</h3>
+              <p><strong>Truck:</strong> ${currentOrder.truck}</p>
+              <p><strong>Total:</strong> L.E ${currentOrder.total.toFixed(2)}</p>
+              <p><strong>Pickup Time:</strong> ${pickupDisplay}</p>
+              ${remainingTime}
+            </div>
+
+            <div class="track-items">
+              <h3>Items</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <th style="text-align: left; padding: 0.5rem 0;">Item</th>
+                    <th style="text-align: right; padding: 0.5rem 0;">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${itemsHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <a href="index.html" style="display: inline-block; padding: 0.6rem 1.2rem; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; margin-right: 0.5rem;">Back to Home</a>
+              <button id="clearOrderBtn" style="padding: 0.6rem 1.2rem; background: #ef4444; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Clear Order</button>
+            </div>
+          </div>
+        `;
+
+        // Add clear order button handler
+        const clearBtn = document.getElementById('clearOrderBtn');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            if (window.confirm('Are you sure you want to clear this order?')) {
+              localStorage.removeItem('currentOrder');
+              window.location.href = 'index.html';
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
