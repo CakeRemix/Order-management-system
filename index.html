@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Food web - Fresh & Healthy food</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <button class="menu-toggle">
+          <span class="material-icons">menu</span>
+        </button>
+        <a class="brand" href="#">Store</a>
+        <div class="search-container">
+          <input type="search" placeholder="Search" />
+          <button class="search-btn"
+            <span class="material-icons">search</span>
+          </button>
+        </div>
+        <button class="cart-toggle" id="cartToggle">
+          <span class="material-icons">shopping_cart</span>
+          <span class="cart-count">0</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="breadcrumb">
+        <div class="container">
+          <p>Store > Food web</p>
+        </div>
+      </section>
+
+      <section class="page-header">
+        <div class="container">
+          <h1>Food web</h1>
+          <p>Fresh & Healthy food recipe</p>
+          
+          <div class="stats">
+            <div class="stat-item">
+              <span class="number">24</span>
+              <span class="label">Total item</span>
+            </div>
+            <div class="stat-item">
+              <span class="number">09</span>
+              <span class="label">Category</span>
+            </div>
+            <div class="stat-item">
+              <span class="number">04</span>
+              <span class="label">Outlate</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="categories">
+        <div class="container">
+          <div class="category-grid">
+            <a href="#" class="category-item">
+              <img src="./images/burger.png" alt="Burger category" />
+              <span>Burger</span>
+            </a>
+            <a href="#" class="category-item active">
+              <img src="./images/salad.png" alt="Salad category" />
+              <span>Salad</span>
+            </a>
+            <a href="#" class="category-item">
+              <img src="./images/pizza.png" alt="Pizza category" />
+              <span>Pizza</span>
+            </a>
+            <a href="#" class="category-item">
+              <img src="./images/drinks.png" alt="Drinks category" />
+              <span>Drinks</span>
+            </a>
+            <a href="#" class="category-item">
+              <img src="./images/steak.png" alt="Steak Meats category" />
+              <span>Steak Meats</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="featured">
+        <div class="container">
+          <div class="feature-card">
+            <div class="feature-image">
+              <img src="./images/veggie-pizza.png" alt="Healthy veggie pizza" />
+            </div>
+            <div class="feature-content">
+              <h2>Your Health is Our First Priority!</h2>
+              <p>Vegan and Vegetarian pizzas can be healthy! The primary ingredient that makes traditional pizza unhealthy is the processed meat that is normally on top. When you order a veggie pizza or several veggies on a pizza with cheese sauce, you get a cheese pizza or several veggies on the pie.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <aside class="cart-sidebar" id="cartSidebar">
+      <div class="cart-header">
+        <h2>My Cart</h2>
+        <button class="close-cart" id="closeCart">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="cart-items">
+        <!-- Cart items will be inserted here by JavaScript -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total</span>
+          <span class="total-amount">$0.00</span>
+        </div>
+        <div class="cart-tax">
+          <span>GST</span>
+          <span>12%</span>
+        </div>
+        <div class="cart-grand-total">
+          <span>Grand Total</span>
+          <span class="grand-total-amount">$0.00</span>
+        </div>
+        <button class="proceed-btn">Proceed</button>
+      </div>
+    </aside>
+
+    <script src="./js/main.js" defer></script>
+  </body>
+</html>
