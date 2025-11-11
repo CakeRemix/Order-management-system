@@ -46,7 +46,7 @@ It follows an **Agile Software Development** process, with an evolving **SRS doc
 ## Prerequisites
 - Node.js >= 18.x
 - Git
-
+- PostgreSQl
 ---
 
 ## Team: Sleepers
