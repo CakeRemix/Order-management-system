@@ -1,5 +1,21 @@
 // Authentication utilities
-const API_URL = 'http://localhost:5000/api';
+// Dynamically detect API URL based on environment
+const getAPIUrl = () => {
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    
+    // Development environment
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'http://localhost:5000/api';
+    }
+    
+    // Production environment - use same domain
+    const baseUrl = port ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
+    return `${baseUrl}/api`;
+};
+
+const API_URL = getAPIUrl();
 
 // Token management
 const getToken = () => {
