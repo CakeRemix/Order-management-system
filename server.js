@@ -25,12 +25,12 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from frontend/public
 app.use(express.static(path.join(__dirname, 'frontend/public')));
 
+// Serve images from frontend/public/images
+app.use('/images', express.static(path.join(__dirname, 'frontend/public/images')));
+
 // Test route
 app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Order managment system',
-    status:  'Best project😮‍💨😮‍💨'
-  });
+  res.sendFile(path.join(__dirname, 'frontend/public', 'index.html'));
 });
 
 // Health check route
