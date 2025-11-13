@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Order Management System</title>
+    <title>Login - Food Court Login Form</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1 class="form-title">Sign in to your account</h1>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1 class="auth-title">Food Court Login Form</h1>
+            <p class="auth-subtitle">Fill out the form below to login</p>
         
         <div id="alert" class="alert" style="display: none;"></div>
         
@@ -44,7 +47,10 @@
             </button>
         </form>
 
-        <a href="signup.html" class="link">Don't have an account? Sign up</a>
+        <p class="auth-footer-text">
+            Don't have an account? <a href="signup.html" class="auth-link">Sign up</a>
+        </p>
+        </div>
     </div>
 
     <script src="js/auth.js"></script>
