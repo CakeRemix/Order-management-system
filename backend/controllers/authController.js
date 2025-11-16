@@ -133,10 +133,11 @@ exports.signup = async (req, res, next) => {
         }
 
         // Password strength validation
-        if (password.length < 6) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(password)) {
             return res.status(400).json({
                 success: false,
-                message: 'Password must be at least 6 characters long'
+                message: 'Password must be at least 8 characters long and contain uppercase, lowercase, and numbers'
             });
         }
 

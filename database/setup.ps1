@@ -100,7 +100,7 @@ Write-Host "Database setup completed successfully!" -ForegroundColor Green
 Write-Host "==================================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Connection String:" -ForegroundColor Yellow
-Write-Host "  postgresql://$DB_USER@$DB_HOST:$DB_PORT/$DB_NAME" -ForegroundColor White
+Write-Host "  postgresql://$DB_USER@${DB_HOST}:${DB_PORT}/$DB_NAME" -ForegroundColor White
 Write-Host ""
 Write-Host "You can now start your application!" -ForegroundColor Green
 Write-Host ""
