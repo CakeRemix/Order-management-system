@@ -35,7 +35,6 @@
         </div>
       </section>
     </main>
-    <script src="./js/trucks.js"></script>
     <!-- Cart sidebar (same as index) -->
     <aside class="cart-sidebar" id="cartSidebar">
       <div class="cart-header">
@@ -85,13 +84,59 @@
       const introEl = document.getElementById('restaurantIntro');
       const itemsGrid = document.getElementById('itemsGrid');
 
-      const data = (window.TRUCKS && window.TRUCKS[truckName]) || [];
-
-      if (introEl) {
-        introEl.innerHTML = `\n          <h1>${truckName}</h1>\n          <p>${data.description || 'Delicious items from this truck.'}</p>\n        `;
+      // Load truck and menu data from API
+      async function loadTruckMenu() {
+        try {
+          const response = await fetch(`http://localhost:5000/api/trucks/name/${encodeURIComponent(truckName)}/menu`);
+          const result = await response.json();
+          
+          if (!result.success) {
+            if (introEl) introEl.innerHTML = `<h1>${truckName}</h1><p class="muted">Food truck not found.</p>`;
+            if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">Food truck not found.</p>';
+            return;
+          }
+          
+          const truck = result.truck;
+          const items = result.data;
+          
+          // Update title
+          if (titleEl) titleEl.textContent = truck.name;
+          document.title = truck.name + ' — Menu';
+          
+          // Display intro
+          if (introEl) {
+            introEl.innerHTML = `
+              <h1>${truck.name}</h1>
+              <p>${truck.description || 'Delicious items from this truck.'}</p>
+            `;
+          }
+          
+          // Check truck status
+          if (truck.is_busy) {
+            if (introEl) introEl.innerHTML = `<h1>${truck.name}</h1><p class="muted">The food truck is busy right now.</p>`;
+            if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">The food truck is busy and not taking orders right now.</p>';
+            return;
+          } else if (truck.status === 'closed') {
+            if (introEl) introEl.innerHTML = `<h1>${truck.name}</h1><p class="muted">The food truck is closed.</p>`;
+            if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">This food truck is currently closed.</p>';
+            return;
+          }
+          
+          // Render menu items
+          renderItems(items, truck.name);
+          
+          // Auto-open cart sidebar when visiting an open restaurant
+          const cartSidebarEl = document.getElementById('cartSidebar');
+          if (cartSidebarEl) cartSidebarEl.classList.add('open');
+          
+        } catch (error) {
+          console.error('Error loading menu:', error);
+          if (introEl) introEl.innerHTML = `<h1>${truckName}</h1><p class="muted">Unable to load menu. Please try again later.</p>`;
+          if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">Unable to load menu items.</p>';
+        }
       }
 
-      function renderItems(items) {
+      function renderItems(items, truckName) {
         if (!itemsGrid) return;
         if (items.length === 0) {
           itemsGrid.innerHTML = '<p class="muted">No items found for this truck.</p>';
@@ -100,50 +145,39 @@
 
         itemsGrid.innerHTML = items.map(item => `
           <div class="item-card">
-            <img src="${item.img || './images/images (3).jpeg'}" alt="${item.name}" />
+            <img src="${item.image_url || './images/images (3).jpeg'}" alt="${item.name}" />
             <div class="item-body">
               <div class="item-name">${item.name}</div>
-              <div class="item-desc">${item.desc || ''}</div>
+              <div class="item-desc">${item.description || ''}</div>
               <div class="item-row">
-                <div class="item-price">L.E ${item.price.toFixed(2)}</div>
-                <button class="add-btn" data-name="${item.name}" data-price="${item.price}">Add</button>
+                <div class="item-price">L.E ${parseFloat(item.price).toFixed(2)}</div>
+                <button class="add-btn" data-name="${item.name}" data-price="${item.price}" ${!item.is_available ? 'disabled' : ''}>
+                  ${item.is_available ? 'Add' : 'Unavailable'}
+                </button>
               </div>
             </div>
           </div>
         `).join('');
-      }
-
-      // Show messages based on status
-      const status = (window.TRUCKS && window.TRUCKS[truckName] && window.TRUCKS[truckName].status) || 'open';
-      if (status === 'busy') {
-        if (introEl) introEl.innerHTML = `<h1>${truckName}</h1><p class="muted">The food truck is busy right now.</p>`;
-        if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">The food truck is busy and not taking orders right now.</p>';
-      } else if (status === 'closed') {
-        if (introEl) introEl.innerHTML = `<h1>${truckName}</h1><p class="muted">The food truck is closed.</p>`;
-        if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">This food truck is currently closed.</p>';
-      } else {
-        // Open
-        renderItems(data.items || []);
-
-        // Auto-open cart sidebar when visiting an open restaurant
-        const cartSidebarEl = document.getElementById('cartSidebar');
-        if (cartSidebarEl) cartSidebarEl.classList.add('open');
-
-        // Add button handler: use the shared cart API (window.addToCart). If not available, fallback to alert.
+        
+        // Add button handler: use the shared cart API (window.addToCart)
         document.addEventListener('click', function(e){
           const btn = e.target.closest('.add-btn');
-          if (!btn) return;
+          if (!btn || btn.disabled) return;
           const name = btn.dataset.name;
           const price = parseFloat(btn.dataset.price);
           if (window.addToCart) {
             // include truck name so cart can enforce single-truck ownership
             const added = window.addToCart({ name, price, quantity: 1, truck: truckName });
+            const cartSidebarEl = document.getElementById('cartSidebar');
             if (added && cartSidebarEl) cartSidebarEl.classList.add('open');
           } else {
             alert(name + ' added to cart (demo)');
           }
         });
       }
+
+      // Load menu on page load
+      document.addEventListener('DOMContentLoaded', loadTruckMenu);
     </script>
   </body>
 </html>

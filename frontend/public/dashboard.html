@@ -64,52 +64,9 @@
 
       <section class="categories">
         <div class="container">
-          <div class="category-grid">
-            <a href="restaurant.html?truck=Demeshq" class="category-item" data-status="open">
-              <div class="category-icon">
-                <span class="icon-text">Demeshq</span>
-              </div>
-              <div class="truck-status" data-status="open">
-                <span class="status-dot" aria-hidden="true"></span>
-                <span class="status-label">Open</span>
-              </div>
-            </a>
-            <a href="restaurant.html?truck=Container" class="category-item" data-status="busy">
-              <div class="category-icon">
-                <span class="icon-text">Container</span>
-              </div>
-              <div class="truck-status" data-status="busy">
-                <span class="status-dot" aria-hidden="true"></span>
-                <span class="status-label">Busy</span>
-              </div>
-            </a>
-            <a href="restaurant.html?truck=Essens" class="category-item" data-status="closed">
-              <div class="category-icon">
-                <span class="icon-text">Essens</span>
-              </div>
-              <div class="truck-status" data-status="closed">
-                <span class="status-dot" aria-hidden="true"></span>
-                <span class="status-label">Closed</span>
-              </div>
-            </a>
-            <a href="restaurant.html?truck=Ftar%20w%20Asha" class="category-item" data-status="open">
-              <div class="category-icon">
-                <span class="icon-text">Ftar w Asha</span>
-              </div>
-              <div class="truck-status" data-status="open">
-                <span class="status-dot" aria-hidden="true"></span>
-                <span class="status-label">Open</span>
-              </div>
-            </a>
-            <a href="restaurant.html?truck=Loaded" class="category-item" data-status="busy">
-              <div class="category-icon">
-                <span class="icon-text">Loaded</span>
-              </div>
-              <div class="truck-status" data-status="busy">
-                <span class="status-dot" aria-hidden="true"></span>
-                <span class="status-label">Busy</span>
-              </div>
-            </a>
+          <div class="category-grid" id="trucksGrid">
+            <!-- Food trucks will be loaded dynamically from API -->
+            <div class="loading-message">Loading food trucks...</div>
           </div>
         </div>
       </section>
@@ -182,6 +139,9 @@
           }
         }
 
+        // Load food trucks from API
+        await loadFoodTrucks();
+
         // Handle logout button
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
@@ -191,6 +151,54 @@
           });
         }
       });
+
+      // Function to load food trucks from the backend API
+      async function loadFoodTrucks() {
+        const trucksGrid = document.getElementById('trucksGrid');
+        
+        try {
+          const response = await fetch('http://localhost:5000/api/trucks');
+          const result = await response.json();
+          
+          if (!result.success || !result.data || result.data.length === 0) {
+            trucksGrid.innerHTML = '<p class="muted">No food trucks available at the moment.</p>';
+            return;
+          }
+          
+          const trucks = result.data;
+          
+          // Render truck cards
+          trucksGrid.innerHTML = trucks.map(truck => {
+            // Determine status label and class
+            let statusLabel = 'Closed';
+            let statusClass = 'closed';
+            
+            if (truck.is_busy) {
+              statusLabel = 'Busy';
+              statusClass = 'busy';
+            } else if (truck.status === 'open') {
+              statusLabel = 'Open';
+              statusClass = 'open';
+            }
+            
+            return `
+              <a href="restaurant.html?truck=${encodeURIComponent(truck.name)}" class="category-item" data-status="${statusClass}">
+                <div class="category-icon">
+                  <span class="icon-text">${truck.name}</span>
+                </div>
+                <div class="truck-status" data-status="${statusClass}">
+                  <span class="status-dot" aria-hidden="true"></span>
+                  <span class="status-label">${statusLabel}</span>
+                </div>
+              </a>
+            `;
+          }).join('');
+          
+        } catch (error) {
+          console.error('Error loading food trucks:', error);
+          trucksGrid.innerHTML = '<p class="muted">Unable to load food trucks. Please try again later.</p>';
+        }
+      }
     </script>
   </body>
 </html>
