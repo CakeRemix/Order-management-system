@@ -1,71 +1,196 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Order Management System</title>
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <header class="dashboard-header">
-            <h1>Order Management System</h1>
-            <div class="user-info">
-                <span id="userEmail"></span>
-                <button id="logoutButton" class="button button-secondary">Logout</button>
-            </div>
-        </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - CampusEats</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand" id="brandMenu">
+          <button class="brand-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="material-icons">restaurant_menu</span>
+          </button>
+          <div class="brand-menu" role="menu">
+            <a href="track.html" class="brand-menu-item">Track Order</a>
+            <a href="#" id="logoutBtn" class="brand-menu-item">Log out</a>
+          </div>
+        </div>
+        <div style="flex: 1;"></div>
+        <button class="cart-toggle" id="cartToggle">
+          <span class="material-icons">shopping_cart</span>
+          <span class="cart-count">0</span>
+        </button>
+      </div>
+    </header>
 
-        <main class="dashboard-main">
-            <div id="alert" class="alert" style="display: none;"></div>
+    <main>
+      <section class="breadcrumb">
+        <div class="container">
+        <p id="userBreadcrumb">Loading user...</p>
+        </div>
+      </section>
+
+      <section class="page-header">
+        <div class="container">
+          <div class="header-content">
+            <div class="title-section">
+              <h1>CampusEats</h1>
+              <p>Order from your favorite campus food trucks — quick and fresh!</p>
+            </div>
             
-            <div class="dashboard-welcome">
-                <h2>Welcome to your Dashboard</h2>
-                <p>Here you can manage your orders and view your account information.</p>
+            <div class="stats-bar">
+              <div class="stat-item">
+                <span class="number">24</span>
+                <span class="label">Active Trucks</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <span class="number">09</span>
+                <span class="label">Menu Items</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <span class="number">04</span>
+                <span class="label">New Added Items</span>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <!-- Placeholder for order management features -->
-            <div class="dashboard-content">
-                <div class="section">
-                    <h3>Recent Orders</h3>
-                    <div id="ordersList" class="orders-list">
-                        <p class="placeholder-text">No orders found.</p>
-                    </div>
-                </div>
+      <section class="categories">
+        <div class="container">
+          <div class="category-grid">
+            <a href="restaurant.html?truck=Demeshq" class="category-item" data-status="open">
+              <div class="category-icon">
+                <span class="icon-text">Demeshq</span>
+              </div>
+              <div class="truck-status" data-status="open">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Open</span>
+              </div>
+            </a>
+            <a href="restaurant.html?truck=Container" class="category-item" data-status="busy">
+              <div class="category-icon">
+                <span class="icon-text">Container</span>
+              </div>
+              <div class="truck-status" data-status="busy">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Busy</span>
+              </div>
+            </a>
+            <a href="restaurant.html?truck=Essens" class="category-item" data-status="closed">
+              <div class="category-icon">
+                <span class="icon-text">Essens</span>
+              </div>
+              <div class="truck-status" data-status="closed">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Closed</span>
+              </div>
+            </a>
+            <a href="restaurant.html?truck=Ftar%20w%20Asha" class="category-item" data-status="open">
+              <div class="category-icon">
+                <span class="icon-text">Ftar w Asha</span>
+              </div>
+              <div class="truck-status" data-status="open">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Open</span>
+              </div>
+            </a>
+            <a href="restaurant.html?truck=Loaded" class="category-item" data-status="busy">
+              <div class="category-icon">
+                <span class="icon-text">Loaded</span>
+              </div>
+              <div class="truck-status" data-status="busy">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span class="status-label">Busy</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="featured">
+        <div class="container">
+          <div class="feature-card">
+            <div class="feature-image">
+              <img src="./images/images (3).jpeg" alt="Healthy veggie pizza" />
             </div>
-        </main>
-    </div>
+            <div class="feature-content">
+              <h2>Hungry on Campus? We've Got You Covered!</h2>
+              <p>Order from your favorite food trucks around campus. Fresh, fast, and delivered to your spot!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
 
-    <script src="js/auth.js"></script>
+    <!-- Cart Sidebar -->
+    <aside class="cart-sidebar" id="cartSidebar">
+      <div class="cart-header">
+        <h2>My Cart</h2>
+        <button class="close-cart" id="closeCart">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="cart-items">
+        <!-- Cart items will be inserted here by JavaScript -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total</span>
+          <span class="total-amount">L.E 0.00</span>
+        </div>
+        <div class="cart-grand-total">
+          <span>Grand Total</span>
+          <span class="grand-total-amount">L.E 0.00</span>
+        </div>
+        <div class="cart-estimate">
+          <span>Estimated time</span>
+          <span class="estimated-time">--</span>
+        </div>
+        <div class="schedule-pickup" id="schedulePickup">
+          <label for="pickupTime">Schedule Pickup:</label>
+          <input type="datetime-local" id="pickupTime" class="pickup-input" />
+        </div>
+        <button class="proceed-btn" id="proceedBtn">Proceed</button>
+      </div>
+    </aside>
+
+    <script src="./js/auth.js"></script>
+    <script src="./js/main.js" defer></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // Check authentication
-                const isAuthenticated = await checkAuth();
-                if (!isAuthenticated) {
-                    window.location.href = '/login.html';
-                    return;
-                }
+      // Check authentication and load user data on page load
+      document.addEventListener('DOMContentLoaded', async () => {
+        const isAuthenticated = await checkAuth();
+        if (!isAuthenticated) {
+          window.location.href = '/login.html';
+          return;
+        }
 
-                // Get and display user info
-                const user = getUserInfo();
-                if (user && user.email) {
-                    document.getElementById('userEmail').textContent = user.email;
-                }
+        // Get current user info and display in breadcrumb
+        const user = getUserInfo();
+        if (user) {
+          const breadcrumb = document.getElementById('userBreadcrumb');
+          if (breadcrumb) {
+            // Display name and email (since ID is not in the data)
+            breadcrumb.textContent = `${user.name} > ${user.email}`;
+          }
+        }
 
-                // Handle logout
-                document.getElementById('logoutButton').addEventListener('click', async () => {
-                    await logout();
-                    window.location.href = '/login.html';
-                });
-
-            } catch (error) {
-                const alert = document.getElementById('alert');
-                alert.className = 'alert alert-error';
-                alert.textContent = error.message || 'An error occurred';
-                alert.style.display = 'block';
-            }
-        });
+        // Handle logout button
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+          });
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
