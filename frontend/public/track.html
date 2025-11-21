@@ -10,7 +10,7 @@
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href="index.html">
+        <a class="brand" href="dashboard.html">
           <span class="material-icons">arrow_back</span>
         </a>
         <div class="restaurant-title">Track Order</div>
@@ -44,7 +44,7 @@
           trackContent.innerHTML = `
             <div class="track-card">
               <p class="muted">No active orders.</p>
-              <a href="index.html" style="margin-top: 1rem; display: inline-block; color: #22c55e; text-decoration: none;">← Back to Home</a>
+              <a href="dashboard.html" style="margin-top: 1rem; display: inline-block; color: #22c55e; text-decoration: none;">← Back to Home</a>
             </div>
           `;
           return;
@@ -113,7 +113,7 @@
             </div>
 
             <div style="margin-top: 1.5rem; text-align: center;">
-              <a href="index.html" style="display: inline-block; padding: 0.6rem 1.2rem; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; margin-right: 0.5rem;">Back to Home</a>
+              <a href="dashboard.html" style="display: inline-block; padding: 0.6rem 1.2rem; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; margin-right: 0.5rem;">Back to Home</a>
               <button id="clearOrderBtn" style="padding: 0.6rem 1.2rem; background: #ef4444; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Clear Order</button>
             </div>
           </div>
@@ -125,7 +125,7 @@
           clearBtn.addEventListener('click', () => {
             if (window.confirm('Are you sure you want to clear this order?')) {
               localStorage.removeItem('currentOrder');
-              window.location.href = 'index.html';
+              window.location.href = 'dashboard.html';
             }
           });
         }
