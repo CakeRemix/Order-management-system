@@ -1,0 +1,135 @@
+HTML
+…for structuring the content of web pages using a system of markup tags to de ne elements like
+headings, paragraphs, images, and links
+Structure and Semantics: uses elements (like
+<p> for paragraphs, <h1> for headings, <img>
+for images, <a> for links) to provide a logical
+structure to the content. These elements also
+provide semantic meaning, helping browsers,
+search engines, and assistive technologies
+understand the purpose of di erent parts of
+the page!!!
+Content Organization: arranging text, images,
+videos, forms, tables, and other elements in a
+meaningful hierarchy…. Without HTML, a web
+page would be an unformatted blob of
+information.
+
+Creating Links: HTML's "Hypertext" aspect
+refers to its ability to create links (<a> tags) that
+connect di erent web pages, both within a single
+website and across the internet. This linking
+mechanism is a core feature of the World
+Wide Web!!!!
+Foundation for Styling and Interactivity: paired
+with CSS (for styling and presentation) and
+JavaScript (for interactivity and dynamic
+behaviour), creates a complete and engaging
+user experience. HTML is the base upon which
+these other technologies build.
+
+fi
+
+ff
+
+ff
+
+Iman Awaad
+
+8
+
+Iman Awaad
+
+9
+
+Iman Awaad
+
+10
+
+Iman Awaad
+
+11
+
+“HTML Living Standard”…
+no longer versioned
+numerically!
+
+See: https://html.spec.whatwg.org/
+Iman Awaad
+12
+
+Iman Awaad
+
+13
+
+Iman Awaad
+
+14
+
+Iman Awaad
+
+15
+
+Iman Awaad
+
+16
+
+CSS
+
+CSS: a style sheet language used to describe the presentation and visual formatting of a document writt
+in a markup language, most commonly HTML
+Styling HTML elements: e.g. properties like
+colors, fonts, text sizes, backgrounds, borders,
+and shadows
+Layout and positioning: enables the
+arrangement of elements on a page, creating
+layouts like grids, exboxes, and multi-column
+designs. It also handles the positioning of
+individual elements.
+
+Adding visual e ects and animations: can be
+used to create transitions, animations, and other
+dynamic visual e ects to enhance user
+engagement
+Separation of concerns: promotes the
+separation of content (HTML) from
+presentation (CSS), making code more
+organized, maintainable, and reusable
+
+Responsive design: allows websites to adapt
+their layout and appearance to di erent
+screen sizes and devices… consistent and
+optimal user experience across devices.
+ff
+
+fl
+
+ff
+
+ff
+
+Iman Awaad
+
+17
+
+Iman Awaad
+
+18
+
+Iman Awaad
+
+19
+
+Iman Awaad
+
+20
+
+Iman Awaad
+
+21
+
+Iman Awaad
+
+22
+
+
