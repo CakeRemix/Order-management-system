@@ -109,11 +109,8 @@ const signup = async (name, email, password, confirmPassword) => {
         });
 
         const data = await handleResponse(response);
-        if (data.success && data.token) {
-            setToken(data.token);
-            if (data.user) {
-                setUserInfo(data.user);
-            }
+        if (data.success) {
+            // Don't auto-login, just return success
             return data;
         }
         throw new Error(data.message || 'Signup failed');
