@@ -28,8 +28,23 @@
       </section>
     </main>
 
+    <script src="js/auth.js"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', function(){
+      document.addEventListener('DOMContentLoaded', async function(){
+        // Check authentication
+        const isAuth = await checkAuth();
+        if (!isAuth) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        // Prevent admin from accessing this page
+        const userInfo = getUserInfo();
+        if (userInfo && userInfo.role === 'admin') {
+          window.location.href = '/admin.html';
+          return;
+        }
+
         const trackContent = document.getElementById('trackContent');
         let currentOrder = null;
 

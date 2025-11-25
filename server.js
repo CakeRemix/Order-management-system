@@ -12,6 +12,7 @@ const { errorHandler } = require('./middleware');
 // Import routes
 const authRoutes = require('./backend/routes/authRoutes');
 const trucksRoutes = require('./backend/routes/trucksRoutes');
+const adminRoutes = require('./backend/routes/adminRoutes');
 // const orderRoutes = require('./backend/routes/orderRoutes');
 // const productRoutes = require('./backend/routes/productRoutes');
 
@@ -55,6 +56,7 @@ app.get('/health', async (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/trucks', trucksRoutes);
+app.use('/api/admin', adminRoutes);
 // app.use('/api/orders', orderRoutes);
 // app.use('/api/products', productRoutes);
 

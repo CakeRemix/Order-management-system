@@ -87,7 +87,12 @@
             // Check if user is already authenticated
             const isAuthenticated = await checkAuth();
             if (isAuthenticated) {
-                window.location.href = '/dashboard.html';
+                const userInfo = getUserInfo();
+                if (userInfo.role === 'admin') {
+                    window.location.href = '/admin.html';
+                } else {
+                    window.location.href = '/dashboard.html';
+                }
                 return;
             }
 

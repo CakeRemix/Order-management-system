@@ -63,7 +63,12 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const isAuthenticated = await checkAuth();
             if (isAuthenticated) {
-                window.location.href = '/dashboard.html';
+                const userInfo = getUserInfo();
+                if (userInfo.role === 'admin') {
+                    window.location.href = '/admin.html';
+                } else {
+                    window.location.href = '/dashboard.html';
+                }
             }
         });
     </script>

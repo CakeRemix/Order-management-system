@@ -131,6 +131,12 @@
 
         // Get current user info and display in breadcrumb
         const user = getUserInfo();
+        
+        // Prevent admin from accessing dashboard
+        if (user && user.role === 'admin') {
+          window.location.href = '/admin.html';
+          return;
+        }
         if (user) {
           const breadcrumb = document.getElementById('userBreadcrumb');
           if (breadcrumb) {

@@ -67,9 +67,26 @@
       </div>
     </aside>
 
+    <script src="./js/auth.js"></script>
     <script src="./js/main.js" defer></script>
 
     <script>
+      // Check authentication first
+      document.addEventListener('DOMContentLoaded', async function() {
+        const isAuth = await checkAuth();
+        if (!isAuth) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        // Prevent admin from accessing this page
+        const userInfo = getUserInfo();
+        if (userInfo && userInfo.role === 'admin') {
+          window.location.href = '/admin.html';
+          return;
+        }
+      });
+
       // Read truck query param and render items
       function getQueryParam(name) {
         const url = new URL(window.location.href);

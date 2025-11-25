@@ -110,7 +110,13 @@
                 try {
                     const response = await login(email, password);
                     if (response.success) {
-                        window.location.href = '/dashboard.html';
+                        // Check user role and redirect accordingly
+                        const userInfo = getUserInfo();
+                        if (userInfo.role === 'admin') {
+                            window.location.href = '/admin.html';
+                        } else {
+                            window.location.href = '/dashboard.html';
+                        }
                     }
                 } catch (error) {
                     showError(error.message || 'An error occurred during login');
