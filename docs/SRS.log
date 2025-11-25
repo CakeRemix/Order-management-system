@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.5)  7 OCT 2025 23:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.5)  21 NOV 2025 14:43
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -563,13 +563,15 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 1.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 1.
-)
+
+
+[2])
 \tf@toc=\write5
 \openout5 = `SRS.toc'.
 
 
 
-[2]
+[3]
 
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
@@ -590,98 +592,149 @@ Overfull \hbox (0.26213pt too wide) in paragraph at lines 211--212
 
 
 
-[3]
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.219     \item \textbf
+                       {Activate Busy Mode:} Vendors can temporarily stop ac... [3]
 
 [4]
 
 [5]
-<cuc.png, id=189, 1104.125pt x 853.1875pt>
-File: cuc.png Graphic file (type png)
-<use cuc.png>
-Package pdftex.def Info: cuc.png  used on input line 299.
-(pdftex.def)             Requested size: 515.50192pt x 398.33858pt.
-
-Overfull \hbox (69.33401pt too wide) in paragraph at lines 299--300
- [][] 
- []
+Overfull \vbox (2581.87474pt too high) has occurred while \output is active []
 
 
 
 [6]
-<ruc.png, id=195, 1104.125pt x 853.1875pt>
-File: ruc.png Graphic file (type png)
-<use ruc.png>
-Package pdftex.def Info: ruc.png  used on input line 306.
+
+[7]
+Overfull \vbox (1297.41641pt too high) has occurred while \output is active []
+
+
+
+[8]
+<cuc.png, id=434, 1104.125pt x 853.1875pt>
+File: cuc.png Graphic file (type png)
+<use cuc.png>
+Package pdftex.def Info: cuc.png  used on input line 689.
 (pdftex.def)             Requested size: 515.50192pt x 398.33858pt.
 
-Overfull \hbox (69.33401pt too wide) in paragraph at lines 306--307
+Overfull \hbox (69.33401pt too wide) in paragraph at lines 689--690
  [][] 
  []
 
 
 
-[7
+[9]
+<ruc.png, id=440, 1104.125pt x 853.1875pt>
+File: ruc.png Graphic file (type png)
+<use ruc.png>
+Package pdftex.def Info: ruc.png  used on input line 696.
+(pdftex.def)             Requested size: 515.50192pt x 398.33858pt.
+
+Overfull \hbox (69.33401pt too wide) in paragraph at lines 696--697
+ [][] 
+ []
+
+
+
+[10
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.310 
+l.700 
        <./cuc.png>]
-<auc.png, id=202, 1104.125pt x 853.1875pt>
+<auc.png, id=448, 1104.125pt x 853.1875pt>
 File: auc.png Graphic file (type png)
 <use auc.png>
-Package pdftex.def Info: auc.png  used on input line 313.
+Package pdftex.def Info: auc.png  used on input line 703.
 (pdftex.def)             Requested size: 515.50192pt x 398.33858pt.
 
-Overfull \hbox (69.33401pt too wide) in paragraph at lines 313--314
+Overfull \hbox (69.33401pt too wide) in paragraph at lines 703--704
  [][] 
  []
 
 
 
-[8
+[11
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.317 
+l.707 
        <./ruc.png>]
 
-[9
+[12
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.318 \newpage
+l.708 \newpage
                <./auc.png>]
-
-[10]
-
-[11]
-
-[12]
 
 [13]
 
 [14]
 
-[15] (SRS.aux)
+[15]
+
+[16]
+
+[17]
+
+[18]
+Overfull \vbox (313.57486pt too high) has occurred while \output is active []
+
+
+
+[19]
+Overfull \hbox (29.82864pt too wide) in paragraph at lines 948--949
+\OT1/cmr/m/n/12 Individual fea-ture de-vel-op-ment. Nam-ing con-ven-tion: \OT1/cmtt/m/n/12 feature/description-of-feature\OT1/cmr/m/n/12 .
+ []
+
+
+Overfull \hbox (27.55423pt too wide) in paragraph at lines 975--976
+\OT1/cmr/m/n/12 end, Post-greSQL database, fron-tend). En-vi-ron-ment vari-ables stored in \OT1/cmtt/m/n/12 .env.development
+ []
+
+
+
+[20]
+Overfull \hbox (6.85614pt too wide) in paragraph at lines 977--978
+\OT1/cmr/m/n/12 dated on de-velop branch merges. Uses sep-a-rate Post-greSQL database with production-
+ []
+
+
+
+[21]
+
+[22]
+
+[23]
+
+[24]
+
+[25]
+
+[26] (SRS.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-09-02>
  ***********
 Package rerunfilecheck Info: File `SRS.out' has not changed.
-(rerunfilecheck)             Checksum: B22911AF774686773909A7F0A98DDD12;4726.
+(rerunfilecheck)             Checksum: B7A6C47E3AE270961DECF2D7C7165E61;12858.
  ) 
 Here is how much of TeX's memory you used:
- 22948 strings out of 468130
- 447201 string characters out of 5430633
- 840801 words of memory out of 5000000
- 51186 multiletter control sequences out of 15000+600000
- 633929 words of font info for 63 fonts, out of 8000000 for 9000
+ 23090 strings out of 468130
+ 449259 string characters out of 5430633
+ 872839 words of memory out of 5000000
+ 51239 multiletter control sequences out of 15000+600000
+ 634098 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 98i,14n,101p,1261b,595s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\hassa\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on SRS.pdf (17 pages, 301319 bytes).
+ 98i,14n,101p,1261b,702s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\hassa\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/hassa/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on SRS.pdf (29 pages, 405016 bytes).
 PDF statistics:
- 286 PDF objects out of 1000 (max. 8388607)
- 53 named destinations out of 1000 (max. 500000)
- 268 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 608 PDF objects out of 1000 (max. 8388607)
+ 141 named destinations out of 1000 (max. 500000)
+ 596 words of extra memory for PDF output out of 10000 (max. 10000000)
 
