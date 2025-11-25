@@ -157,7 +157,15 @@
                 try {
                     const response = await signup(name, email, password, confirmPassword);
                     if (response.success) {
-                        window.location.href = '/dashboard.html';
+                        // Show success message
+                        alert.className = 'alert alert-success';
+                        alert.textContent = 'Account created successfully! Redirecting to login...';
+                        alert.style.display = 'block';
+                        
+                        // Redirect to login page after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = '/login.html';
+                        }, 2000);
                     }
                 } catch (error) {
                     showError(error.message || 'An error occurred during sign up');
