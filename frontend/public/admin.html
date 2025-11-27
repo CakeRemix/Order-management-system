@@ -6,6 +6,7 @@
     <title>Admin Dashboard - CampusEats</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <style>
         * {
             margin: 0;
@@ -444,82 +445,82 @@
         // API_URL is already defined in auth.js
         let currentSection = 'stats';
 
-        // Check if user is admin
-        document.addEventListener('DOMContentLoaded', async () => {
-            const isAuth = await checkAuth();
-            if (!isAuth) {
-                window.location.href = '/login.html';
-                return;
-            }
+        // Check if user is admin using jQuery
+        $(document).ready(function() {
+            checkAuth().then(function(isAuth) {
+                if (!isAuth) {
+                    window.location.href = '/login.html';
+                    return;
+                }
 
-            const userInfo = getUserInfo();
-            if (userInfo.role !== 'admin') {
-                alert('Access denied. Admin only.');
-                window.location.href = '/dashboard.html';
-                return;
-            }
+                const userInfo = getUserInfo();
+                if (userInfo.role !== 'admin') {
+                    alert('Access denied. Admin only.');
+                    window.location.href = '/dashboard.html';
+                    return;
+                }
 
-            // Set admin name and avatar
-            document.getElementById('adminName').textContent = userInfo.name;
-            const avatar = document.querySelector('.user-avatar');
-            avatar.textContent = userInfo.name.charAt(0).toUpperCase();
-            
-            loadStats();
-            loadTrucks();
-            loadUsers();
+                // Set admin name and avatar
+                $('#adminName').text(userInfo.name);
+                const avatar = $('.user-avatar');
+                avatar.text(userInfo.name.charAt(0).toUpperCase());
+                
+                loadStats();
+                loadTrucks();
+                loadUsers();
 
-            // Attach form submit handler
-            document.getElementById('addTruckForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
+                // Attach form submit handler using jQuery
+                $('#addTruckForm').on('submit', function(e) {
+                    e.preventDefault();
 
-                const truckData = {
-                    truckName: document.getElementById('truckName').value,
-                    vendorName: document.getElementById('vendorName').value,
-                    vendorEmail: document.getElementById('vendorEmail').value,
-                    vendorPassword: document.getElementById('vendorPassword').value
-                };
+                    const truckData = {
+                        truckName: $('#truckName').val(),
+                        vendorName: $('#vendorName').val(),
+                        vendorEmail: $('#vendorEmail').val(),
+                        vendorPassword: $('#vendorPassword').val()
+                    };
 
-                try {
-                    const response = await fetch(`${API_URL}/admin/trucks`, {
+                    $.ajax({
+                        url: `${API_URL}/admin/trucks`,
                         method: 'POST',
+                        contentType: 'application/json',
                         headers: {
-                            'Content-Type': 'application/json',
                             'Authorization': `Bearer ${getToken()}`
                         },
-                        body: JSON.stringify(truckData)
+                        data: JSON.stringify(truckData)
+                    })
+                    .done(function(data) {
+                        if (data.success) {
+                            showAlert('Food truck and vendor created successfully!', 'success');
+                            $('#addTruckForm')[0].reset();
+                            loadTrucks();
+                            loadStats();
+                        } else {
+                            showAlert(data.message || 'Error creating truck', 'error');
+                        }
+                    })
+                    .fail(function(xhr) {
+                        showAlert('Error creating truck: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
                     });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        showAlert('Food truck and vendor created successfully!', 'success');
-                        document.getElementById('addTruckForm').reset();
-                        loadTrucks();
-                        loadStats();
-                    } else {
-                        showAlert(data.message || 'Error creating truck', 'error');
-                    }
-                } catch (error) {
-                    showAlert('Error creating truck: ' + error.message, 'error');
-                }
+                });
             });
         });
 
         function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alertContainer');
-            alertContainer.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => {
-                alertContainer.innerHTML = '';
+            const alertContainer = $('#alertContainer');
+            alertContainer.html(`<div class="alert alert-${type}">${message}</div>`);
+            setTimeout(function() {
+                alertContainer.html('');
             }, 5000);
         }
 
         function showSection(section) {
             console.log('Showing section:', section);
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
+            $('.section').removeClass('active');
+            $('.sidebar-nav button').removeClass('active');
             
-            document.getElementById(section).classList.add('active');
-            document.getElementById(section + 'Btn').classList.add('active');
+            $('#' + section).addClass('active');
+            $('#' + section + 'Btn').addClass('active');
             currentSection = section;
 
             // Update page title
@@ -528,7 +529,7 @@
                 'trucks': 'Food Trucks',
                 'users': 'Users Management'
             };
-            document.querySelector('.top-bar h1').textContent = titles[section] || 'Dashboard';
+            $('.top-bar h1').text(titles[section] || 'Dashboard');
 
             if (section === 'stats') loadStats();
             if (section === 'trucks') loadTrucks();
@@ -538,15 +539,15 @@
             }
         }
 
-        async function loadStats() {
-            try {
-                const response = await fetch(`${API_URL}/admin/stats`, {
-                    headers: {
-                        'Authorization': `Bearer ${getToken()}`
-                    }
-                });
-                const data = await response.json();
-
+        function loadStats() {
+            $.ajax({
+                url: `${API_URL}/admin/stats`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            })
+            .done(function(data) {
                 if (data.success) {
                     const stats = data.data;
                     
@@ -554,38 +555,39 @@
                     let vendors = 0;
                     let customers = 0;
                     
-                    stats.users.forEach(u => {
+                    stats.users.forEach(function(u) {
                         totalUsers += parseInt(u.count);
                         if (u.role === 'vendor') vendors = parseInt(u.count);
                         if (u.role === 'customer') customers = parseInt(u.count);
                     });
 
-                    document.getElementById('totalUsers').textContent = totalUsers;
-                    document.getElementById('totalVendors').textContent = vendors;
-                    document.getElementById('totalCustomers').textContent = customers;
-                    document.getElementById('totalTrucks').textContent = stats.trucks.total || 0;
-                    document.getElementById('totalOrders').textContent = stats.orders.total || 0;
-                    document.getElementById('completedOrders').textContent = stats.orders.completed || 0;
+                    $('#totalUsers').text(totalUsers);
+                    $('#totalVendors').text(vendors);
+                    $('#totalCustomers').text(customers);
+                    $('#totalTrucks').text(stats.trucks.total || 0);
+                    $('#totalOrders').text(stats.orders.total || 0);
+                    $('#completedOrders').text(stats.orders.completed || 0);
                 }
-            } catch (error) {
+            })
+            .fail(function(error) {
                 console.error('Error loading stats:', error);
-            }
+            });
         }
 
-        async function loadTrucks() {
-            try {
-                const response = await fetch(`${API_URL}/admin/trucks`, {
-                    headers: {
-                        'Authorization': `Bearer ${getToken()}`
-                    }
-                });
-                const data = await response.json();
-
+        function loadTrucks() {
+            $.ajax({
+                url: `${API_URL}/admin/trucks`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            })
+            .done(function(data) {
                 if (data.success) {
-                    const tbody = document.getElementById('trucksTable');
-                    tbody.innerHTML = '';
+                    const tbody = $('#trucksTable');
+                    tbody.html('');
 
-                    data.data.forEach(truck => {
+                    data.data.forEach(function(truck) {
                         const row = `
                             <tr>
                                 <td>${truck.id}</td>
@@ -597,31 +599,33 @@
                                 </td>
                             </tr>
                         `;
-                        tbody.innerHTML += row;
+                        tbody.append(row);
                     });
                 }
-            } catch (error) {
+            })
+            .fail(function(error) {
                 console.error('Error loading trucks:', error);
-            }
+            });
         }
 
-        async function loadUsers() {
+        function loadUsers() {
             console.log('loadUsers called');
-            try {
-                const response = await fetch(`${API_URL}/admin/users`, {
-                    headers: {
-                        'Authorization': `Bearer ${getToken()}`
-                    }
-                });
-                console.log('Users response status:', response.status);
-                const data = await response.json();
+            $.ajax({
+                url: `${API_URL}/admin/users`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            })
+            .done(function(data) {
+                console.log('Users response received');
                 console.log('Users data:', data);
 
                 if (data.success) {
-                    const tbody = document.getElementById('usersTable');
-                    tbody.innerHTML = '';
+                    const tbody = $('#usersTable');
+                    tbody.html('');
 
-                    data.data.forEach(user => {
+                    data.data.forEach(function(user) {
                         // Don't show deactivate button for admin users
                         const actionButton = user.role === 'admin' 
                             ? '-' 
@@ -642,32 +646,31 @@
                                 </td>
                             </tr>
                         `;
-                        tbody.innerHTML += row;
+                        tbody.append(row);
                     });
                     console.log('Users table populated with', data.data.length, 'users');
                 } else {
                     console.error('Failed to load users:', data.message);
                 }
-            } catch (error) {
+            })
+            .fail(function(error) {
                 console.error('Error loading users:', error);
-            }
+            });
         }
 
-        async function deleteTruck(id, name) {
+        function deleteTruck(id, name) {
             if (!confirm(`Are you sure you want to delete "${name}" and all its data? This will also delete the vendor account.`)) {
                 return;
             }
 
-            try {
-                const response = await fetch(`${API_URL}/admin/trucks/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${getToken()}`
-                    }
-                });
-
-                const data = await response.json();
-
+            $.ajax({
+                url: `${API_URL}/admin/trucks/${id}`,
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            })
+            .done(function(data) {
                 if (data.success) {
                     showAlert('Food truck deleted successfully!', 'success');
                     loadTrucks();
@@ -675,22 +678,21 @@
                 } else {
                     showAlert(data.message || 'Error deleting truck', 'error');
                 }
-            } catch (error) {
-                showAlert('Error deleting truck: ' + error.message, 'error');
-            }
+            })
+            .fail(function(xhr) {
+                showAlert('Error deleting truck: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
+            });
         }
 
-        async function toggleUserStatus(id) {
-            try {
-                const response = await fetch(`${API_URL}/admin/users/${id}/toggle-active`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${getToken()}`
-                    }
-                });
-
-                const data = await response.json();
-
+        function toggleUserStatus(id) {
+            $.ajax({
+                url: `${API_URL}/admin/users/${id}/toggle-active`,
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            })
+            .done(function(data) {
                 if (data.success) {
                     showAlert('User status updated!', 'success');
                     loadUsers();
@@ -698,9 +700,10 @@
                 } else {
                     showAlert(data.message || 'Error updating user', 'error');
                 }
-            } catch (error) {
-                showAlert('Error updating user: ' + error.message, 'error');
-            }
+            })
+            .fail(function(xhr) {
+                showAlert('Error updating user: ' + (xhr.responseJSON?.message || 'Unknown error'), 'error');
+            });
         }
 
         function handleLogout() {

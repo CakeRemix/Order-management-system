@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 <body class="auth-body">
     <div class="auth-container homepage-container">
@@ -60,16 +61,17 @@
     <script src="js/auth.js"></script>
     <script>
         // Redirect to dashboard if user is already authenticated
-        document.addEventListener('DOMContentLoaded', async () => {
-            const isAuthenticated = await checkAuth();
-            if (isAuthenticated) {
-                const userInfo = getUserInfo();
-                if (userInfo.role === 'admin') {
-                    window.location.href = '/admin.html';
-                } else {
-                    window.location.href = '/dashboard.html';
+        $(document).ready(function() {
+            checkAuth().then(function(isAuthenticated) {
+                if (isAuthenticated) {
+                    const userInfo = getUserInfo();
+                    if (userInfo.role === 'admin') {
+                        window.location.href = '/admin.html';
+                    } else {
+                        window.location.href = '/dashboard.html';
+                    }
                 }
-            }
+            });
         });
     </script>
 </body>

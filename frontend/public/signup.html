@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 <body class="auth-body">
     <div class="auth-container">
@@ -83,100 +84,104 @@
 
     <script src="js/auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+        $(document).ready(function() {
             // Check if user is already authenticated
-            const isAuthenticated = await checkAuth();
-            if (isAuthenticated) {
-                const userInfo = getUserInfo();
-                if (userInfo.role === 'admin') {
-                    window.location.href = '/admin.html';
-                } else {
-                    window.location.href = '/dashboard.html';
+            checkAuth().then(function(isAuthenticated) {
+                if (isAuthenticated) {
+                    const userInfo = getUserInfo();
+                    if (userInfo.role === 'admin') {
+                        window.location.href = '/admin.html';
+                    } else {
+                        window.location.href = '/dashboard.html';
+                    }
+                    return;
                 }
-                return;
-            }
+            });
 
-            const form = document.getElementById('signupForm');
-            const submitButton = document.getElementById('submitButton');
-            const spinner = document.getElementById('spinner');
-            const alert = document.getElementById('alert');
+            const form = $('#signupForm');
+            const submitButton = $('#submitButton');
+            const spinner = $('#spinner');
+            const alert = $('#alert');
             
             const showError = (message) => {
-                alert.className = 'alert alert-error';
-                alert.textContent = message;
-                alert.style.display = 'block';
+                alert.removeClass().addClass('alert alert-error');
+                alert.text(message);
+                alert.show();
             };
 
             const showLoading = (loading) => {
-                submitButton.disabled = loading;
-                spinner.style.display = loading ? 'inline-block' : 'none';
-                submitButton.textContent = loading ? 'Creating account...' : 'Sign up';
+                submitButton.prop('disabled', loading);
+                spinner.css('display', loading ? 'inline-block' : 'none');
+                submitButton.text(loading ? 'Creating account...' : 'Sign up');
                 if (loading) {
                     submitButton.prepend(spinner);
                 }
             };
 
-            form.addEventListener('submit', async (e) => {
+            form.on('submit', function(e) {
                 e.preventDefault();
                 
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
+                const name = $('#name').val();
+                const email = $('#email').val();
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
 
                 // Reset errors
-                document.getElementById('nameError').textContent = '';
-                document.getElementById('emailError').textContent = '';
-                document.getElementById('passwordError').textContent = '';
-                document.getElementById('confirmPasswordError').textContent = '';
-                alert.style.display = 'none';
+                $('#nameError').text('');
+                $('#emailError').text('');
+                $('#passwordError').text('');
+                $('#confirmPasswordError').text('');
+                alert.hide();
 
                 // Validate name
                 if (!name.trim()) {
-                    document.getElementById('nameError').textContent = 'Name is required';
+                    $('#nameError').text('Name is required');
                     return;
                 }
 
                 // Validate email
                 if (!validateEmail(email)) {
-                    document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                    $('#emailError').text('Please enter a valid email address');
                     return;
                 }
 
                 // Validate password
                 if (!validatePassword(password)) {
-                    document.getElementById('passwordError').textContent = 
-                        'Password must be at least 8 characters long and contain uppercase, lowercase, and numbers';
+                    $('#passwordError').text(
+                        'Password must be at least 8 characters long and contain uppercase, lowercase, and numbers'
+                    );
                     return;
                 }
 
                 // Validate password confirmation
                 if (password !== confirmPassword) {
-                    document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+                    $('#confirmPasswordError').text('Passwords do not match');
                     return;
                 }
 
                 // Show loading state
                 showLoading(true);
 
-                try {
-                    const response = await signup(name, email, password, confirmPassword);
-                    if (response.success) {
-                        // Show success message
-                        alert.className = 'alert alert-success';
-                        alert.textContent = 'Account created successfully! Redirecting to login...';
-                        alert.style.display = 'block';
-                        
-                        // Redirect to login page after 2 seconds
-                        setTimeout(() => {
-                            window.location.href = '/login.html';
-                        }, 2000);
-                    }
-                } catch (error) {
-                    showError(error.message || 'An error occurred during sign up');
-                } finally {
-                    showLoading(false);
-                }
+                signup(name, email, password, confirmPassword)
+                    .done(function(response) {
+                        if (response.success) {
+                            // Show success message
+                            alert.removeClass().addClass('alert alert-success');
+                            alert.text('Account created successfully! Redirecting to login...');
+                            alert.show();
+                            
+                            // Redirect to login page after 2 seconds
+                            setTimeout(function() {
+                                window.location.href = '/login.html';
+                            }, 2000);
+                        }
+                    })
+                    .fail(function(error) {
+                        showError(error.message || 'An error occurred during sign up');
+                    })
+                    .always(function() {
+                        showLoading(false);
+                    });
             });
         });
     </script>
