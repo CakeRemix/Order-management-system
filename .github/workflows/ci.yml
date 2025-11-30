@@ -125,9 +125,7 @@ jobs:
             const summary = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
             const lines = summary.total.lines.pct;
             const branches = summary.total.branches.pct;
-            const comment = `## Backend Test Results
-- **Lines Coverage**: ${lines}%
-- **Branch Coverage**: ${branches}%`;
+            const comment = '## Backend Test Results\n- **Lines Coverage**: ' + lines + '%\n- **Branch Coverage**: ' + branches + '%';
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
