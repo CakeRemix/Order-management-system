@@ -1,12 +1,137 @@
 -- =====================================================
 -- Seed Data: Sample Orders
+-- Schema: FoodTruck
 -- =====================================================
 
 -- Clear existing data
-TRUNCATE TABLE orders CASCADE;
-TRUNCATE TABLE order_items CASCADE;
-RESET SEQUENCE orders_id_seq;
-RESET SEQUENCE order_items_id_seq;
+TRUNCATE TABLE FoodTruck.Orders CASCADE;
+TRUNCATE TABLE FoodTruck.OrderItems CASCADE;
+TRUNCATE TABLE FoodTruck.Order_Contains_OrderItems CASCADE;
+TRUNCATE TABLE FoodTruck.Order_Contains_MenuItems CASCADE;
+TRUNCATE TABLE FoodTruck.User_Track_Order CASCADE;
+TRUNCATE TABLE FoodTruck.User_Place_Order CASCADE;
+ALTER SEQUENCE FoodTruck.Orders_orderid_seq RESTART WITH 1;
+ALTER SEQUENCE FoodTruck.OrderItems_orderitemid_seq RESTART WITH 1;
+
+-- =====================================================
+-- Sample Orders from Various Customers
+-- =====================================================
+
+-- Order 1: Hassan Yousef - Demeshq - Completed
+INSERT INTO FoodTruck.Orders (userId, truckId, orderStatus, totalPrice, scheduledPickupTime, estimatedEarliestPickup, createdAt) 
+VALUES (
+    (SELECT userId FROM FoodTruck.Users WHERE email = 'hassan.yousef@student.giu-uni.de'),
+    (SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Demeshq'),
+    'completed',
+    90.00,
+    CURRENT_TIMESTAMP - INTERVAL '2 hours',
+    CURRENT_TIMESTAMP - INTERVAL '2 hours 15 minutes',
+    CURRENT_TIMESTAMP - INTERVAL '2 hours 30 minutes'
+);
+
+-- Create OrderItems for Order 1
+INSERT INTO FoodTruck.OrderItems (name, quantity, price)
+VALUES ('Chicken Shawarma Sandwich', 2, 45.00);
+
+-- Link OrderItems to Order 1
+INSERT INTO FoodTruck.Order_Contains_OrderItems (orderId, orderItemId, lineNumber)
+VALUES (1, 1, 1);
+
+-- Link MenuItems to Order 1
+INSERT INTO FoodTruck.Order_Contains_MenuItems (orderId, itemId, quantity, priceAtOrder)
+VALUES (1, (SELECT itemId FROM FoodTruck.MenuItems WHERE name = 'Chicken Shawarma Sandwich' LIMIT 1), 2, 45.00);
+
+-- Track order
+INSERT INTO FoodTruck.User_Track_Order (userId, orderId, notificationsEnabled)
+VALUES ((SELECT userId FROM FoodTruck.Users WHERE email = 'hassan.yousef@student.giu-uni.de'), 1, TRUE);
+
+-- Record order placement
+INSERT INTO FoodTruck.User_Place_Order (userId, orderId, placedAt, ipAddress)
+VALUES ((SELECT userId FROM FoodTruck.Users WHERE email = 'hassan.yousef@student.giu-uni.de'), 1, 
+        CURRENT_TIMESTAMP - INTERVAL '2 hours 30 minutes', '192.168.1.100');
+
+-- Order 2: Sara Adel - Container - Ready
+INSERT INTO FoodTruck.Orders (userId, truckId, orderStatus, totalPrice, scheduledPickupTime, estimatedEarliestPickup, createdAt) 
+VALUES (
+    (SELECT userId FROM FoodTruck.Users WHERE email = 'sara.adel@student.giu-uni.de'),
+    (SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'),
+    'ready',
+    125.00,
+    CURRENT_TIMESTAMP + INTERVAL '10 minutes',
+    CURRENT_TIMESTAMP + INTERVAL '5 minutes',
+    CURRENT_TIMESTAMP - INTERVAL '15 minutes'
+);
+
+INSERT INTO FoodTruck.OrderItems (name, quantity, price)
+VALUES 
+    ('Classic Beef Burger', 1, 65.00),
+    ('Sweet Potato Fries', 2, 30.00);
+
+INSERT INTO FoodTruck.Order_Contains_OrderItems (orderId, orderItemId, lineNumber)
+VALUES (2, 2, 1), (2, 3, 2);
+
+INSERT INTO FoodTruck.Order_Contains_MenuItems (orderId, itemId, quantity, priceAtOrder)
+VALUES 
+    (2, (SELECT itemId FROM FoodTruck.MenuItems WHERE name = 'Classic Beef Burger' LIMIT 1), 1, 65.00),
+    (2, (SELECT itemId FROM FoodTruck.MenuItems WHERE name = 'Sweet Potato Fries' LIMIT 1), 2, 30.00);
+
+INSERT INTO FoodTruck.User_Track_Order (userId, orderId, notificationsEnabled)
+VALUES ((SELECT userId FROM FoodTruck.Users WHERE email = 'sara.adel@student.giu-uni.de'), 2, TRUE);
+
+INSERT INTO FoodTruck.User_Place_Order (userId, orderId, placedAt, ipAddress)
+VALUES ((SELECT userId FROM FoodTruck.Users WHERE email = 'sara.adel@student.giu-uni.de'), 2, 
+        CURRENT_TIMESTAMP - INTERVAL '15 minutes', '192.168.1.101');
+
+-- Order 3: Mohamed Walid - Loaded - Pending
+INSERT INTO FoodTruck.Orders (userId, truckId, orderStatus, totalPrice, scheduledPickupTime, estimatedEarliestPickup, createdAt) 
+VALUES (
+    (SELECT userId FROM FoodTruck.Users WHERE email = 'mohamed.walid@student.giu-uni.de'),
+    (SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Loaded'),
+    'pending',
+    130.00,
+    CURRENT_TIMESTAMP + INTERVAL '30 minutes',
+    CURRENT_TIMESTAMP + INTERVAL '25 minutes',
+    CURRENT_TIMESTAMP - INTERVAL '2 minutes'
+);
+
+INSERT INTO FoodTruck.OrderItems (name, quantity, price)
+VALUES 
+    ('Pulled Beef Loaded Fries', 1, 70.00),
+    ('Milkshake', 2, 35.00);
+
+INSERT INTO FoodTruck.Order_Contains_OrderItems (orderId, orderItemId, lineNumber)
+VALUES (3, 4, 1), (3, 5, 2);
+
+INSERT INTO FoodTruck.Order_Contains_MenuItems (orderId, itemId, quantity, priceAtOrder)
+VALUES 
+    (3, (SELECT itemId FROM FoodTruck.MenuItems WHERE name = 'Pulled Beef Loaded Fries' LIMIT 1), 1, 70.00),
+    (3, (SELECT itemId FROM FoodTruck.MenuItems WHERE name = 'Milkshake' LIMIT 1), 2, 35.00);
+
+INSERT INTO FoodTruck.User_Track_Order (userId, orderId, notificationsEnabled)
+VALUES ((SELECT userId FROM FoodTruck.Users WHERE email = 'mohamed.walid@student.giu-uni.de'), 3, TRUE);
+
+INSERT INTO FoodTruck.User_Place_Order (userId, orderId, placedAt, ipAddress)
+VALUES ((SELECT userId FROM FoodTruck.Users WHERE email = 'mohamed.walid@student.giu-uni.de'), 3, 
+        CURRENT_TIMESTAMP - INTERVAL '2 minutes', '192.168.1.102');
+
+-- Display seed results
+SELECT 
+    o.orderId,
+    u.name AS customer_name,
+    t.truckName AS truck_name,
+    o.orderStatus,
+    o.totalPrice,
+    o.scheduledPickupTime,
+    COUNT(oi.orderItemId) AS item_count
+FROM FoodTruck.Orders o
+JOIN FoodTruck.Users u ON o.userId = u.userId
+JOIN FoodTruck.Trucks t ON o.truckId = t.truckId
+LEFT JOIN FoodTruck.Order_Contains_OrderItems ocoi ON o.orderId = ocoi.orderId
+LEFT JOIN FoodTruck.OrderItems oi ON ocoi.orderItemId = oi.orderItemId
+GROUP BY o.orderId, u.name, t.truckName
+ORDER BY o.orderId;
+
+SELECT 'Orders seeded successfully!' as status;
 
 -- =====================================================
 -- Sample Orders from Various Customers
