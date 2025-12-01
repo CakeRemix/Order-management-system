@@ -1,17 +1,40 @@
-# GIU Food Truck Order Management System
+<div align="center">
 
-## Overview
+# 🍔 GIU Food Truck Order Management System
+
+### *Revolutionizing Campus Dining Through Digital Innovation*
+
+[![Node.js](https://img.shields.io/badge/Node.js-18.x-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/)
+[![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![License](https://img.shields.io/badge/License-Academic-blue?style=flat-square)](#-license)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](http://makeapullrequest.com)
+
+[Overview](#-overview) • [Features](#-features) • [Tech Stack](#-technology-stack) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Team](#-team-sleepers)
+
+</div>
+
+---
+
+## 📋 Overview
+
 The **GIU Food Truck Order Management System** is a comprehensive web-based platform that revolutionizes campus dining by eliminating waiting lines and streamlining the ordering process.
 
 Students and staff can browse menus from multiple food trucks, place orders with scheduled pickup times, and track order status in real-time. Food truck operators manage incoming orders, update menu items, and control their operational status through an intuitive vendor dashboard.
 
-This project is developed as part of the **Software Engineering (CSEN 303)** course, WS 2025/26, following an **Agile Software Development** methodology with an evolving SRS document.
+> **Academic Context:** Developed as part of the **Software Engineering (CSEN 303)** course, WS 2025/26  
+> **Methodology:** Agile Software Development with an evolving SRS document
 
 ---
 
 ## ✨ Features
 
-### For Customers
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### 👥 For Customers
 - 🔐 Secure registration and login (GIU email only)
 - 🍔 Browse food trucks and their menus
 - 🛒 Add items to cart with scheduling
@@ -20,28 +43,94 @@ This project is developed as part of the **Software Engineering (CSEN 303)** cou
 - ⏰ Schedule pickup times
 - 📱 Responsive web design for mobile/desktop
 
-### For Vendors
+</td>
+<td width="33%" valign="top">
+
+### 🍕 For Vendors
 - 📊 Vendor dashboard with order management
 - 🍕 Add/edit/remove menu items
 - ✅ Update order statuses
 - 🚫 Activate "busy mode" to pause orders
 - 📈 View order statistics and history
+- 📋 Real-time order notifications
+- 💼 Business analytics
 
-### For Administrators
+</td>
+<td width="33%" valign="top">
+
+### 🔧 For Administrators
 - 👥 User management
 - 🚚 Add/remove food trucks
 - 📊 Platform-wide statistics
+- 🛡️ System monitoring
+- 📈 Analytics dashboard
+- ⚙️ Configuration management
+- 🔐 Security controls
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠 Technology Stack
 
-- **Frontend:** HTML5, CSS3, Vanilla JavaScript
-- **Backend:** Node.js, Express.js
-- **Database:** PostgreSQL 13+
-- **Authentication:** JWT (JSON Web Tokens) + bcrypt
-- **API:** RESTful API
-- **Development:** Nodemon, dotenv
+<table>
+<tr>
+<td align="center" width="20%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original.svg" width="48" height="48" alt="HTML5" />
+<br><strong>HTML5</strong>
+</td>
+<td align="center" width="20%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original.svg" width="48" height="48" alt="CSS3" />
+<br><strong>CSS3</strong>
+</td>
+<td align="center" width="20%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" width="48" height="48" alt="JavaScript" />
+<br><strong>JavaScript</strong>
+</td>
+<td align="center" width="20%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original.svg" width="48" height="48" alt="Node.js" />
+<br><strong>Node.js</strong>
+</td>
+<td align="center" width="20%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original.svg" width="48" height="48" alt="Express" />
+<br><strong>Express.js</strong>
+</td>
+</tr>
+<tr>
+<td align="center" width="20%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original.svg" width="48" height="48" alt="PostgreSQL" />
+<br><strong>PostgreSQL</strong>
+</td>
+<td align="center" width="20%">
+<img src="https://cdn.worldvectorlogo.com/logos/jwt-3.svg" width="48" height="48" alt="JWT" />
+<br><strong>JWT Auth</strong>
+</td>
+<td align="center" width="20%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/git/git-original.svg" width="48" height="48" alt="Git" />
+<br><strong>Git</strong>
+</td>
+<td align="center" width="20%">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="48" height="48" alt="GitHub" />
+<br><strong>GitHub</strong>
+</td>
+<td align="center" width="20%">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" width="48" height="48" alt="VS Code" />
+<br><strong>VS Code</strong>
+</td>
+</tr>
+</table>
+
+### Core Technologies
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript | Client-side interface and interactions |
+| **Backend** | Node.js, Express.js | RESTful API server and business logic |
+| **Database** | PostgreSQL 13+ | Relational data persistence with ACID compliance |
+| **Authentication** | JWT + bcrypt | Secure token-based authentication with password hashing |
+| **Development** | Nodemon, dotenv | Hot-reload development and environment configuration |
 
 ---
 
@@ -49,51 +138,70 @@ This project is developed as part of the **Software Engineering (CSEN 303)** cou
 
 ```
 Order-management-system/
-├── backend/
-│   ├── config/
-│   │   └── db.js              # Database connection pool
-│   ├── controllers/
-│   │   └── authController.js   # Authentication logic
-│   ├── models/
-│   │   └── userModel.js        # User data model
-│   └── routes/
-│       └── authRoutes.js       # API routes
-├── database/
-│   ├── schema.sql              # Complete database schema
-│   ├── setup.ps1               # Automated setup script
-│   ├── utilities.sql           # Maintenance queries
-│   ├── api_queries.sql         # Query examples
-│   ├── test-connection.js      # DB connection tester
-│   ├── README.md               # Database documentation
-│   ├── QUICKSTART.md           # Quick setup guide
-│   ├── migrations/             # Future migrations
-│   └── seeds/                  # Sample data
+│
+├── 📂 backend/                     # Backend API Server
+│   ├── 📂 config/
+│   │   └── db.js                   # PostgreSQL connection pool
+│   ├── 📂 controllers/
+│   │   ├── authController.js       # Authentication logic
+│   │   └── trucksController.js     # Truck management
+│   ├── 📂 models/
+│   │   └── userModel.js            # User data access layer
+│   └── 📂 routes/
+│       ├── authRoutes.js           # Auth endpoints
+│       └── trucksRoutes.js         # Truck endpoints
+│
+├── 📂 database/                    # Database Layer
+│   ├── 📄 schema.sql               # Complete database schema (5 tables, 3 views)
+│   ├── 📄 setup.ps1                # Automated setup script
+│   ├── 📄 utilities.sql            # Maintenance & health check queries
+│   ├── 📄 api_queries.sql          # API query examples
+│   ├── 📄 test-connection.js       # Connection tester
+│   ├── 📄 README.md                # Full database documentation
+│   ├── 📄 QUICKSTART.md            # 5-minute setup guide
+│   ├── 📄 DATABASE_SUMMARY.md      # Schema overview
+│   ├── 📂 migrations/              # Future schema migrations
+│   └── 📂 seeds/                   # Sample data (50+ records)
 │       ├── seed_all.sql
-│       ├── 01_seed_users.sql
-│       ├── 02_seed_food_trucks.sql
-│       ├── 03_seed_menu_items.sql
-│       └── 04_seed_orders.sql
-├── docs/
-│   └── SRS.tex                 # Software Requirements Spec
-├── frontend/
-│   ├── public/
-│   │   ├── css/
-│   │   ├── js/
-│   │   ├── index.html
-│   │   ├── login.html
-│   │   ├── signup.html
-│   │   ├── dashboard.html
-│   │   ├── restaurant.html
-│   │   └── track.html
-│   └── src/
-├── middleware/
-│   ├── authMiddleware.js       # JWT verification
-│   ├── errorHandler.js         # Error handling
-│   └── index.js
-├── .env.example                # Environment template
-├── package.json
-├── server.js                   # Main server file
-└── README.md
+│       ├── 01_seed_users.sql       # Admin, vendors, students
+│       ├── 02_seed_food_trucks.sql # 5 food trucks
+│       ├── 03_seed_menu_items.sql  # 30+ menu items
+│       └── 04_seed_orders.sql      # Sample orders
+│
+├── 📂 docs/                        # Documentation
+│   ├── SRS.tex                     # Software Requirements Specification
+│   ├── SRS.pdf                     # Compiled SRS document
+│   └── architecture/               # System diagrams
+│
+├── 📂 frontend/                    # Frontend Application
+│   ├── 📂 public/
+│   │   ├── 📂 css/
+│   │   │   └── styles.css          # Main stylesheet
+│   │   ├── 📂 js/
+│   │   │   ├── auth.js             # Authentication handler
+│   │   │   └── main.js             # Core client logic
+│   │   ├── 📂 images/              # Static assets
+│   │   ├── index.html              # Landing page
+│   │   ├── homepage.html           # Main app page
+│   │   ├── login.html              # Login form
+│   │   ├── signup.html             # Registration form
+│   │   ├── dashboard.html          # Vendor dashboard
+│   │   ├── restaurant.html         # Menu browsing
+│   │   └── track.html              # Order tracking
+│   └── 📂 src/
+│       ├── 📂 contexts/
+│       └── 📂 utils/
+│
+├── 📂 middleware/                  # Express Middleware
+│   ├── authMiddleware.js           # JWT verification
+│   ├── errorHandler.js             # Global error handler
+│   └── index.js                    # Middleware aggregator
+│
+├── 📄 .env.example                 # Environment variables template
+├── 📄 package.json                 # Dependencies & scripts
+├── 📄 server.js                    # Application entry point
+├── 📄 SETUP_CHECKLIST.md           # Step-by-step setup guide
+└── 📄 README.md                    # This file
 ```
 
 ---
@@ -101,24 +209,49 @@ Order-management-system/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js** >= 18.x ([Download](https://nodejs.org/))
-- **PostgreSQL** >= 13 ([Download](https://www.postgresql.org/download/))
-- **Git** ([Download](https://git-scm.com/))
+
+Ensure you have the following installed on your system:
+
+<table>
+<tr>
+<td align="center" width="33%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original.svg" width="48" height="48" alt="Node.js" />
+<br><strong>Node.js</strong>
+<br><code>>= 18.x</code>
+<br><a href="https://nodejs.org/">Download</a>
+</td>
+<td align="center" width="33%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original.svg" width="48" height="48" alt="PostgreSQL" />
+<br><strong>PostgreSQL</strong>
+<br><code>>= 13</code>
+<br><a href="https://www.postgresql.org/download/">Download</a>
+</td>
+<td align="center" width="33%">
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/git/git-original.svg" width="48" height="48" alt="Git" />
+<br><strong>Git</strong>
+<br><code>Latest</code>
+<br><a href="https://git-scm.com/">Download</a>
+</td>
+</tr>
+</table>
 
 ### Installation
 
-1. **Clone the repository**
+#### 1️⃣ Clone the Repository
+
 ```powershell
 git clone https://github.com/CakeRemix/Order-management-system.git
 cd Order-management-system
 ```
 
-2. **Install dependencies**
+#### 2️⃣ Install Dependencies
+
 ```powershell
 npm install
 ```
 
-3. **Configure environment**
+#### 3️⃣ Configure Environment
+
 ```powershell
 # Copy the example environment file
 Copy-Item .env.example .env
@@ -127,234 +260,832 @@ Copy-Item .env.example .env
 notepad .env
 ```
 
-Update these required fields:
-- `DB_PASSWORD` - Your PostgreSQL password
-- `JWT_SECRET` - Random 32+ character string
+**Required Configuration:**
 
-4. **Setup database**
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `DB_PASSWORD` | Your PostgreSQL password | `your_secure_password` |
+| `JWT_SECRET` | Random 32+ character string | `your_super_secret_jwt_key_here_32chars+` |
+| `PORT` | Server port (optional) | `5000` |
+| `NODE_ENV` | Environment mode | `development` |
+
+#### 4️⃣ Setup Database
+
 ```powershell
 cd database
 .\setup.ps1
 ```
 
-Choose "yes" when prompted to seed sample data.
+> **Tip:** Choose **"yes"** when prompted to seed sample data for testing
 
-5. **Test database connection**
+#### 5️⃣ Test Database Connection
+
 ```powershell
 # From project root
 node database/test-connection.js
 ```
 
-6. **Start the server**
+**Expected Output:**
+```
+✅ Database connection successful
+✅ All tables exist
+✅ Sample data loaded
+```
+
+#### 6️⃣ Start the Server
+
 ```powershell
+# Production mode
 npm start
-# or for development with auto-reload:
+
+# Development mode (with auto-reload)
 npm run dev
 ```
 
-7. **Open in browser**
+**Server Status:**
 ```
-http://localhost:5000
+🚀 Server running on http://localhost:5000
+✅ Database connected
+📊 Environment: development
 ```
+
+#### 7️⃣ Open in Browser
+
+Navigate to: **[http://localhost:5000](http://localhost:5000)**
 
 ---
 
-## 📊 Database
+## 📊 Database Architecture
 
 ### Schema Overview
-- **5 Core Tables:** users, food_trucks, menu_items, orders, order_items
-- **3 Custom ENUMs:** user_role, order_status, truck_status
-- **3 Views:** active_orders_view, menu_items_with_truck, vendor_stats
+
+<table>
+<tr>
+<td width="50%">
+
+#### Core Components
+- **5 Core Tables:** `users`, `food_trucks`, `menu_items`, `orders`, `order_items`
+- **3 Custom ENUMs:** `user_role`, `order_status`, `truck_status`
+- **3 Materialized Views:** `active_orders_view`, `menu_items_with_truck`, `vendor_stats`
 - **Triggers:** Auto-update timestamps, generate order numbers
 - **Functions:** Order calculations, truck availability checks
+- **Constraints:** Foreign keys, unique constraints, check constraints
+
+</td>
+<td width="50%">
+
+#### Key Features
+- ✅ **ACID Compliance** — Full transactional integrity
+- 🔒 **Row-Level Security** — Role-based access control
+- 🗂️ **Soft Deletes** — Data preservation with `deleted_at` columns
+- 🔐 **Password Security** — bcrypt hashing with salt
+- 📈 **Indexing** — Optimized query performance
+- 🔄 **Auto-timestamps** — Created/updated tracking
+
+</td>
+</tr>
+</table>
+
+### Entity Relationship
+
+```
+┌─────────────┐         ┌──────────────┐         ┌─────────────┐
+│    USERS    │         │ FOOD_TRUCKS  │         │ MENU_ITEMS  │
+│─────────────│         │──────────────│         │─────────────│
+│ user_id (PK)│─────────│ truck_id (PK)│────────▶│ item_id (PK)│
+│ email       │         │ truck_name   │         │ truck_id(FK)│
+│ password    │         │ location     │         │ item_name   │
+│ role        │         │ status       │         │ price       │
+└─────────────┘         └──────────────┘         └─────────────┘
+       │                                                  │
+       │                                                  │
+       ▼                                                  ▼
+┌─────────────┐         ┌──────────────┐         ┌─────────────┐
+│   ORDERS    │◀────────│ ORDER_ITEMS  │────────▶│             │
+│─────────────│         │──────────────│         │             │
+│ order_id(PK)│         │ item_id (FK) │         │             │
+│ user_id (FK)│         │ order_id(FK) │         │             │
+│ truck_id(FK)│         │ quantity     │         │             │
+│ status      │         │ price        │         │             │
+└─────────────┘         └──────────────┘         └─────────────┘
+```
 
 ### Quick Database Commands
 
 ```powershell
-# Health check
+# Health check with detailed diagnostics
 psql -U postgres -d giu_food_truck_db -f database/utilities.sql
 
-# View tables
-psql -U postgres -d giu_food_truck_db -c "\dt"
+# View all tables with row counts
+psql -U postgres -d giu_food_truck_db -c "\dt+"
 
-# Reset database
+# View database schema
+psql -U postgres -d giu_food_truck_db -c "\d"
+
+# Check active connections
+psql -U postgres -d giu_food_truck_db -c "SELECT * FROM pg_stat_activity;"
+
+# Reset database (drop & recreate)
 cd database
 .\setup.ps1  # Choose "yes" to drop and recreate
 ```
 
-**Full Database Documentation:** [database/README.md](database/README.md)  
-**Quick Setup Guide:** [database/QUICKSTART.md](database/QUICKSTART.md)
+### Database Documentation
+
+| Document | Description |
+|----------|-------------|
+| 📄 [README.md](database/README.md) | Comprehensive database documentation (schema, queries, maintenance) |
+| ⚡ [QUICKSTART.md](database/QUICKSTART.md) | 5-minute setup guide for new developers |
+| 📊 [DATABASE_SUMMARY.md](database/DATABASE_SUMMARY.md) | High-level architecture overview |
+| 🔍 [api_queries.sql](database/api_queries.sql) | Example queries for API development |
+| 🛠️ [utilities.sql](database/utilities.sql) | Maintenance and diagnostic queries |
 
 ---
 
 ## 🧪 Test Accounts
 
-All test accounts use password: **`Test123!`**
+> **Universal Password:** All test accounts use `Test123!`
 
-### Admin
-- admin@giu-uni.de
+<table>
+<tr>
+<td width="33%" valign="top">
 
-### Vendors (one per truck)
-- demeshq.vendor@giu-uni.de
-- container.vendor@giu-uni.de
-- essens.vendor@giu-uni.de
-- ftarwasha.vendor@giu-uni.de
-- loaded.vendor@giu-uni.de
+### 👑 Administrator
+- `admin@giu-uni.de`
 
-### Students (Team Members)
-- hassan.yousef@student.giu-uni.de
-- sara.adel@student.giu-uni.de
-- hana.yasser@student.giu-uni.de
-- khaled.khaled@student.giu-uni.de
-- (and more...)
+**Capabilities:**
+- Full system access
+- User management
+- Truck management
+- Analytics dashboard
+
+</td>
+<td width="33%" valign="top">
+
+### 🍔 Vendors
+**One vendor per food truck:**
+
+- `demeshq.vendor@giu-uni.de`
+- `container.vendor@giu-uni.de`
+- `essens.vendor@giu-uni.de`
+- `ftarwasha.vendor@giu-uni.de`
+- `loaded.vendor@giu-uni.de`
+
+**Capabilities:**
+- Order management
+- Menu editing
+- Status updates
+
+</td>
+<td width="33%" valign="top">
+
+### 🎓 Students (Team Members)
+- `hassan.yousef@student.giu-uni.de`
+- `sara.adel@student.giu-uni.de`
+- `hana.yasser@student.giu-uni.de`
+- `khaled.khaled@student.giu-uni.de`
+- `omar.hani@student.giu-uni.de`
+- `mohamed.walid@student.giu-uni.de`
+- *...and more*
+
+**Capabilities:**
+- Browse menus
+- Place orders
+- Track orders
+
+</td>
+</tr>
+</table>
+
+### Quick Login
+
+```javascript
+// Example login credentials
+{
+  "email": "hassan.yousef@student.giu-uni.de",
+  "password": "Test123!"
+}
+```
 
 ---
 
 ## 📖 Documentation
-- **[SRS Document](docs/SRS.tex)** - Complete requirements specification
-- **[Database Docs](database/README.md)** - Full database documentation
-- **[Quick Start](database/QUICKSTART.md)** - 5-minute setup guide
-- **[API Queries](database/api_queries.sql)** - Example queries for development
+
+<table>
+<tr>
+<td align="center" width="25%">
+<br>📄<br><strong>SRS Document</strong><br>
+<a href="docs/SRS.tex">SRS.tex</a><br>
+<sub>Complete requirements specification</sub>
+</td>
+<td align="center" width="25%">
+<br>💾<br><strong>Database Docs</strong><br>
+<a href="database/README.md">README.md</a><br>
+<sub>Full database documentation</sub>
+</td>
+<td align="center" width="25%">
+<br>⚡<br><strong>Quick Start</strong><br>
+<a href="database/QUICKSTART.md">QUICKSTART.md</a><br>
+<sub>5-minute setup guide</sub>
+</td>
+<td align="center" width="25%">
+<br>🔍<br><strong>API Queries</strong><br>
+<a href="database/api_queries.sql">api_queries.sql</a><br>
+<sub>Example queries for development</sub>
+</td>
+</tr>
+</table>
 
 ---
 
 ## 🏗️ API Endpoints
 
-### Authentication
-- `POST /api/auth/signup` - Register new user
-- `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user (protected)
+### Authentication Endpoints
 
-### Health Check
-- `GET /health` - Server and database status
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/auth/signup` | Register new user | ❌ |
+| `POST` | `/api/auth/login` | User login | ❌ |
+| `GET` | `/api/auth/me` | Get current user profile | ✅ |
+| `PUT` | `/api/auth/profile` | Update user profile | ✅ |
+| `POST` | `/api/auth/logout` | Logout user | ✅ |
 
-*More endpoints coming soon: orders, trucks, menu items*
+### Health & Status
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `GET` | `/health` | Server and database status | ❌ |
+| `GET` | `/api/status` | API service status | ❌ |
+
+### Request Examples
+
+#### Signup
+
+```bash
+curl -X POST http://localhost:5000/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@student.giu-uni.de",
+    "password": "SecurePass123!",
+    "fullName": "John Doe",
+    "role": "customer"
+  }'
+```
+
+#### Login
+
+```bash
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@student.giu-uni.de",
+    "password": "SecurePass123!"
+  }'
+```
+
+#### Get Current User
+
+```bash
+curl -X GET http://localhost:5000/api/auth/me \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+> **Coming Soon:** Orders, trucks, menu items, and cart endpoints
 
 ---
 
-## 📱 Features Roadmap
+## 🗺️ Development Roadmap
 
-### Current Sprint ✅
-- [x] Database schema and setup
-- [x] User authentication (signup/login)
-- [x] Basic frontend pages
-- [x] Seed data with 5 food trucks
+### Phase 1: Foundation ✅ Completed
 
-### Next Sprint 🚧
-- [ ] Order creation API
-- [ ] Menu browsing functionality
-- [ ] Order status tracking
-- [ ] Vendor dashboard
+<table>
+<tr>
+<td width="50%">
 
-### Future Enhancements 📋
-- [ ] Payment integration
+**Backend Infrastructure**
+- [x] PostgreSQL database schema (5 tables, 3 views)
+- [x] Node.js/Express API server
+- [x] JWT authentication system
+- [x] bcrypt password hashing
+- [x] RESTful API architecture
+- [x] Environment configuration
+
+</td>
+<td width="50%">
+
+**Frontend & Data**
+- [x] HTML/CSS/JavaScript UI
+- [x] Login & signup pages
+- [x] Dashboard templates
+- [x] Sample data seeding (50+ records)
+- [x] 5 food trucks with menus
+- [x] Test user accounts
+
+</td>
+</tr>
+</table>
+
+### Phase 2: Core Features 🚧 In Progress
+
+- [ ] **Order Management API** — Create, read, update, delete orders
+- [ ] **Menu Browsing** — View food trucks and menu items
+- [ ] **Order Tracking** — Real-time status updates (pending → preparing → ready)
+- [ ] **Vendor Dashboard** — Manage orders and menu items
+- [ ] **Cart Functionality** — Add/remove items, calculate totals
+- [ ] **Pickup Time Scheduling** — Select preferred pickup windows
+- [ ] **Order History** — View past orders for customers
+- [ ] **Busy Mode** — Vendors can pause incoming orders
+
+**Target Completion:** December 2025
+
+### Phase 3: Enhancement 📋 Planned
+
+<table>
+<tr>
+<td width="33%">
+
+**Integration**
+- [ ] Payment gateway (Stripe/PayPal)
+- [ ] University SSO authentication
+- [ ] Email notifications
+- [ ] SMS alerts
+- [ ] Third-party APIs
+
+</td>
+<td width="33%">
+
+**Features**
+- [ ] Rating & review system
+- [ ] Advanced analytics
+- [ ] Inventory management
+- [ ] Loyalty program
+- [ ] Promotional codes
+
+</td>
+<td width="33%">
+
+**Platform**
 - [ ] Push notifications
 - [ ] Mobile app (React Native)
-- [ ] University SSO integration
-- [ ] Rating and review system
-- [ ] Advanced analytics
+- [ ] Progressive Web App (PWA)
+- [ ] Multi-language support
+- [ ] Dark mode
+
+</td>
+</tr>
+</table>
+
+**Target Completion:** Q1 2026
 ---
 
 ## 🧪 Development Workflow
 
-### Running in Development Mode
+### Running the Application
+
+<table>
+<tr>
+<td width="50%">
+
+#### Production Mode
+
 ```powershell
-# Terminal 1: Start backend with auto-reload
+npm start
+```
+
+**Features:**
+- Optimized for performance
+- No auto-reload
+- Production error handling
+- Suitable for deployment
+
+</td>
+<td width="50%">
+
+#### Development Mode
+
+```powershell
+npm run dev
+```
+
+**Features:**
+- Hot-reload with nodemon
+- Detailed error messages
+- Development logging
+- Fast iteration
+
+</td>
+</tr>
+</table>
+
+### Multi-Terminal Setup
+
+```powershell
+# Terminal 1: Backend server
 npm run dev
 
-# Terminal 2 (optional): Watch database logs
+# Terminal 2 (optional): Database monitoring
 psql -U postgres -d giu_food_truck_db
+
+# Terminal 3 (optional): Database logs
+psql -U postgres -d giu_food_truck_db -c "SELECT * FROM pg_stat_activity;"
 ```
 
-### Testing API Endpoints
+### Testing & Quality Assurance
+
+#### API Testing
+
 ```powershell
-# Using curl
+# Health check
 curl http://localhost:5000/health
 
-# Or use Postman, Thunder Client (VS Code), or similar
+# Test authentication
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@giu-uni.de","password":"Test123!"}'
 ```
 
-### Common Issues & Solutions
+**Recommended Tools:**
+- 🔥 [Postman](https://www.postman.com/) — API testing platform
+- ⚡ [Thunder Client](https://www.thunderclient.com/) — VS Code extension
+- 🐾 [Insomnia](https://insomnia.rest/) — REST client
+- 🌐 [HTTPie](https://httpie.io/) — CLI HTTP client
 
-**Database connection fails:**
+#### Database Testing
+
 ```powershell
-# Check PostgreSQL is running
+# Run connection test
+node database/test-connection.js
+
+# Check database health
+psql -U postgres -d giu_food_truck_db -f database/utilities.sql
+
+# Verify seed data
+psql -U postgres -d giu_food_truck_db -c "SELECT COUNT(*) FROM users;"
+```
+
+### Troubleshooting Guide
+
+<details>
+<summary><strong>❌ Database connection fails</strong></summary>
+
+```powershell
+# 1. Check if PostgreSQL is running
 Get-Service postgresql*
 
-# Test connection
+# 2. Verify connection parameters
 node database/test-connection.js
+
+# 3. Check database exists
+psql -U postgres -c "\l"
+
+# 4. Restart PostgreSQL service
+Restart-Service postgresql-x64-13  # Adjust version number
 ```
 
-**Port 5000 already in use:**
-- Change `PORT` in `.env` file
+</details>
 
-**bcrypt installation issues:**
+<details>
+<summary><strong>❌ Port 5000 already in use</strong></summary>
+
+**Option 1: Change port in .env**
+```env
+PORT=3000
+```
+
+**Option 2: Kill process using port 5000**
 ```powershell
-npm install --build-from-source bcrypt
+# Find process
+netstat -ano | findstr :5000
+
+# Kill process (replace PID)
+taskkill /PID <PID> /F
 ```
 
+</details>
+
+<details>
+<summary><strong>❌ bcrypt installation issues</strong></summary>
+
+```powershell
+# Clean install
+Remove-Item node_modules -Recurse -Force
+Remove-Item package-lock.json
+
+# Rebuild bcrypt from source
+npm install --build-from-source bcrypt
+
+# Reinstall all dependencies
+npm install
+```
+
+</details>
+
+<details>
+<summary><strong>❌ JWT token validation fails</strong></summary>
+
+**Ensure JWT_SECRET is set in .env:**
+```env
+JWT_SECRET=your_super_secret_jwt_key_here_32chars+
+```
+
+**Generate a secure secret:**
+```powershell
+# PowerShell
+[Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((New-Guid).ToString()))
+```
+
+</details>
+
+<details>
+<summary><strong>❌ Frontend not loading</strong></summary>
+
+```powershell
+# 1. Check if server is running
+curl http://localhost:5000/health
+
+# 2. Clear browser cache
+# Ctrl + Shift + Delete in most browsers
+
+# 3. Check file paths in HTML
+# Ensure CSS/JS paths are correct
+
+# 4. Check console for errors
+# Open browser DevTools (F12)
+```
+
+</details>
+
+<div align="center">
+
+## 👥 Team Sleepers
+
+*Building the future of campus dining, one commit at a time* 🌙
+
+</div>
+
+<table>
+<tr>
+<td align="center" width="25%">
+<br>
+<strong>Hassan Yousef</strong><br>
+<sub>Full Stack Developer</sub><br>
+<code>13006567</code><br>
+<a href="mailto:hassan.yousef@student.giu-uni.de">📧 Email</a>
+</td>
+<td align="center" width="25%">
+<br>
+<strong>Sara Adel</strong><br>
+<sub>Full Stack Developer</sub><br>
+<code>14003723</code><br>
+<a href="mailto:sara.adel@student.giu-uni.de">📧 Email</a>
+</td>
+<td align="center" width="25%">
+<br>
+<strong>Hana Yasser</strong><br>
+<sub>Full Stack Developer</sub><br>
+<code>13003628</code><br>
+<a href="mailto:hana.yasser@student.giu-uni.de">📧 Email</a>
+</td>
+<td align="center" width="25%">
+<br>
+<strong>Mohamed Walid</strong><br>
+<sub>Full Stack Developer</sub><br>
+<code>13006513</code><br>
+<a href="mailto:mohamed.walid@student.giu-uni.de">📧 Email</a>
+</td>
+</tr>
+<tr>
+<td align="center" width="25%">
+<br>
+<strong>Omar Hani</strong><br>
+<sub>Full Stack Developer</sub><br>
+<code>13007515</code><br>
+<a href="mailto:omar.hani@student.giu-uni.de">📧 Email</a>
+</td>
+<td align="center" width="25%">
+<br>
+<strong>Abdelhamid ElSharnouby</strong><br>
+<sub>Full Stack Developer</sub><br>
+<code>13006294</code><br>
+<a href="mailto:abdelhamid.el@student.giu-uni.de">📧 Email</a>
+</td>
+<td align="center" width="25%">
+<br>
+<strong>Hanin Mohamed</strong><br>
+<sub>Full Stack Developer</sub><br>
+<code>13007010</code><br>
+<a href="mailto:hanin.mohamed@student.giu-uni.de">📧 Email</a>
+</td>
+<td align="center" width="25%">
+<br>
+<strong>Khaled Khaled</strong><br>
+<sub>Full Stack Developer</sub><br>
+<code>14001048</code><br>
+<a href="mailto:khaled.khaled@student.giu-uni.de">📧 Email</a>
+</td>
+</tr>
+</table>
+
 ---
 
-## 👥 Team: Sleepers
+## 🎓 Academic Context
 
-| Name | Student ID | Email |
-|------|-----------|-------|
-| Hassan Yousef | 13006567 | hassan.yousef@student.giu-uni.de |
-| Sara Adel | 14003723 | sara.adel@student.giu-uni.de |
-| Hana Yasser | 13003628 | hana.yasser@student.giu-uni.de |
-| Mohamed Walid | 13006513 | mohamed.walid@student.giu-uni.de |
-| Omar Hani | 13007515 | omar.hani@student.giu-uni.de |
-| Abdelhamid ElSharnouby | 13006294 | abdelhamid.el@student.giu-uni.de |
-| Hanin Mohamed | 13007010 | hanin.mohamed@student.giu-uni.de |
-| Khaled Khaled | 14001048 | khaled.khaled@student.giu-uni.de |
+<table>
+<tr>
+<td width="50%">
+
+### Course Information
+
+| | |
+|---|---|
+| **Course** | Software Engineering (CSEN 303) |
+| **Semester** | Winter Semester 2025/26 |
+| **University** | German International University (GIU) |
+| **Methodology** | Agile Software Development |
+| **Documentation** | Living SRS Document |
+
+</td>
+<td width="50%">
+
+### Supervision Team
+
+<table>
+<tr>
+<td align="center">
+👨‍🏫<br>
+<strong>Dr. Iman Awaad</strong><br>
+<sub>Course Instructor</sub>
+</td>
+</tr>
+<tr>
+<td align="center">
+👨‍💻<br>
+<strong>Eng. Amir Haytham</strong><br>
+<sub>Technical Supervisor</sub>
+</td>
+</tr>
+<tr>
+<td align="center">
+👨‍💻<br>
+<strong>Eng. Ahmad Sherif</strong><br>
+<sub>Technical Supervisor</sub>
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 🎓 Course Information
+## 🤝 Contributing
 
-- **Course:** Software Engineering (CSEN 303)
-- **Semester:** Winter Semester 2025/26
-- **University:** German International University (GIU)
-- **Supervisors:** 
-  - Dr. Iman Awaad
-  - Eng. Amir Haytham
-  - Eng. Ahmad Sherif
+We welcome contributions from team members! Follow these steps:
+
+### Development Workflow
+
+```bash
+# 1. Create a feature branch
+git checkout -b feature/amazing-feature
+
+# 2. Make your changes and commit
+git add .
+git commit -m "feat: Add amazing feature"
+
+# 3. Push to your branch
+git push origin feature/amazing-feature
+
+# 4. Open a Pull Request on GitHub
+```
+
+### Commit Message Convention
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `feat` | New feature | `feat: Add order tracking` |
+| `fix` | Bug fix | `fix: Resolve login issue` |
+| `docs` | Documentation | `docs: Update README` |
+| `style` | Code style | `style: Format with prettier` |
+| `refactor` | Code refactoring | `refactor: Optimize queries` |
+| `test` | Tests | `test: Add auth tests` |
+| `chore` | Maintenance | `chore: Update dependencies` |
+
+### Code Review Process
+
+1. **Self-review** your code before submitting PR
+2. **Request review** from at least one team member
+3. **Address feedback** and make requested changes
+4. **Merge** after approval from reviewer(s)
 
 ---
 
-## 📝 Contributing
+## 📄 License & Usage
 
-1. Create a feature branch: `git checkout -b feature/amazing-feature`
-2. Commit changes: `git commit -m 'Add amazing feature'`
-3. Push to branch: `git push origin feature/amazing-feature`
-4. Open a Pull Request
+<div align="center">
 
----
+```
+Copyright © 2025 Team Sleepers - German International University
 
-## 📄 License
+This project is submitted for academic evaluation under the 
+Software Engineering (CSEN 303) course at GIU.
 
-This project is submitted for academic evaluation under the Software Engineering course at GIU.  
-**Do not reuse without permission from the team and instructors.**
+⚠️ Do not reuse without permission from the team and instructors.
+```
+
+**Academic Project** • **Not for Commercial Use** • **All Rights Reserved**
+
+</div>
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Dr. Iman Awaad for project guidance
-- Engineering team for technical support
-- GIU community for feedback and testing
+<table>
+<tr>
+<td align="center" width="33%">
+👨‍🏫<br>
+<strong>Dr. Iman Awaad</strong><br>
+<sub>For project guidance and mentorship</sub>
+</td>
+<td align="center" width="33%">
+👨‍💻<br>
+<strong>Engineering Team</strong><br>
+<sub>For technical support and code reviews</sub>
+</td>
+<td align="center" width="33%">
+🎓<br>
+<strong>GIU Community</strong><br>
+<sub>For valuable feedback and testing</sub>
+</td>
+</tr>
+</table>
 
 ---
 
 ## 📞 Support & Contact
 
-For questions or issues:
-- Open an issue on GitHub
-- Contact team members via university email
-- Check documentation in `/docs` and `/database`
+<table>
+<tr>
+<td width="33%" align="center">
+
+### 🐛 Report Issues
+[Open an Issue](https://github.com/CakeRemix/Order-management-system/issues)
+
+Found a bug? Have a suggestion?  
+Submit an issue on GitHub
+
+</td>
+<td width="33%" align="center">
+
+### 📧 Team Contact
+[Team Email](mailto:hassan.yousef@student.giu-uni.de)
+
+General inquiries and collaboration  
+Contact team members via university email
+
+</td>
+<td width="33%" align="center">
+
+### 📚 Documentation
+[View Docs](/docs) • [Database](/database)
+
+Comprehensive guides and references  
+Check `/docs` and `/database` folders
+
+</td>
+</tr>
+</table>
 
 ---
 
-**Last Updated:** November 13, 2025  
-**Version:** 1.0.0  
-**Status:** 🚧 Active Development
+<div align="center">
+
+## 📊 Project Status
+
+| Metric | Status |
+|--------|--------|
+| **Version** | `1.0.0` |
+| **Status** | 🚧 Active Development |
+| **Last Updated** | November 30, 2025 |
+| **Deployment** | 🔜 Coming Soon |
+| **Test Coverage** | 📝 In Progress |
+| **Documentation** | ✅ Complete |
+
+---
+
+### ⭐ If you found this project interesting, please consider giving it a star!
+
+**Made with ❤️ by Team Sleepers**
+
+*German International University • Software Engineering (CSEN 303) • Winter Semester 2025/26*
+
+---
+
+[![GitHub Stars](https://img.shields.io/github/stars/CakeRemix/Order-management-system?style=social)](https://github.com/CakeRemix/Order-management-system)
+[![GitHub Forks](https://img.shields.io/github/forks/CakeRemix/Order-management-system?style=social)](https://github.com/CakeRemix/Order-management-system/fork)
+[![GitHub Watchers](https://img.shields.io/github/watchers/CakeRemix/Order-management-system?style=social)](https://github.com/CakeRemix/Order-management-system)
+
+</div>
