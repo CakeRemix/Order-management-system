@@ -13,86 +13,59 @@
 \contentsline {section}{\numberline {3}High-Level Architecture}{5}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Password Security: Bcrypt Hashing Implementation}{6}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Data Preservation Strategy: Soft Deletes}{7}{subsection.3.2}%
-\contentsline {subsubsection}{\numberline {3.2.1}Technical Implementation}{8}{subsubsection.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.2}Security Configuration}{9}{subsubsection.3.2.2}%
-\contentsline {subsubsection}{\numberline {3.2.3}Integration Points}{10}{subsubsection.3.2.3}%
-\contentsline {subsubsection}{\numberline {3.2.4}Security Benefits and Threat Mitigation}{10}{subsubsection.3.2.4}%
-\contentsline {subsubsection}{\numberline {3.2.5}Performance Considerations}{11}{subsubsection.3.2.5}%
-\contentsline {subsubsection}{\numberline {3.2.6}Compliance and Best Practices}{11}{subsubsection.3.2.6}%
-\contentsline {subsubsection}{\numberline {3.2.7}Future Enhancements}{12}{subsubsection.3.2.7}%
-\contentsline {subsubsection}{\numberline {3.2.8}Advanced Implementation Patterns}{12}{subsubsection.3.2.8}%
-\contentsline {subsubsection}{\numberline {3.2.9}Performance Engineering and Optimization}{13}{subsubsection.3.2.9}%
-\contentsline {subsubsection}{\numberline {3.2.10}Enterprise-Grade Security Enhancements}{14}{subsubsection.3.2.10}%
-\contentsline {subsubsection}{\numberline {3.2.11}Compliance and Regulatory Alignment}{15}{subsubsection.3.2.11}%
-\contentsline {subsubsection}{\numberline {3.2.12}Disaster Recovery and Business Continuity}{16}{subsubsection.3.2.12}%
-\contentsline {subsubsection}{\numberline {3.2.13}Code Implementation Details}{18}{subsubsection.3.2.13}%
-\contentsline {subsubsection}{\numberline {3.2.14}Testing and Quality Assurance}{22}{subsubsection.3.2.14}%
-\contentsline {subsubsection}{\numberline {3.2.15}Industry Comparison and Benchmarking}{25}{subsubsection.3.2.15}%
-\contentsline {subsubsection}{\numberline {3.2.16}Cost-Benefit Analysis}{26}{subsubsection.3.2.16}%
-\contentsline {subsubsection}{\numberline {3.2.17}Lessons Learned and Best Practices}{28}{subsubsection.3.2.17}%
-\contentsline {subsubsection}{\numberline {3.2.18}Implementation Architecture}{29}{subsubsection.3.2.18}%
-\contentsline {subsubsection}{\numberline {3.2.19}Application Layer Logic}{29}{subsubsection.3.2.19}%
-\contentsline {subsubsection}{\numberline {3.2.20}System Impact and Considerations}{30}{subsubsection.3.2.20}%
-\contentsline {subsubsection}{\numberline {3.2.21}User Experience Impact}{30}{subsubsection.3.2.21}%
-\contentsline {subsubsection}{\numberline {3.2.22}Data Lifecycle Management}{31}{subsubsection.3.2.22}%
-\contentsline {subsubsection}{\numberline {3.2.23}Advanced Implementation Patterns}{31}{subsubsection.3.2.23}%
-\contentsline {subsubsection}{\numberline {3.2.24}Monitoring and Observability}{32}{subsubsection.3.2.24}%
-\contentsline {subsubsection}{\numberline {3.2.25}Disaster Recovery and Business Continuity}{33}{subsubsection.3.2.25}%
-\contentsline {subsubsection}{\numberline {3.2.26}Scalability Considerations}{33}{subsubsection.3.2.26}%
-\contentsline {subsubsection}{\numberline {3.2.27}Industry Best Practices Alignment}{34}{subsubsection.3.2.27}%
-\contentsline {subsubsection}{\numberline {3.2.28}Advanced Security Considerations}{34}{subsubsection.3.2.28}%
-\contentsline {subsubsection}{\numberline {3.2.29}Cost-Benefit Analysis}{35}{subsubsection.3.2.29}%
-\contentsline {subsubsection}{\numberline {3.2.30}Testing and Quality Assurance}{36}{subsubsection.3.2.30}%
-\contentsline {section}{\numberline {4}Functional Requirements}{38}{section.4}%
-\contentsline {subsection}{\numberline {4.1}User Stories}{38}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}Food Truck Customer User Stories}{38}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}Food Truck Service Provider User Stories}{38}{subsubsection.4.1.2}%
-\contentsline {subsubsection}{\numberline {4.1.3}Food Truck Admin User Stories}{38}{subsubsection.4.1.3}%
+\contentsline {subsubsection}{\numberline {3.2.1}Algorithm Comparison}{8}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Integration Points}{9}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Security Benefits and Threat Mitigation}{10}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Performance Considerations}{10}{subsubsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.5}Compliance and Best Practices}{11}{subsubsection.3.2.5}%
+\contentsline {subsubsection}{\numberline {3.2.6}Future Enhancements}{11}{subsubsection.3.2.6}%
+\contentsline {subsubsection}{\numberline {3.2.7}Advanced Implementation Patterns}{12}{subsubsection.3.2.7}%
+\contentsline {subsubsection}{\numberline {3.2.8}Performance Engineering and Optimization}{13}{subsubsection.3.2.8}%
+\contentsline {subsubsection}{\numberline {3.2.9}Enterprise-Grade Security Enhancements}{14}{subsubsection.3.2.9}%
+\contentsline {subsubsection}{\numberline {3.2.10}Compliance and Regulatory Alignment}{15}{subsubsection.3.2.10}%
+\contentsline {subsubsection}{\numberline {3.2.11}Disaster Recovery and Business Continuity}{16}{subsubsection.3.2.11}%
+\contentsline {subsubsection}{\numberline {3.2.12}Code Implementation Details}{17}{subsubsection.3.2.12}%
+\contentsline {subsubsection}{\numberline {3.2.13}Testing and Quality Assurance}{22}{subsubsection.3.2.13}%
+\contentsline {subsubsection}{\numberline {3.2.14}Industry Comparison and Benchmarking}{25}{subsubsection.3.2.14}%
+\contentsline {subsubsection}{\numberline {3.2.15}Cost-Benefit Analysis}{26}{subsubsection.3.2.15}%
+\contentsline {subsubsection}{\numberline {3.2.16}Lessons Learned and Best Practices}{27}{subsubsection.3.2.16}%
+\contentsline {subsubsection}{\numberline {3.2.17}Implementation Architecture}{28}{subsubsection.3.2.17}%
+\contentsline {subsubsection}{\numberline {3.2.18}Application Layer Logic}{29}{subsubsection.3.2.18}%
+\contentsline {subsubsection}{\numberline {3.2.19}System Impact and Considerations}{29}{subsubsection.3.2.19}%
+\contentsline {subsubsection}{\numberline {3.2.20}User Experience Impact}{30}{subsubsection.3.2.20}%
+\contentsline {subsubsection}{\numberline {3.2.21}Data Lifecycle Management}{31}{subsubsection.3.2.21}%
+\contentsline {subsubsection}{\numberline {3.2.22}Advanced Implementation Patterns}{31}{subsubsection.3.2.22}%
+\contentsline {subsubsection}{\numberline {3.2.23}Monitoring and Observability}{32}{subsubsection.3.2.23}%
+\contentsline {subsubsection}{\numberline {3.2.24}Disaster Recovery and Business Continuity}{32}{subsubsection.3.2.24}%
+\contentsline {subsubsection}{\numberline {3.2.25}Scalability Considerations}{33}{subsubsection.3.2.25}%
+\contentsline {subsubsection}{\numberline {3.2.26}Industry Best Practices Alignment}{33}{subsubsection.3.2.26}%
+\contentsline {subsubsection}{\numberline {3.2.27}Advanced Security Considerations}{34}{subsubsection.3.2.27}%
+\contentsline {subsubsection}{\numberline {3.2.28}Cost-Benefit Analysis}{35}{subsubsection.3.2.28}%
+\contentsline {subsubsection}{\numberline {3.2.29}Testing and Quality Assurance}{36}{subsubsection.3.2.29}%
+\contentsline {section}{\numberline {4}Functional Requirements}{37}{section.4}%
+\contentsline {subsection}{\numberline {4.1}User Stories}{37}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Food Truck Customer User Stories}{37}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Food Truck Service Provider User Stories}{37}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Food Truck Admin User Stories}{37}{subsubsection.4.1.3}%
 \contentsline {subsection}{\numberline {4.2}Use Case Diagrams}{38}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Non-Functional Requirements}{40}{section.5}%
-\contentsline {section}{\numberline {6}Interface Requirements}{41}{section.6}%
-\contentsline {section}{\numberline {7}Constraints}{42}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Technical Constraints}{42}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Operational Constraints}{42}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Resource Constraints}{42}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Regulatory and Policy Constraints}{43}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}User and Usability Constraints}{43}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Design and Architectural Constraints}{43}{subsection.7.6}%
-\contentsline {section}{\numberline {8}Continuous Integration and Continuous Deployment Pipeline}{44}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Overview and Purpose}{44}{subsection.8.1}%
+\contentsline {section}{\numberline {5}Non-Functional Requirements}{41}{section.5}%
+\contentsline {section}{\numberline {6}Interface Requirements}{42}{section.6}%
+\contentsline {section}{\numberline {7}Constraints}{43}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Technical Constraints}{43}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Operational Constraints}{43}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Resource Constraints}{43}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Regulatory and Policy Constraints}{44}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}User and Usability Constraints}{44}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Design and Architectural Constraints}{44}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Continuous Integration and Continuous Deployment Pipeline}{45}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Overview and Purpose}{45}{subsection.8.1}%
 \contentsline {subsection}{\numberline {8.2}Pipeline Architecture}{45}{subsection.8.2}%
-\contentsline {subsubsection}{\numberline {8.2.1}Technology Stack}{45}{subsubsection.8.2.1}%
-\contentsline {subsubsection}{\numberline {8.2.2}Pipeline Stages}{45}{subsubsection.8.2.2}%
-\contentsline {subsection}{\numberline {8.3}Branching Strategy and Workflow}{46}{subsection.8.3}%
-\contentsline {subsubsection}{\numberline {8.3.1}Git Branching Model}{46}{subsubsection.8.3.1}%
-\contentsline {subsubsection}{\numberline {8.3.2}Pull Request Workflow}{47}{subsubsection.8.3.2}%
-\contentsline {subsection}{\numberline {8.4}Environment Management}{47}{subsection.8.4}%
-\contentsline {subsubsection}{\numberline {8.4.1}Environment Tiers}{47}{subsubsection.8.4.1}%
-\contentsline {subsubsection}{\numberline {8.4.2}Configuration Management}{47}{subsubsection.8.4.2}%
-\contentsline {subsection}{\numberline {8.5}Automated Testing Strategy}{48}{subsection.8.5}%
-\contentsline {subsubsection}{\numberline {8.5.1}Test Coverage Requirements}{48}{subsubsection.8.5.1}%
-\contentsline {subsubsection}{\numberline {8.5.2}Test Types and Execution}{48}{subsubsection.8.5.2}%
-\contentsline {subsection}{\numberline {8.6}Deployment Strategies}{49}{subsection.8.6}%
-\contentsline {subsubsection}{\numberline {8.6.1}Rolling Deployment}{49}{subsubsection.8.6.1}%
-\contentsline {subsubsection}{\numberline {8.6.2}Database Migration Handling}{49}{subsubsection.8.6.2}%
-\contentsline {subsection}{\numberline {8.7}Monitoring and Observability}{49}{subsection.8.7}%
-\contentsline {subsubsection}{\numberline {8.7.1}Pipeline Monitoring}{49}{subsubsection.8.7.1}%
-\contentsline {subsubsection}{\numberline {8.7.2}Application Monitoring Post-Deployment}{49}{subsubsection.8.7.2}%
-\contentsline {subsection}{\numberline {8.8}Security and Compliance}{50}{subsection.8.8}%
-\contentsline {subsubsection}{\numberline {8.8.1}Pipeline Security}{50}{subsubsection.8.8.1}%
-\contentsline {subsubsection}{\numberline {8.8.2}Access Controls}{50}{subsubsection.8.8.2}%
-\contentsline {subsection}{\numberline {8.9}Benefits and Impact}{51}{subsection.8.9}%
-\contentsline {subsection}{\numberline {8.10}Advanced Pipeline Engineering}{51}{subsection.8.10}%
-\contentsline {subsubsection}{\numberline {8.10.1}Pipeline Performance Optimization}{51}{subsubsection.8.10.1}%
-\contentsline {subsubsection}{\numberline {8.10.2}Infrastructure as Code (IaC)}{52}{subsubsection.8.10.2}%
-\contentsline {subsubsection}{\numberline {8.10.3}Test Automation Strategy}{56}{subsubsection.8.10.3}%
-\contentsline {subsubsection}{\numberline {8.10.4}Deployment Strategies and Patterns}{57}{subsubsection.8.10.4}%
-\contentsline {subsubsection}{\numberline {8.10.5}Observability and Monitoring Integration}{58}{subsubsection.8.10.5}%
-\contentsline {subsubsection}{\numberline {8.10.6}Security Hardening and Compliance}{59}{subsubsection.8.10.6}%
-\contentsline {subsubsection}{\numberline {8.10.7}Cost Optimization and Resource Management}{60}{subsubsection.8.10.7}%
-\contentsline {subsubsection}{\numberline {8.10.8}Team Workflow and Developer Experience}{61}{subsubsection.8.10.8}%
-\contentsline {subsubsection}{\numberline {8.10.9}Industry Comparison and Benchmarking}{62}{subsubsection.8.10.9}%
-\contentsline {subsubsection}{\numberline {8.10.10}Lessons Learned and Best Practices}{62}{subsubsection.8.10.10}%
-\contentsline {subsubsection}{\numberline {8.10.11}Future Enhancements and Roadmap}{64}{subsubsection.8.10.11}%
-\contentsline {section}{\numberline {9}Future Scope of the Project}{65}{section.9}%
-\contentsline {section}{Notes}{66}{section.9}%
+\contentsline {subsubsection}{\numberline {8.2.1}Pipeline Stages}{45}{subsubsection.8.2.1}%
+\contentsline {subsection}{\numberline {8.3}Branching Strategy}{45}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Environment Management}{46}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Testing Strategy}{46}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Deployment Strategy}{46}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Monitoring and Security}{46}{subsection.8.7}%
+\contentsline {section}{\numberline {9}Future Scope of the Project}{47}{section.9}%
+\contentsline {section}{\numberline {10}Future Scope of the Project}{48}{section.10}%
+\contentsline {section}{Notes}{49}{section.10}%

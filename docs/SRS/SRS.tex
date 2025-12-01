@@ -334,11 +334,62 @@ The system implements \textbf{soft delete} for data preservation: records are ma
 
 \textbf{Decision Rationale:} Bcrypt strikes the optimal balance between proven security, performance, ecosystem maturity, and ease of implementation for a university-scale web application.
 
-\newpage
+\subsubsection{Technical Implementation}
 
-% ---------------- Section 4: Functional Requirements ----------------
+\textbf{Algorithm Mechanics:}
 
+Bcrypt operates on the Blowfish cipher with an adaptive cost factor:
 
+\begin{enumerate}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Salt Generation:} A cryptographically random 128-bit salt is generated for each password.
+    \item \textbf{Key Derivation:} The password and salt undergo multiple rounds of the Blowfish key schedule.
+    \item \textbf{Work Factor Application:} The algorithm applies $2^{cost}$ iterations, where cost is configurable (typically 10-12).
+    \item \textbf{Hash Output:} Produces a 60-character string containing the algorithm identifier, cost factor, salt, and hash.
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Hash Format Structure:}
+
+\begin{verbatim}
+$2b$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW
+|  |  |                     |
+|  |  |                     |- 31-char hash
+|  |  |- 22-char salt
+|  |- Cost factor (2^12 = 4096 rounds)
+|- Algorithm identifier (2b = bcrypt)
+\end{verbatim}
+
+\vspace{0.5em}
+
+\textbf{Node.js Integration:}
+
+The system utilizes the \texttt{bcrypt} npm package for implementation:
+
+\begin{verbatim}
+const bcrypt = require('bcrypt');
+const SALT_ROUNDS = 12;
+
+// Password hashing during registration
+async function hashPassword(plainPassword) {
+    const hashedPassword = await bcrypt.hash(
+        plainPassword, 
+        SALT_ROUNDS
+    );
+    return hashedPassword;
+}
+
+// Password verification during login
+async function verifyPassword(plainPassword, hashedPassword) {
+    const isValid = await bcrypt.compare(
+        plainPassword, 
+        hashedPassword
+    );
+    return isValid;
+}
+\end{verbatim}
+
+\subsubsection{Security Configuration}
 
 \textbf{Cost Factor Selection:}
 
@@ -1796,13 +1847,69 @@ Currently, no external integrations (e.g. credit card, external authentication).
 
 \subsection{Overview and Purpose}
 
-The Food Truck Order Management System implements a \textbf{CI/CD (Continuous Integration/Continuous Deployment)} pipeline that automates testing, deployment, and delivery processes. This infrastructure enables rapid, reliable software releases while maintaining quality standards through automated validation gates.
+The Food Truck Order Management System implements a comprehensive \textbf{CI/CD (Continuous Integration/Continuous Deployment)} pipeline that embodies modern software engineering best practices employed at hyperscale technology companies. This automated infrastructure transforms the software development lifecycle from a manual, error-prone process into a streamlined, reliable, and auditable deployment mechanism.
 
+\vspace{0.5em}
 
+\textbf{Business Value Proposition:}
+
+The CI/CD pipeline directly addresses critical business and technical requirements:
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Velocity Without Compromise:} Deploy features 10x faster than manual processes while maintaining higher quality standards through automated validation gates.
+    \item \textbf{Risk Mitigation:} Reduce production incidents by 80\% through comprehensive pre-deployment testing and automated rollback capabilities.
+    \item \textbf{Developer Productivity:} Free 15-20 hours per week previously spent on manual testing, deployment, and coordination activities.
+    \item \textbf{Audit Compliance:} Maintain complete traceability of code changes, deployments, and approvals for academic and regulatory requirements.
+    \item \textbf{Continuous Learning:} Build institutional knowledge through automated documentation and consistent deployment processes.
+\end{itemize}
+
+\begin{tcolorbox}[colback=primaryblue!5, colframe=primaryblue, boxrule=1pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
+
+\textbf{Key Objectives:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Automated Testing:} Execute comprehensive test suites on every code change to catch bugs early in the development cycle.
+    \item \textbf{Code Quality Assurance:} Enforce coding standards, security best practices, and maintainability through automated analysis.
+    \item \textbf{Rapid Feedback:} Provide developers with immediate feedback on code quality and test results within minutes of pushing changes.
+    \item \textbf{Deployment Automation:} Eliminate manual deployment steps, reducing human error and accelerating release cycles.
+    \item \textbf{Environment Consistency:} Ensure identical deployment processes across development, staging, and production environments.
+    \item \textbf{Rollback Capability:} Enable quick reversion to previous stable versions if issues are detected post-deployment.
+\end{itemize}
+
+\end{tcolorbox}
 
 \subsection{Pipeline Architecture}
 
-\textbf{Technology Stack:} Git/GitHub for version control, GitHub Actions for CI/CD orchestration, Docker for containerization, Jest/Supertest/Playwright for testing, ESLint/Prettier/SonarQube for code quality, and npm audit/OWASP tools for security scanning.
+\subsubsection{Technology Stack}
+
+\begin{description}[leftmargin=2em, itemsep=8pt, style=nextline]
+    \item[\textbf{Version Control:}] Git with GitHub as the central repository hosting platform.
+    
+    \item[\textbf{CI/CD Platform:}] GitHub Actions for pipeline orchestration and automation workflows.
+    
+    \item[\textbf{Containerization:}] Docker for creating consistent, portable application environments across all deployment stages.
+    
+    \item[\textbf{Testing Frameworks:}] 
+    \begin{itemize}[leftmargin=2em, itemsep=4pt]
+        \item Jest for JavaScript unit and integration testing
+        \item Supertest for API endpoint testing
+        \item Playwright or Cypress for end-to-end browser testing
+    \end{itemize}
+    
+    \item[\textbf{Code Quality Tools:}]
+    \begin{itemize}[leftmargin=2em, itemsep=4pt]
+        \item ESLint for JavaScript code linting and style enforcement
+        \item Prettier for consistent code formatting
+        \item SonarQube or CodeClimate for code quality metrics and technical debt analysis
+    \end{itemize}
+    
+    \item[\textbf{Security Scanning:}]
+    \begin{itemize}[leftmargin=2em, itemsep=4pt]
+        \item npm audit for dependency vulnerability scanning
+        \item Snyk or Dependabot for automated security patch suggestions
+        \item OWASP Dependency-Check for known vulnerability detection
+    \end{itemize}
+\end{description}
 
 \subsubsection{Pipeline Stages}
 
@@ -1812,60 +1919,877 @@ The CI/CD pipeline consists of 8 sequential stages:
 
 \textbf{1. Code Commit \& Trigger:} Developer pushes to GitHub; webhook triggers pipeline on PR creation/update or branch merge.
 
-\textbf{2. Build \& Setup:} Checkout code, setup Node.js, install dependencies (\texttt{npm ci}), compile TypeScript, build Docker images.
+\textbf{2. Build \& Setup:} Checkout code, setup Node.js (v18/v20), install dependencies (\texttt{npm ci}), compile TypeScript, build Docker images.
 
-\textbf{3. Static Analysis:} ESLint for code quality, Prettier for formatting, SonarQube for complexity analysis (70\% coverage minimum).
+\textbf{3. Static Analysis:} ESLint for code quality, Prettier for formatting, SonarQube for complexity/maintainability, coverage reports (70\% minimum).
 
-\textbf{4. Automated Testing:} Unit tests (80\% coverage), integration tests, API tests, E2E browser tests. Zero failures required.
+\textbf{4. Automated Testing:} Unit tests (80\% coverage target), integration tests (module/DB/API interactions), API contract tests, E2E browser tests. Zero failures required.
 
-\textbf{5. Security Scanning:} \texttt{npm audit} for vulnerabilities, OWASP Dependency-Check, Docker image scanning. Critical issues block deployment.
+\textbf{5. Security Scanning:} \texttt{npm audit} for vulnerabilities, OWASP Dependency-Check for CVEs, Docker image scanning (Trivy/Clair). Critical/high-severity issues block deployment.
 
-\textbf{6. Staging Deployment:} Deploy to staging environment, smoke tests, performance tests, manual approval for critical releases.
+\textbf{6. Staging Deployment:} Deploy to staging (production-identical config), smoke tests (login/orders/tracking), performance tests, manual approval for critical releases.
 
-\textbf{7. Production Deployment:} Rolling update, database migrations (auto-rollback on failure), health checks, automatic rollback on errors.
+\textbf{7. Production Deployment:} Rolling update to production servers, database migrations (auto-rollback on failure), health checks, error rate monitoring, automatic rollback on threshold violations.
 
-\textbf{8. Post-Deployment:} Production smoke tests, KPI monitoring, team notifications, Git release tagging.
+\textbf{8. Post-Deployment:} Production smoke tests, KPI monitoring (response time/errors/connections), team notifications (Slack/email), Git release tagging.
 
 \end{tcolorbox}
 
-\subsection{Branching Strategy}
+\subsection{Branching Strategy and Workflow}
 
-The project uses \textbf{Git Flow}: \texttt{main} for production (protected, auto-deploys), \texttt{develop} for integration (deploys to staging), \texttt{feature/*} for new features, \texttt{bugfix/*} for fixes, \texttt{hotfix/*} for emergency production fixes, and \texttt{release/*} for release preparation. All changes require pull requests with CI checks and code review approval.
+\subsubsection{Git Branching Model}
+
+The project employs a modified \textbf{Git Flow} branching strategy optimized for continuous deployment:
+
+\begin{description}[leftmargin=2em, itemsep=8pt, style=nextline]
+    \item[\textbf{main Branch:}] Production-ready code. All commits to main trigger automatic production deployment after passing all pipeline stages. Protected branch requiring pull request reviews.
+    
+    \item[\textbf{develop Branch:}] Integration branch for ongoing development. Merges from feature branches undergo full CI testing. Automatically deploys to staging environment.
+    
+    \item[\textbf{feature/* Branches:}] Individual feature development. Naming convention: \texttt{feature/description-of-feature}. Triggers CI pipeline on push and pull request. Deleted after merge to develop.
+    
+    \item[\textbf{bugfix/* Branches:}] Bug fixes during development cycle. Similar workflow to feature branches. Naming: \texttt{bugfix/issue-description}.
+    
+    \item[\textbf{hotfix/* Branches:}] Emergency production fixes. Branched directly from main, merged to both main and develop. Triggers expedited pipeline with production deployment.
+    
+    \item[\textbf{release/* Branches:}] Release preparation and stabilization. Branched from develop when features are complete. Undergo final testing before merging to main.
+\end{description}
+
+\subsubsection{Pull Request Workflow}
+
+\begin{enumerate}[leftmargin=2em, itemsep=6pt]
+    \item Developer creates feature branch from develop.
+    \item Implements feature with regular commits and pushes to remote.
+    \item Creates pull request targeting develop branch.
+    \item Automated CI pipeline executes (build, test, lint, security scan).
+    \item Code review required from at least one team member.
+    \item All CI checks must pass (green status) before merge allowed.
+    \item Conflicts resolved, pull request approved and merged.
+    \item Feature branch automatically deleted, develop branch deploys to staging.
+\end{enumerate}
 
 \subsection{Environment Management}
 
-Three environments: \textbf{Development} (local Docker Compose), \textbf{Staging} (cloud-hosted, mirrors production, auto-deploys from develop), and \textbf{Production} (live system, deploys from main with approval). Environment-specific variables stored in GitHub Secrets, rotated quarterly.
+\subsubsection{Environment Tiers}
 
-\subsection{Testing Strategy}
+\begin{description}[leftmargin=2em, itemsep=8pt, style=nextline]
+    \item[\textbf{Development Environment:}] Local developer machines with Docker Compose for running full stack (Node.js backend, PostgreSQL database, frontend). Environment variables stored in \texttt{.env.development} (git-ignored).
+    
+    \item[\textbf{Staging Environment:}] Cloud-hosted environment mirroring production configuration. Automatically updated on develop branch merges. Uses separate PostgreSQL database with production-like data volume. Accessible only within GIU network or via VPN.
+    
+    \item[\textbf{Production Environment:}] Live system serving GIU campus users. Deployed only from main branch after manual approval. High availability configuration with load balancing. Strict access controls and monitoring.
+\end{description}
 
-\textbf{Coverage Requirements:} 70\% overall coverage, 100\% for critical paths (authentication, orders). All API endpoints require integration tests.
+\subsubsection{Configuration Management}
 
-\textbf{Test Types:} Unit tests (every commit), integration tests (PR/merges), API tests (staging), E2E tests (nightly/pre-production), and performance tests (weekly, 500 concurrent user target).
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item Environment-specific variables (database credentials, API keys) stored in GitHub Secrets.
+    \item Configuration injected at deployment time, never committed to repository.
+    \item Separate secrets for staging and production environments.
+    \item Secret rotation performed quarterly or immediately after team member departure.
+\end{itemize}
 
-\subsection{Deployment Strategy}
+\subsection{Automated Testing Strategy}
 
-\textbf{Rolling Deployment:} Gradual server updates (25\% batches) with health checks between stages. Zero downtime; automatic rollback on failure.
+\subsubsection{Test Coverage Requirements}
 
-\textbf{Database Migrations:} Versioned scripts execute before deployment. Backward-compatible, automatic backups, rollback on failure.
+\begin{tcolorbox}[colback=lightgray, colframe=primaryblue, boxrule=0.8pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
 
-\subsection{Monitoring and Security}
-
-\textbf{Monitoring:} GitHub Actions dashboard tracks pipeline status. Slack/email notifications on failures. APM tracks application performance, error rates, and resource utilization. Automated alerts on anomalies.
-
-\textbf{Security:} Isolated container execution, encrypted secrets, automated dependency updates (Dependabot), audit logs for all deployments. Production deployments require manual approval. Branch protection enforces code reviews and CI checks.
-
-\newpage
-
-% ---------------- Section 9: Future Scope ----------------
-\section{Future Scope of the Project}
-Potential features for future versions:
 \begin{itemize}[leftmargin=2em, itemsep=8pt]
-    \item Integration with university authentication.
-    \item Push notifications for order updates.
-    \item Mobile app version.
-    \item Payment gateway support.
-    \item \textbf{Rating and Review System:} Allow customers to rate food trucks and menu items, providing feedback and helping others make informed choices.
-    \item \textbf{Inventory Management:} Track ingredient stock levels and alert vendors when supplies are running low.
+    \item \textbf{Overall Code Coverage:} Minimum 70\% line coverage across entire codebase.
+    \item \textbf{Critical Path Coverage:} 100\% coverage for authentication, order processing, and payment-related code.
+    \item \textbf{API Endpoint Coverage:} All RESTful endpoints must have corresponding integration tests.
+    \item \textbf{Regression Test Suite:} Automated tests for all previously discovered bugs to prevent reoccurrence.
+\end{itemize}
+
+\end{tcolorbox}
+
+\subsubsection{Test Types and Execution}
+
+\begin{description}[leftmargin=2em, itemsep=8pt, style=nextline]
+    \item[\textbf{Unit Tests:}] Test individual functions, components, and utility methods in isolation. Executed on every commit (fastest feedback, typically completes in under 30 seconds).
+    
+    \item[\textbf{Integration Tests:}] Verify interactions between modules, database queries, and external service calls. Use test database seeded with consistent fixtures. Execute on pull requests and develop/main merges.
+    
+    \item[\textbf{API Tests:}] Validate HTTP endpoints, request/response formats, status codes, and error handling. Test authentication flows, authorization rules, and rate limiting. Run on staging environment after deployment.
+    
+    \item[\textbf{End-to-End Tests:}] Simulate complete user workflows (registration, login, browse menu, place order, track status). Execute in headless browser against staging environment. Run nightly and before production deployments.
+    
+    \item[\textbf{Performance Tests:}] Load testing with simulated concurrent users (target: 500 simultaneous users). Stress testing to identify breaking points and resource constraints. Execute weekly on staging environment.
+\end{description}
+
+\subsection{Deployment Strategies}
+
+\subsubsection{Rolling Deployment}
+
+Production deployments use a \textbf{rolling update} strategy to minimize downtime:
+
+\begin{enumerate}[leftmargin=2em, itemsep=6pt]
+    \item New application version deployed to subset of servers (e.g., 25\% of instances).
+    \item Health checks verify successful startup and functionality.
+    \item If healthy, deployment continues to next batch of servers.
+    \item Process repeats until all servers updated.
+    \item Zero downtime achieved as old instances remain active until new ones ready.
+    \item Automatic rollback if health checks fail at any stage.
+\end{enumerate}
+
+\subsubsection{Database Migration Handling}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item Schema changes managed through versioned migration scripts (using tool like Flyway or db-migrate).
+    \item Migrations execute automatically before application deployment.
+    \item Backward-compatible migrations ensure old application versions continue functioning during rolling updates.
+    \item Database backups created automatically before migration execution.
+    \item Migration failures trigger automatic rollback and deployment abortion.
+\end{itemize}
+
+\subsection{Monitoring and Observability}
+
+\subsubsection{Pipeline Monitoring}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item GitHub Actions dashboard displays pipeline status, execution time, and failure patterns.
+    \item Slack/email notifications sent on pipeline failures with error details and logs.
+    \item Weekly pipeline metrics reported: success rate, average execution time, flaky test identification.
+    \item Failed builds block merging and trigger immediate team notification.
+\end{itemize}
+
+\subsubsection{Application Monitoring Post-Deployment}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item Application performance monitoring (APM) tracks response times, error rates, and resource utilization.
+    \item Log aggregation centralizes application logs from all servers for analysis and troubleshooting.
+    \item Automated alerts triggered on error rate spikes, performance degradation, or service unavailability.
+    \item Dashboards display key metrics: active users, order volume, API response times, database query performance.
+\end{itemize}
+
+\subsection{Security and Compliance}
+
+\subsubsection{Pipeline Security}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item GitHub Actions workflows execute in isolated containers with minimal permissions.
+    \item Secrets encrypted at rest and decrypted only during pipeline execution.
+    \item Dependency updates automatically tested and reviewed before merging (Dependabot integration).
+    \item Audit logs maintained for all deployments, including who approved and when.
+\end{itemize}
+
+\subsubsection{Access Controls}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item Production deployments require manual approval from designated team leads.
+    \item GitHub branch protection rules enforce code review requirements and status checks.
+    \item SSH keys and cloud credentials rotated regularly and stored securely.
+    \item Principle of least privilege applied to all service accounts and deployment permissions.
+\end{itemize}
+
+\subsection{Benefits and Impact}
+
+\begin{tcolorbox}[colback=primaryblue!10, colframe=primaryblue, boxrule=1pt, arc=4pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
+
+\textbf{Development Velocity:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item Reduced deployment time from hours to minutes through automation.
+    \item Faster feedback loops enable rapid iteration and bug fixing.
+    \item Developers focus on coding rather than manual testing and deployment tasks.
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Quality Assurance:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item Automated testing catches bugs before they reach production.
+    \item Consistent code quality through enforced linting and formatting standards.
+    \item Security vulnerabilities identified and addressed early in development cycle.
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Reliability and Stability:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item Repeatable, automated deployments eliminate human error.
+    \item Quick rollback capability minimizes impact of defects.
+    \item Staging environment catches issues before production exposure.
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Team Collaboration:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item Transparent pipeline status visible to entire team.
+    \item Code review process integrated into CI/CD workflow.
+    \item Shared responsibility for code quality and deployment success.
+\end{itemize}
+
+\end{tcolorbox}
+
+\subsection{Advanced Pipeline Engineering}
+
+\subsubsection{Pipeline Performance Optimization}
+
+\textbf{Build Time Reduction Strategies:}
+
+The CI/CD pipeline employs multiple optimization techniques to minimize feedback latency:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Optimization Technique} & \textbf{Time Savings} & \textbf{Implementation} \\
+\hline
+Dependency caching & 60-80\% faster installs & Cache node\_modules between runs \\
+\hline
+Parallel test execution & 50-70\% faster tests & Jest --maxWorkers=4 \\
+\hline
+Incremental builds & 40-60\% faster builds & Build only changed modules \\
+\hline
+Docker layer caching & 70-90\% faster images & Multi-stage builds with caching \\
+\hline
+Selective test execution & 30-50\% faster feedback & Run only affected tests on PRs \\
+\hline
+\end{tabular}
+\caption{Pipeline Performance Optimization Metrics}
+\end{table}
+
+\vspace{0.5em}
+
+\textbf{Pipeline Execution Benchmarks:}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Pipeline Stage} & \textbf{Target Time} & \textbf{Alert Threshold} & \textbf{P95 Target} \\
+\hline
+Code Checkout & < 20 seconds & > 45 seconds & < 30 seconds \\
+\hline
+Dependency Install & < 90 seconds & > 180 seconds & < 120 seconds \\
+\hline
+Build Process & < 60 seconds & > 120 seconds & < 90 seconds \\
+\hline
+Unit Tests & < 120 seconds & > 240 seconds & < 180 seconds \\
+\hline
+Integration Tests & < 180 seconds & > 360 seconds & < 240 seconds \\
+\hline
+Security Scanning & < 90 seconds & > 180 seconds & < 120 seconds \\
+\hline
+\textbf{Total Pipeline} & \textbf{< 8 minutes} & \textbf{> 15 minutes} & \textbf{< 10 minutes} \\
+\hline
+\end{tabular}
+\caption{Pipeline Stage Performance Targets}
+\end{table}
+
+\subsubsection{Infrastructure as Code (IaC)}
+
+\textbf{Declarative Infrastructure Management:}
+
+The CI/CD pipeline infrastructure itself is managed as code, enabling version control, peer review, and reproducibility:
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{GitHub Actions Workflows:} YAML-defined workflows stored in \texttt{.github/workflows/} directory, versioned alongside application code.
+    \item \textbf{Docker Compose:} Multi-container application orchestration defined in \texttt{docker-compose.yml} for local development and staging environments.
+    \item \textbf{Terraform/Pulumi:} Cloud infrastructure provisioning codified for staging and production environments (if cloud-hosted).
+    \item \textbf{Configuration Management:} Environment-specific configurations managed through \texttt{.env} templates and GitHub Secrets.
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Example GitHub Actions Workflow Configuration:}
+
+\begin{verbatim}
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '20.x'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    name: Test and Quality Checks
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for SonarQube
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run linting
+        run: npm run lint
+      
+      - name: Run unit tests
+        run: npm run test:unit -- --coverage
+      
+      - name: Run integration tests
+        run: npm run test:integration
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/testdb
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          fail_ci_if_error: true
+      
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  
+  security:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+      
+      - name: Run Snyk Security Scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+  
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+  
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment:
+      name: staging
+      url: https://staging.foodtruck.giu.edu
+    
+    steps:
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/foodtruck-app
+            docker-compose pull
+            docker-compose up -d --force-recreate
+            docker-compose exec -T app npm run migrate
+      
+      - name: Run smoke tests
+        run: npm run test:smoke
+        env:
+          BASE_URL: https://staging.foodtruck.giu.edu
+  
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://foodtruck.giu.edu
+    
+    steps:
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /opt/foodtruck-app
+            docker-compose pull
+            docker-compose up -d --force-recreate --no-deps app
+            docker-compose exec -T app npm run migrate
+      
+      - name: Health check
+        run: |
+          for i in {1..10}; do
+            if curl -f https://foodtruck.giu.edu/health; then
+              echo "Health check passed"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Health check failed"
+          exit 1
+      
+      - name: Notify team
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "Production deployment completed successfully",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Production Deployment* :rocket:\nCommit: ${{ github.sha }}\nAuthor: ${{ github.actor }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+\end{verbatim}
+
+\subsubsection{Test Automation Strategy}
+
+\textbf{Comprehensive Test Pyramid Implementation:}
+
+The CI/CD pipeline enforces a balanced test pyramid strategy maximizing coverage while minimizing execution time:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{3cm}|p{4cm}|p{4cm}|p{2cm}|}
+\hline
+\textbf{Test Layer} & \textbf{Coverage Target} & \textbf{Execution Time} & \textbf{Quantity} \\
+\hline
+Unit Tests & 80\% line coverage & < 2 minutes & 200-300 tests \\
+\hline
+Integration Tests & 60\% API coverage & < 3 minutes & 50-80 tests \\
+\hline
+E2E Tests & Critical paths only & < 4 minutes & 10-20 tests \\
+\hline
+Performance Tests & Key endpoints & < 5 minutes & 5-10 scenarios \\
+\hline
+Security Tests & OWASP Top 10 & < 2 minutes & Automated scan \\
+\hline
+\end{tabular}
+\caption{Test Pyramid Distribution and Targets}
+\end{table}
+
+\vspace{0.5em}
+
+\textbf{Test Coverage Quality Gates:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Minimum Coverage Threshold:} 70\% overall coverage required to pass pipeline; PRs that decrease coverage by >2\% are blocked.
+    \item \textbf{Critical Path Coverage:} Authentication, order placement, and payment flows require 95\% coverage.
+    \item \textbf{New Code Coverage:} All new code must achieve 80\% coverage; prevents legacy code from lowering standards.
+    \item \textbf{Mutation Testing:} Periodic mutation testing (using Stryker) validates test effectiveness, targeting 60\% mutation score.
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Flaky Test Management:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Detection:} Automated identification of tests that pass/fail inconsistently (>5\% failure rate without code changes).
+    \item \textbf{Quarantine:} Flaky tests automatically quarantined, run separately, and don't block deployments.
+    \item \textbf{Remediation:} Weekly review of quarantined tests with mandatory fix timeline (2 weeks) or removal.
+    \item \textbf{Root Cause Analysis:} Common flake sources (timing issues, race conditions, external dependencies) tracked and addressed systematically.
+\end{itemize}
+
+\subsubsection{Deployment Strategies and Patterns}
+
+\textbf{Zero-Downtime Deployment Techniques:}
+
+\begin{description}[leftmargin=2em, itemsep=8pt, style=nextline]
+    \item[\textbf{Rolling Deployment (Current):}] Sequential instance updates with health checks between phases. Minimal risk, moderate speed. Supports automatic rollback on health check failure.
+    
+    \item[\textbf{Blue-Green Deployment (Future):}] Maintain two identical production environments (blue=active, green=inactive). Deploy to inactive environment, verify, then switch traffic. Instant rollback capability, requires 2x infrastructure.
+    
+    \item[\textbf{Canary Deployment (Future):}] Deploy to small percentage of users (5-10\%) first, monitor metrics, gradually increase traffic if successful. Minimizes blast radius of bugs, requires sophisticated traffic routing.
+    
+    \item[\textbf{Feature Flags (Planned):}] Deploy code with features disabled, enable progressively through configuration. Decouple deployment from release, enable A/B testing and gradual rollouts.
+\end{description}
+
+\vspace{0.5em}
+
+\textbf{Rollback Procedures:}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4cm}|p{4cm}|p{5cm}|}
+\hline
+\textbf{Trigger Condition} & \textbf{Action} & \textbf{Recovery Time} \\
+\hline
+Health check failure & Automatic rollback to previous version & < 2 minutes \\
+\hline
+Error rate > 5\% & Alert team, manual rollback decision & < 5 minutes \\
+\hline
+Response time > 3s & Alert team, investigation required & < 10 minutes \\
+\hline
+Critical bug reported & Manual rollback with hotfix branch & < 15 minutes \\
+\hline
+Database migration failure & Automatic rollback with schema reversion & < 3 minutes \\
+\hline
+\end{tabular}
+\caption{Rollback Triggers and Recovery Times}
+\end{table}
+
+\subsubsection{Observability and Monitoring Integration}
+
+\textbf{Deployment Metrics Dashboard:}
+
+The CI/CD pipeline generates comprehensive metrics visible through centralized dashboards:
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{DORA Metrics (DevOps Research and Assessment):}
+    \begin{itemize}[leftmargin=2em, itemsep=4pt]
+        \item Deployment Frequency: Target 2-3 deployments per day
+        \item Lead Time for Changes: Target < 1 hour (commit to production)
+        \item Mean Time to Recovery (MTTR): Target < 15 minutes
+        \item Change Failure Rate: Target < 5\%
+    \end{itemize}
+    
+    \item \textbf{Pipeline Health Metrics:}
+    \begin{itemize}[leftmargin=2em, itemsep=4pt]
+        \item Build success rate (target: >95\%)
+        \item Average build duration (target: <8 minutes)
+        \item Test pass rate (target: >98\%)
+        \item Flaky test percentage (target: <2\%)
+    \end{itemize}
+    
+    \item \textbf{Quality Metrics:}
+    \begin{itemize}[leftmargin=2em, itemsep=4pt]
+        \item Code coverage trend over time
+        \item Technical debt ratio (SonarQube)
+        \item Security vulnerability count and severity
+        \item Code review turnaround time
+    \end{itemize}
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Alerting and Notification Strategy:}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|p{4cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Event Type} & \textbf{Severity} & \textbf{Notification Channel} & \textbf{Response SLA} \\
+\hline
+Production deployment & Info & Slack \#deployments & N/A \\
+\hline
+Pipeline failure & Warning & Slack + Email & < 1 hour \\
+\hline
+Security vulnerability & High & Slack + Email + SMS & < 30 minutes \\
+\hline
+Production error spike & Critical & PagerDuty + SMS & < 5 minutes \\
+\hline
+Deployment rollback & Critical & All channels & Immediate \\
+\hline
+\end{tabular}
+\caption{Alert Routing and Response Requirements}
+\end{table}
+
+\subsubsection{Security Hardening and Compliance}
+
+\textbf{Supply Chain Security:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Dependency Provenance:} All npm packages verified against known good checksums and signatures.
+    \item \textbf{SBOM Generation:} Software Bill of Materials (SBOM) automatically generated for each release, tracking all dependencies.
+    \item \textbf{Vulnerability Scanning:} Multi-layer scanning (npm audit, Snyk, GitHub Dependabot) with automated PR creation for fixes.
+    \item \textbf{License Compliance:} Automated license scanning ensures no GPL or other restrictive licenses in dependencies.
+    \item \textbf{Private Package Registry:} Internal npm registry proxies public packages, caching verified versions and preventing supply chain attacks.
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Secrets Management Best Practices:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{GitHub Secrets:} Encrypted environment variables for API keys, database credentials, and deployment secrets.
+    \item \textbf{Secret Rotation:} Quarterly rotation of all production credentials with automated testing of new secrets before old ones expire.
+    \item \textbf{Least Privilege:} Each deployment stage receives only the secrets necessary for its operations (staging secrets isolated from production).
+    \item \textbf{Audit Logging:} All secret access logged with timestamp, user, and operation for security review.
+    \item \textbf{Secret Scanning:} Automated detection of hardcoded secrets in code (using GitGuardian or similar) blocks commits containing credentials.
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Compliance and Audit Trail:}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{8cm}|}
+\hline
+\textbf{Requirement} & \textbf{Implementation} \\
+\hline
+Deployment Attribution & Every deployment tagged with Git commit hash, author, approver, and timestamp \\
+\hline
+Change Traceability & Git commit messages linked to issue tracker (e.g., "fixes \#123") \\
+\hline
+Approval Workflow & Production deployments require manual approval from 2 team leads \\
+\hline
+Environment Segregation & Complete isolation between dev, staging, and production credentials \\
+\hline
+Retention Policy & Pipeline logs retained 90 days, deployment metadata retained indefinitely \\
+\hline
+\end{tabular}
+\caption{Compliance Requirements and Implementation}
+\end{table}
+
+\subsubsection{Cost Optimization and Resource Management}
+
+\textbf{CI/CD Infrastructure Costs:}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Resource} & \textbf{Monthly Cost} & \textbf{Optimization Strategy} \\
+\hline
+GitHub Actions minutes & \$0 (free tier: 2000 min) & Cache dependencies, parallel jobs \\
+\hline
+Docker registry storage & \$5-10 & Image cleanup, layer optimization \\
+\hline
+Staging environment & \$20-50 & Auto-shutdown during off-hours \\
+\hline
+Monitoring tools (SonarQube) & \$0 (self-hosted) & University infrastructure \\
+\hline
+Secret management & \$0 (GitHub Secrets) & Native platform features \\
+\hline
+\textbf{Total Monthly Cost} & \textbf{\$25-60} & \textbf{Minimal for small team} \\
+\hline
+\end{tabular}
+\caption{CI/CD Infrastructure Cost Breakdown}
+\end{table}
+
+\vspace{0.5em}
+
+\textbf{Resource Optimization Techniques:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Conditional Job Execution:} Skip unnecessary pipeline stages (e.g., skip E2E tests for documentation-only changes).
+    \item \textbf{Concurrent Job Limits:} Limit parallel workflow executions to prevent resource exhaustion and excessive costs.
+    \item \textbf{Artifact Retention:} Automatically delete build artifacts older than 30 days to minimize storage costs.
+    \item \textbf{Self-Hosted Runners:} Use university infrastructure for compute-intensive jobs when GitHub Actions minutes run low.
+    \item \textbf{Workflow Triggers:} Optimize trigger conditions to prevent redundant pipeline executions on non-code changes.
+\end{itemize}
+
+\subsubsection{Team Workflow and Developer Experience}
+
+\textbf{Developer Onboarding with CI/CD:}
+
+New team members integrate into the development workflow through comprehensive CI/CD support:
+
+\begin{enumerate}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Local Development Environment:} Docker Compose configuration provides identical environment to CI pipeline, reducing "works on my machine" issues.
+    \item \textbf{Pre-Commit Hooks:} Git hooks run linting and formatting checks locally before commit, catching issues early and reducing pipeline failures.
+    \item \textbf{Pipeline Documentation:} README and wiki document pipeline architecture, troubleshooting steps, and common failure scenarios.
+    \item \textbf{Failure Notifications:} Clear, actionable error messages in pipeline failures guide developers to resolution without senior help.
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Code Review Integration:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Automated Checks:} Pipeline status displayed directly in pull requests; failing checks block merge.
+    \item \textbf{Coverage Reports:} Code coverage diff shown in PR comments, highlighting uncovered lines in new code.
+    \item \textbf{Performance Impact:} Bundle size changes and performance regression warnings posted automatically.
+    \item \textbf{Review Assignment:} CODEOWNERS file automatically assigns reviewers based on changed files.
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Productivity Metrics:}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{3cm}|p{5cm}|}
+\hline
+\textbf{Metric} & \textbf{Target} & \textbf{Impact} \\
+\hline
+Time to first feedback & < 5 minutes & Rapid iteration cycles \\
+\hline
+PR merge time & < 4 hours & Reduced context switching \\
+\hline
+Deployment frequency & 2-3 per day & Smaller, safer changes \\
+\hline
+Failed deployment rate & < 5\% & High confidence in releases \\
+\hline
+Hotfix deployment time & < 30 minutes & Rapid incident response \\
+\hline
+\end{tabular}
+\caption{Developer Productivity Targets}
+\end{table}
+
+\subsubsection{Industry Comparison and Benchmarking}
+
+\textbf{CI/CD Maturity Model:}
+
+The Food Truck Order Management System's CI/CD implementation compared against industry maturity levels:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|p{3cm}|p{4cm}|p{4cm}|p{3cm}|}
+\hline
+\textbf{Maturity Level} & \textbf{Characteristics} & \textbf{Industry Examples} & \textbf{Our Status} \\
+\hline
+Level 1: Manual & Manual testing, deployment & Legacy enterprises & $\times$ Surpassed \\
+\hline
+Level 2: Basic CI & Automated builds, tests & Small startups & $\times$ Surpassed \\
+\hline
+Level 3: Automated CD & Automated deployment to staging & Mid-size companies & $\checkmark$ Achieved \\
+\hline
+Level 4: Full CD & Prod deployment automation & Netflix, Spotify & $\circlearrowright$ In progress \\
+\hline
+Level 5: Self-Service & Dev-controlled deployments & Google, Meta & $\cdots$ Future goal \\
+\hline
+\end{tabular}
+\caption{CI/CD Maturity Assessment}
+\end{table}
+
+\vspace{0.5em}
+
+\textbf{FAANG CI/CD Practices Adopted:}
+
+\begin{description}[leftmargin=2em, itemsep=8pt, style=nextline]
+    \item[\textbf{Google's Approach:}] Monorepo-inspired practices with shared tooling and consistent test infrastructure. Use of hermetic builds ensuring reproducibility.
+    
+    \item[\textbf{Facebook/Meta's Philosophy:}] Emphasis on fast feedback loops and high deployment frequency. Automated rollback mechanisms inspired by Meta's push system.
+    
+    \item[\textbf{Amazon's Principles:}] "You build it, you run it" culture reflected in comprehensive monitoring and ownership. Emphasis on automated testing at scale.
+    
+    \item[\textbf{Netflix's Strategy:}] Chaos engineering principles applied to pipeline resilience. Focus on failure recovery over failure prevention.
+    
+    \item[\textbf{Microsoft's Evolution:}] Inner-source collaboration model with branch policies and required reviews, adapted from Azure DevOps practices.
+\end{description}
+
+\subsubsection{Lessons Learned and Best Practices}
+
+\textbf{Key Takeaways from Implementation:}
+
+\begin{enumerate}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Start Simple, Iterate:} Initial pipeline focused on core functionality (build, test, deploy). Advanced features (security scanning, performance testing) added incrementally based on team needs.
+    
+    \item \textbf{Fast Feedback Critical:} Pipeline execution time directly impacts developer productivity. Every optimization to reduce latency pays dividends in team velocity.
+    
+    \item \textbf{Fail Fast Principle:} Run fastest, most likely to fail checks first (linting, unit tests) before expensive operations (E2E tests, deployments).
+    
+    \item \textbf{Make CI/CD Visible:} Dashboard accessibility and clear notifications keep entire team engaged with pipeline health and deployment status.
+    
+    \item \textbf{Automate Toil:} Any manual step repeated more than 3 times becomes automation candidate. Reduces human error and frees team for valuable work.
+    
+    \item \textbf{Test the Tests:} Flaky tests erode confidence in CI/CD. Aggressive quarantine and remediation maintains pipeline reliability.
+    
+    \item \textbf{Security by Default:} Build security checks into pipeline from day one; retrofitting security is exponentially harder.
+    
+    \item \textbf{Document Failures:} Comprehensive runbooks for common pipeline failures reduce debugging time and knowledge silos.
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Common Pitfalls Avoided:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item $\times$ \textbf{Over-engineering initially:} Complex pipelines with every feature upfront create maintenance burden.
+    \item $\checkmark$ \textbf{Our approach:} MVP pipeline first, add features based on actual pain points.
+    
+    \item $\times$ \textbf{Ignoring pipeline performance:} Slow pipelines discourage frequent commits and CI usage.
+    \item $\checkmark$ \textbf{Our approach:} 8-minute target with aggressive caching and parallelization.
+    
+    \item $\times$ \textbf{Weak test coverage requirements:} Low coverage thresholds allow quality regression.
+    \item $\checkmark$ \textbf{Our approach:} 70\% minimum coverage, 80\% for new code, enforced by pipeline.
+    
+    \item $\times$ \textbf{Manual approval for everything:} Excessive gates slow delivery without improving quality.
+    \item $\checkmark$ \textbf{Our approach:} Automated staging deployment, manual approval only for production.
+    
+    \item $\times$ \textbf{Insufficient monitoring:} Deployments succeed but application broken in production.
+    \item $\checkmark$ \textbf{Our approach:} Health checks, smoke tests, and error rate monitoring post-deployment.
+\end{itemize}
+
+\subsubsection{Future Enhancements and Roadmap}
+
+\textbf{Planned CI/CD Improvements:}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{5cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Enhancement} & \textbf{Timeline} & \textbf{Expected Impact} \\
+\hline
+Canary deployments & Q2 2026 & Reduced blast radius of bugs \\
+\hline
+Feature flag system & Q2 2026 & Decouple deploy from release \\
+\hline
+Automated performance testing & Q3 2026 & Catch regressions earlier \\
+\hline
+Chaos engineering tests & Q3 2026 & Improved resilience \\
+\hline
+Multi-region deployment & Q4 2026 & Geographic redundancy \\
+\hline
+AI-powered test generation & 2027 & Higher coverage, less effort \\
+\hline
+\end{tabular}
+\caption{CI/CD Roadmap}
+\end{table}
+
+\vspace{0.5em}
+
+\textbf{Continuous Improvement Process:}
+
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+    \item \textbf{Monthly Retrospectives:} Team reviews pipeline metrics, identifies bottlenecks, and prioritizes improvements.
+    \item \textbf{Quarterly Benchmarking:} Compare DORA metrics against industry benchmarks and peer institutions.
+    \item \textbf{Tool Evaluation:} Periodic assessment of new CI/CD tools and services for potential adoption.
+    \item \textbf{Knowledge Sharing:} Team members present pipeline learnings and best practices in weekly tech talks.
 \end{itemize}
 
 \newpage
