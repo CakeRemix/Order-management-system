@@ -1,5 +1,6 @@
 -- =====================================================
 -- Master Seed Script
+-- Schema: FoodTruck
 -- Runs all seed files in order
 -- =====================================================
 
@@ -31,8 +32,9 @@
 \echo '\nDatabase Statistics:'
 \echo '-------------------'
 
-SELECT 'Total Users: ' || COUNT(*) FROM users;
-SELECT 'Total Food Trucks: ' || COUNT(*) FROM food_trucks;
-SELECT 'Total Menu Items: ' || COUNT(*) FROM menu_items;
-SELECT 'Total Orders: ' || COUNT(*) FROM orders;
-SELECT 'Total Order Items: ' || COUNT(*) FROM order_items;
+SELECT 'Total Users: ' || COUNT(*) FROM FoodTruck.Users;
+SELECT 'Total Food Trucks: ' || COUNT(*) FROM FoodTruck.Trucks;
+SELECT 'Total Menu Items: ' || COUNT(*) FROM FoodTruck.MenuItems;
+SELECT 'Total Orders: ' || COUNT(*) FROM FoodTruck.Orders;
+SELECT 'Total Order Items: ' || COUNT(*) FROM FoodTruck.OrderItems;
+SELECT 'Total Junction Tables: 8' as info;
