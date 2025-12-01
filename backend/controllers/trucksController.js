@@ -7,17 +7,19 @@ const db = require('../config/db');
 const getAllTrucks = async (req, res, next) => {
   try {
     // Using Knex Query Builder
-    const trucks = await db('foodtruck.trucks')
+    const trucks = await db('public.food_trucks')
       .select(
-        'truckid as id',
-        'truckname as name',
-        'trucklogo as image_url',
-        'ownerid',
-        'truckstatus as status',
-        'orderstatus',
-        'createdat as created_at'
+        'id',
+        'name',
+        'description',
+        'location',
+        'image_url',
+        'vendor_id',
+        'status',
+        'is_busy',
+        'created_at'
       )
-      .orderBy('truckname', 'asc');
+      .orderBy('name', 'asc');
     
     res.json({
       success: true,
@@ -39,17 +41,17 @@ const getTruckById = async (req, res, next) => {
     const { id } = req.params;
     
     // Using Knex Query Builder
-    const truck = await db('foodtruck.trucks')
+    const truck = await db('public.food_trucks')
       .select(
-        'truckid as id',
-        'truckname as name',
-        'trucklogo as image_url',
-        'ownerid',
-        'truckstatus as status',
-        'orderstatus',
-        'createdat as created_at'
+        'id',
+        'name',
+        'image_url',
+        'owner_id',
+        'status',
+        'is_busy',
+        'created_at'
       )
-      .where({ truckid: id })
+      .where({ id: id })
       .first();
     
     if (!truck) {
@@ -78,17 +80,19 @@ const getTruckByName = async (req, res, next) => {
     const { name } = req.params;
     
     // Using Knex Query Builder
-    const truck = await db('foodtruck.trucks')
+    const truck = await db('public.food_trucks')
       .select(
-        'truckid as id',
-        'truckname as name',
-        'trucklogo as image_url',
-        'ownerid',
-        'truckstatus as status',
-        'orderstatus',
-        'createdat as created_at'
+        'id',
+        'name',
+        'description',
+        'location',
+        'image_url',
+        'vendor_id',
+        'status',
+        'is_busy',
+        'created_at'
       )
-      .where({ truckname: name })
+      .where({ name: name })
       .first();
     
     if (!truck) {
@@ -117,9 +121,9 @@ const getMenuItemsByTruckId = async (req, res, next) => {
     const { id } = req.params;
     
     // Using Knex Query Builder - First verify the truck exists
-    const truck = await db('foodtruck.trucks')
-      .select('truckid as id', 'truckname as name', 'truckstatus as status')
-      .where({ truckid: id })
+    const truck = await db('public.food_trucks')
+      .select('id', 'name', 'status')
+      .where({ id: id })
       .first();
     
     if (!truck) {
@@ -130,18 +134,18 @@ const getMenuItemsByTruckId = async (req, res, next) => {
     }
     
     // Get menu items using Knex Query Builder
-    const menuItems = await db('foodtruck.menuitems')
+    const menuItems = await db('public.menu_items')
       .select(
-        'itemid as id',
-        'truckid as food_truck_id',
+        'id',
+        'food_truck_id',
         'name',
         'description',
         'price',
         'category',
-        'status as is_available',
-        'createdat as created_at'
+        'is_available',
+        'created_at'
       )
-      .where({ truckid: id })
+      .where({ food_truck_id: id })
       .orderBy(['category', 'name']);
     
     res.json({
@@ -165,9 +169,9 @@ const getMenuItemsByTruckName = async (req, res, next) => {
     const { name } = req.params;
     
     // Using Knex Query Builder - First verify the truck exists and get its ID
-    const truck = await db('foodtruck.trucks')
-      .select('truckid as id', 'truckname as name', 'truckstatus as status')
-      .where({ truckname: name })
+    const truck = await db('public.food_trucks')
+      .select('id', 'name', 'status')
+      .where({ name: name })
       .first();
     
     if (!truck) {
@@ -178,18 +182,18 @@ const getMenuItemsByTruckName = async (req, res, next) => {
     }
     
     // Get menu items using Knex Query Builder
-    const menuItems = await db('foodtruck.menuitems')
+    const menuItems = await db('public.menu_items')
       .select(
-        'itemid as id',
-        'truckid as food_truck_id',
+        'id',
+        'food_truck_id',
         'name',
         'description',
         'price',
         'category',
-        'status as is_available',
-        'createdat as created_at'
+        'is_available',
+        'created_at'
       )
-      .where({ truckid: truck.id })
+      .where({ food_truck_id: truck.id })
       .orderBy(['category', 'name']);
     
     res.json({

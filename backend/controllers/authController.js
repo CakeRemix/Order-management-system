@@ -37,13 +37,11 @@ exports.login = async (req, res, next) => {
             });
         }
 
-        // Check if user exists
-        const result = await db.query(
-            'SELECT id, email, password, name, role, is_active FROM users WHERE email = $1',
-            [email]
-        );
-
-        const user = result.rows[0];
+        // Check if user exists - Using Knex Query Builder
+        const user = await db('public.users')
+            .select('id', 'email', 'password', 'name', 'role', 'is_active')
+            .where({ email })
+            .first();
 
         if (!user) {
             return res.status(401).json({
@@ -150,8 +148,8 @@ exports.signup = async (req, res, next) => {
         }
 
         // Check if user already exists - Using Knex Query Builder
-        const existingUser = await db('foodtruck.users')
-            .select('userid')
+        const existingUser = await db('public.users')
+            .select('id')
             .where({ email })
             .first();
 
@@ -167,15 +165,14 @@ exports.signup = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Create new user - default role is customer - Using Knex Query Builder
-        const [newUser] = await db('foodtruck.users')
+        const [newUser] = await db('public.users')
             .insert({
                 name,
                 email,
                 password: hashedPassword,
-                role: role || 'customer',
-                birthdate: new Date()
+                role: role || 'customer'
             })
-            .returning(['userid as id', 'name', 'email', 'role']);
+            .returning(['id', 'name', 'email', 'role']);
 
         // Generate JWT token
         const token = generateToken(newUser);
@@ -206,9 +203,9 @@ exports.getCurrentUser = async (req, res, next) => {
         const user = req.user;
 
         // Get fresh user data from database - Using Knex Query Builder
-        const userData = await db('foodtruck.users')
-            .select('userid as id', 'name', 'email', 'role')
-            .where({ userid: user.id })
+        const userData = await db('public.users')
+            .select('id', 'name', 'email', 'role')
+            .where({ id: user.id })
             .first();
 
         if (!userData) {

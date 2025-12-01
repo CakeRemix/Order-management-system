@@ -7,18 +7,14 @@ const bcrypt = require('bcrypt');
  */
 exports.getAllUsers = async (req, res, next) => {
     try {
-        const query = `
-            SELECT id, name, email, role, phone, is_active, email_verified, created_at, last_login
-            FROM users
-            ORDER BY created_at DESC
-        `;
-        
-        const result = await db.query(query);
+        const users = await db('public.users')
+            .select('id', 'name', 'email', 'role', 'phone', 'is_active', 'email_verified', 'created_at', 'last_login')
+            .orderBy('created_at', 'desc');
         
         res.json({
             success: true,
-            count: result.rows.length,
-            data: result.rows
+            count: users.length,
+            data: users
         });
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -32,46 +28,39 @@ exports.getAllUsers = async (req, res, next) => {
  */
 exports.getSystemStats = async (req, res, next) => {
     try {
-        // Get user counts by role (all users, not just active)
-        const usersQuery = `
-            SELECT role, COUNT(*) as count
-            FROM users
-            GROUP BY role
-        `;
+        // Get user counts by role
+        const users = await db('public.users')
+            .select('role')
+            .count('* as count')
+            .groupBy('role');
         
-        // Get total food trucks
-        const trucksQuery = `
-            SELECT 
-                COUNT(*) as total,
-                COUNT(*) FILTER (WHERE status = 'open') as open,
-                COUNT(*) FILTER (WHERE status = 'closed') as closed,
-                COUNT(*) FILTER (WHERE status = 'busy') as busy
-            FROM food_trucks
-            WHERE is_active = TRUE
-        `;
+        // Get total food trucks with status breakdown
+        const trucksData = await db('public.food_trucks')
+            .where('is_active', true)
+            .select(
+                db.raw("COUNT(*) as total"),
+                db.raw("COUNT(*) FILTER (WHERE status = 'open') as open"),
+                db.raw("COUNT(*) FILTER (WHERE status = 'closed') as closed"),
+                db.raw("COUNT(*) FILTER (WHERE status = 'busy') as busy")
+            )
+            .first();
         
-        // Get total orders
-        const ordersQuery = `
-            SELECT 
-                COUNT(*) as total,
-                COUNT(*) FILTER (WHERE status = 'completed') as completed,
-                COUNT(*) FILTER (WHERE status = 'preparing') as preparing,
-                COUNT(*) FILTER (WHERE status = 'received') as received
-            FROM orders
-        `;
-        
-        const [usersResult, trucksResult, ordersResult] = await Promise.all([
-            db.query(usersQuery),
-            db.query(trucksQuery),
-            db.query(ordersQuery)
-        ]);
+        // Get total orders with status breakdown
+        const ordersData = await db('public.orders')
+            .select(
+                db.raw("COUNT(*) as total"),
+                db.raw("COUNT(*) FILTER (WHERE status = 'completed') as completed"),
+                db.raw("COUNT(*) FILTER (WHERE status = 'preparing') as preparing"),
+                db.raw("COUNT(*) FILTER (WHERE status = 'received') as received")
+            )
+            .first();
         
         res.json({
             success: true,
             data: {
-                users: usersResult.rows,
-                trucks: trucksResult.rows[0],
-                orders: ordersResult.rows[0]
+                users: users,
+                trucks: trucksData,
+                orders: ordersData
             }
         });
     } catch (error) {
@@ -115,8 +104,12 @@ exports.createTruckWithVendor = async (req, res, next) => {
         }
 
         // Check if email exists
-        const emailCheck = await db.query('SELECT id FROM users WHERE email = $1', [vendorEmail]);
-        if (emailCheck.rows.length > 0) {
+        const emailCheck = await db('public.users')
+            .select('id')
+            .where('email', vendorEmail)
+            .first();
+            
+        if (emailCheck) {
             return res.status(409).json({
                 success: false,
                 message: 'Email already exists'
@@ -124,59 +117,61 @@ exports.createTruckWithVendor = async (req, res, next) => {
         }
 
         // Check if truck name exists
-        const truckCheck = await db.query('SELECT id FROM food_trucks WHERE name = $1', [truckName]);
-        if (truckCheck.rows.length > 0) {
+        const truckCheck = await db('public.food_trucks')
+            .select('id')
+            .where('name', truckName)
+            .first();
+            
+        if (truckCheck) {
             return res.status(409).json({
                 success: false,
                 message: 'Truck name already exists'
             });
         }
 
-        // Start transaction
-        await db.query('BEGIN');
-
-        try {
+        // Use Knex transaction
+        const result = await db.transaction(async (trx) => {
             // Hash password
             const hashedPassword = await bcrypt.hash(vendorPassword, 10);
 
             // Create vendor user
-            const vendorQuery = `
-                INSERT INTO users (name, email, password, role, is_active, email_verified)
-                VALUES ($1, $2, $3, 'vendor', TRUE, TRUE)
-                RETURNING id, name, email, role
-            `;
-            const vendorResult = await db.query(vendorQuery, [vendorName, vendorEmail, hashedPassword]);
-            const vendor = vendorResult.rows[0];
+            const vendors = await trx('public.users')
+                .insert({
+                    name: vendorName,
+                    email: vendorEmail,
+                    password: hashedPassword,
+                    role: 'vendor',
+                    is_active: true,
+                    email_verified: true
+                })
+                .returning(['id', 'name', 'email', 'role']);
+            
+            const vendor = vendors[0];
 
             // Create food truck
-            const truckQuery = `
-                INSERT INTO food_trucks (
-                    name, description, location, vendor_id, status, 
-                    is_busy, prep_time_minutes, is_active
-                )
-                VALUES ($1, $2, $3, $4, 'closed', FALSE, $5, TRUE)
-                RETURNING id, name, description, location, vendor_id, status, prep_time_minutes
-            `;
-            const truckResult = await db.query(truckQuery, [
-                truckName,
-                description || '',
-                location || '',
-                vendor.id,
-                prepTimeMinutes || 15
-            ]);
-            const truck = truckResult.rows[0];
+            const trucks = await trx('public.food_trucks')
+                .insert({
+                    name: truckName,
+                    description: description || '',
+                    location: location || '',
+                    vendor_id: vendor.id,
+                    status: 'closed',
+                    is_busy: false,
+                    prep_time_minutes: prepTimeMinutes || 15,
+                    is_active: true
+                })
+                .returning(['id', 'name', 'description', 'location', 'vendor_id', 'status', 'prep_time_minutes']);
+            
+            const truck = trucks[0];
 
-            await db.query('COMMIT');
+            return { truck, vendor };
+        });
 
-            res.status(201).json({
-                success: true,
-                message: 'Food truck and vendor created successfully',
-                data: { truck, vendor }
-            });
-        } catch (error) {
-            await db.query('ROLLBACK');
-            throw error;
-        }
+        res.status(201).json({
+            success: true,
+            message: 'Food truck and vendor created successfully',
+            data: result
+        });
     } catch (error) {
         console.error('Error creating truck with vendor:', error);
         next(error);
@@ -192,50 +187,47 @@ exports.deleteTruck = async (req, res, next) => {
         const { id } = req.params;
 
         // Get truck with vendor info
-        const truckQuery = `
-            SELECT id, name, vendor_id 
-            FROM food_trucks 
-            WHERE id = $1
-        `;
-        const truckResult = await db.query(truckQuery, [id]);
+        const truck = await db('public.food_trucks')
+            .select('id', 'name', 'vendor_id')
+            .where('id', id)
+            .first();
 
-        if (truckResult.rows.length === 0) {
+        if (!truck) {
             return res.status(404).json({
                 success: false,
                 message: 'Food truck not found'
             });
         }
 
-        const truck = truckResult.rows[0];
-
-        // Start transaction
-        await db.query('BEGIN');
-
-        try {
+        // Use Knex transaction
+        await db.transaction(async (trx) => {
             // Delete menu items (cascade will handle order_items)
-            await db.query('DELETE FROM menu_items WHERE food_truck_id = $1', [id]);
+            await trx('public.menu_items')
+                .where('food_truck_id', id)
+                .del();
 
             // Delete orders and order_items (cascade)
-            await db.query('DELETE FROM orders WHERE food_truck_id = $1', [id]);
+            await trx('public.orders')
+                .where('food_truck_id', id)
+                .del();
 
             // Delete food truck
-            await db.query('DELETE FROM food_trucks WHERE id = $1', [id]);
+            await trx('public.food_trucks')
+                .where('id', id)
+                .del();
 
             // Delete vendor user if exists
             if (truck.vendor_id) {
-                await db.query('DELETE FROM users WHERE id = $1', [truck.vendor_id]);
+                await trx('public.users')
+                    .where('id', truck.vendor_id)
+                    .del();
             }
+        });
 
-            await db.query('COMMIT');
-
-            res.json({
-                success: true,
-                message: 'Food truck and vendor deleted successfully'
-            });
-        } catch (error) {
-            await db.query('ROLLBACK');
-            throw error;
-        }
+        res.json({
+            success: true,
+            message: 'Food truck and vendor deleted successfully'
+        });
     } catch (error) {
         console.error('Error deleting truck:', error);
         next(error);
@@ -248,30 +240,27 @@ exports.deleteTruck = async (req, res, next) => {
  */
 exports.getAllTrucksAdmin = async (req, res, next) => {
     try {
-        const query = `
-            SELECT 
-                ft.id,
-                ft.name,
-                ft.description,
-                ft.location,
-                ft.status,
-                ft.is_busy,
-                ft.prep_time_minutes,
-                ft.vendor_id,
-                u.name as vendor_name,
-                u.email as vendor_email,
-                ft.created_at
-            FROM food_trucks ft
-            LEFT JOIN users u ON ft.vendor_id = u.id
-            ORDER BY ft.created_at DESC
-        `;
-        
-        const result = await db.query(query);
+        const trucks = await db('public.food_trucks as ft')
+            .leftJoin('public.users as u', 'ft.vendor_id', 'u.id')
+            .select(
+                'ft.id',
+                'ft.name',
+                'ft.description',
+                'ft.location',
+                'ft.status',
+                'ft.is_busy',
+                'ft.prep_time_minutes',
+                'ft.vendor_id',
+                'u.name as vendor_name',
+                'u.email as vendor_email',
+                'ft.created_at'
+            )
+            .orderBy('ft.created_at', 'desc');
         
         res.json({
             success: true,
-            count: result.rows.length,
-            data: result.rows
+            count: trucks.length,
+            data: trucks
         });
     } catch (error) {
         console.error('Error fetching trucks:', error);
@@ -287,16 +276,14 @@ exports.toggleUserActive = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const query = `
-            UPDATE users 
-            SET is_active = NOT is_active
-            WHERE id = $1
-            RETURNING id, name, email, is_active
-        `;
-        
-        const result = await db.query(query, [id]);
+        const users = await db('public.users')
+            .where('id', id)
+            .update({
+                is_active: db.raw('NOT is_active')
+            })
+            .returning(['id', 'name', 'email', 'is_active']);
 
-        if (result.rows.length === 0) {
+        if (users.length === 0) {
             return res.status(404).json({
                 success: false,
                 message: 'User not found'
@@ -306,7 +293,7 @@ exports.toggleUserActive = async (req, res, next) => {
         res.json({
             success: true,
             message: 'User status updated',
-            data: result.rows[0]
+            data: users[0]
         });
     } catch (error) {
         console.error('Error toggling user status:', error);

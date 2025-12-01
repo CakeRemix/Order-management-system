@@ -42,7 +42,7 @@ const checkAuth = () => {
             'Authorization': `Bearer ${token}`
         }
     })
-    .done((data) => {
+    .then((data) => {
         if (data.success) {
             if (data.user) {
                 setUserInfo(data.user);
@@ -51,7 +51,7 @@ const checkAuth = () => {
         }
         return false;
     })
-    .fail((error) => {
+    .catch((error) => {
         console.error('Auth check failed:', error);
         removeToken();
         removeUserInfo();
