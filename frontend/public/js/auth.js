@@ -67,7 +67,7 @@ const login = (email, password) => {
         contentType: 'application/json',
         data: JSON.stringify({ email, password })
     })
-    .done((data) => {
+    .then((data) => {
         if (data.success && data.token) {
             setToken(data.token);
             if (data.user) {
@@ -75,12 +75,10 @@ const login = (email, password) => {
             }
             return data;
         }
-        throw new Error(data.message || 'Login failed');
+        return $.Deferred().reject({ responseJSON: { message: data.message || 'Login failed' } });
     })
-    .fail((xhr, status, error) => {
-        console.error('Login error:', error);
-        const errorMsg = xhr.responseJSON?.message || 'Login failed';
-        throw new Error(errorMsg);
+    .fail((xhr) => {
+        console.error('Login error:', xhr.responseJSON?.message || xhr.statusText);
     });
 };
 

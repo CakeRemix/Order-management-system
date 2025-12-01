@@ -39,7 +39,7 @@ exports.login = async (req, res, next) => {
 
         // Check if user exists
         const result = await db.query(
-            'SELECT id, email, password, name, role FROM users WHERE email = $1',
+            'SELECT id, email, password, name, role, is_active FROM users WHERE email = $1',
             [email]
         );
 
@@ -49,6 +49,14 @@ exports.login = async (req, res, next) => {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid credentials'
+            });
+        }
+
+        // Check if account is active
+        if (!user.is_active) {
+            return res.status(403).json({
+                success: false,
+                message: 'Your account has been deactivated. Please contact support.'
             });
         }
 

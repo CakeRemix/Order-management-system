@@ -121,8 +121,9 @@
                             }
                         }
                     })
-                    .fail(function(error) {
-                        showError(error.message || 'An error occurred during login');
+                    .fail(function(xhr) {
+                        const errorMsg = xhr.responseJSON?.message || xhr.statusText || 'An error occurred during login';
+                        showError(errorMsg);
                     })
                     .always(function() {
                         showLoading(false);
