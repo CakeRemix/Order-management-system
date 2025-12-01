@@ -37,7 +37,7 @@ app.use('/images', express.static(path.join(__dirname, 'frontend/public/images')
 // Health check route
 app.get('/health', async (req, res) => {
   try {
-    await db.query('SELECT NOW()');
+    await db.raw('SELECT NOW()');
     res.json({ 
       status: 'healthy',
       database: 'connected',

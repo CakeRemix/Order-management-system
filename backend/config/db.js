@@ -1,29 +1,34 @@
-const { Pool } = require('pg');
+const knex = require('knex');
 require('dotenv').config();
 
-// PostgreSQL connection pool
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+// Knex configuration for PostgreSQL
+const db = knex({
+  client: 'pg',
+  connection: {
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || 'giu_food_truck',
+  },
+  searchPath: ['foodtruck', 'public'],
+  pool: {
+    min: 2,
+    max: 20,
+  },
+  acquireConnectionTimeout: 10000,
 });
 
 // Test database connection
-pool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL database');
-});
+db.raw('SELECT 1')
+  .then(() => {
+    console.log('✅ Connected to PostgreSQL database via Knex');
+  })
+  .catch((err) => {
+    console.error('❌ Failed to connect to database:');
+    console.error('Error message:', err.message);
+    console.error('Error code:', err.code);
+    console.error('Full error:', err);
+  });
 
-pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle client', err);
-  process.exit(-1);
-});
-
-module.exports = {
-  query: (text, params) => pool.query(text, params),
-  pool,
-};
+module.exports = db;
