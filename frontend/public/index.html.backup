@@ -56,16 +56,5 @@
             </div>
         </div>
     </div>
-
-    <script src="js/auth.js"></script>
-    <script>
-        // Redirect to dashboard if user is already authenticated
-        document.addEventListener('DOMContentLoaded', async () => {
-            const isAuthenticated = await checkAuth();
-            if (isAuthenticated) {
-                window.location.href = '/dashboard.html';
-            }
-        });
-    </script>
 </body>
 </html>

@@ -11,6 +11,7 @@ const { errorHandler } = require('./middleware');
 
 // Import routes
 const authRoutes = require('./backend/routes/authRoutes');
+const trucksRoutes = require('./backend/routes/trucksRoutes');
 const orderRoutes = require('./backend/routes/orderRoutes');
 // const productRoutes = require('./backend/routes/productRoutes');
 
@@ -22,16 +23,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Homepage route - MUST be before static middleware
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/public', 'homepage.html'));
+});
+
 // Serve static files from frontend/public
 app.use(express.static(path.join(__dirname, 'frontend/public')));
 
 // Serve images from frontend/public/images
 app.use('/images', express.static(path.join(__dirname, 'frontend/public/images')));
-
-// Test route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/public', 'index.html'));
-});
 
 // Health check route
 app.get('/health', async (req, res) => {
@@ -53,6 +54,7 @@ app.get('/health', async (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/trucks', trucksRoutes);
 app.use('/api/orders', orderRoutes);
 // app.use('/api/products', productRoutes);
 

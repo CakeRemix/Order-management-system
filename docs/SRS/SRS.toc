@@ -11,6 +11,7 @@
 \contentsline {subsubsection}{\numberline {2.2.3}Admin Features}{4}{subsubsection.2.2.3}%
 \contentsline {subsection}{\numberline {2.3}Out of Scope}{4}{subsection.2.3}%
 \contentsline {section}{\numberline {3}High-Level Architecture}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Database Schema: Entity Relationship Diagram}{5}{subsection.3.1}%
 \contentsline {section}{\numberline {4}Functional Requirements}{6}{section.4}%
 \contentsline {subsection}{\numberline {4.1}User Stories}{6}{subsection.4.1}%
 \contentsline {subsubsection}{\numberline {4.1.1}Food Truck Customer User Stories}{6}{subsubsection.4.1.1}%

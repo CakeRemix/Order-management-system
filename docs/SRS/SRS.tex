@@ -258,6 +258,17 @@ The following features are explicitly excluded from the current system scope:
 \end{itemize}
 \end{tcolorbox}
 
+\subsection{Database Schema: Entity Relationship Diagram}
+
+The system utilizes a normalized relational database schema designed for data integrity, scalability, and audit trail support.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.95\textwidth]{erd.png}}
+    \caption{\textbf{Entity Relationship Diagram - Database Schema}}
+    \label{fig:erd}
+\end{figure}
+
 \newpage
 
 % ---------------- Section 4: Functional Requirements ----------------
@@ -324,6 +335,9 @@ The following features are explicitly excluded from the current system scope:
 \begin{description}[leftmargin=2em, itemsep=12pt, style=nextline]
     \item[\textbf{Response Time:}] Page load times under three seconds.
     \item[\textbf{Concurrent Users:}] Support for at least 500 simultaneous users.
+    \item[\textbf{Password Security:}] User passwords must be stored using industry-standard cryptographic hashing (bcrypt or equivalent) with appropriate cost factors to prevent unauthorized access.
+    \item[\textbf{Data Preservation (Soft Deletes):}] System must implement soft deletion for critical entities (users, orders, menu items) to maintain historical records and enable data recovery without permanent loss. Deleted records are marked with timestamps rather than physically removed from the database.
+    \item[\textbf{Continuous Integration/Deployment:}] System must utilize automated CI/CD pipelines for testing, building, and deploying code changes to ensure consistent quality and rapid delivery across development, staging, and production environments.
     \item[\textbf{API Security:}] Rate limiting and input validation.
     \item[\textbf{Backup \& Recovery:}] Automated daily backups with disaster recovery plan.
     \item[\textbf{System Operating Hours (Food Service Providers):}] 7:00 AM - 5:00 PM, Saturday to Thursday. This allows providers to prepare before customer ordering begins and complete cleanup after customer hours end.
