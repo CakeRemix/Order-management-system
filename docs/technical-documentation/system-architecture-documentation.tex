@@ -13,6 +13,7 @@
 \usepackage{xcolor}
 \usepackage{tcolorbox}
 \usepackage{parskip}
+\usepackage{amssymb}
 
 % ---------------- Color Scheme ----------------
 \definecolor{primaryblue}{RGB}{0, 102, 204}
@@ -264,26 +265,58 @@ The following features are explicitly excluded from the current system scope:
 
 \begin{tcolorbox}[colback=primaryblue!5, colframe=primaryblue, boxrule=1pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
 
-\subsubsection{Purpose and Security Rationale}
-
-The Food Truck Order Management System implements \textbf{bcrypt} as the cryptographic hashing algorithm for all user password storage. This industry-standard approach ensures that user credentials remain secure even in the event of database compromise, protecting students, staff, and vendors from unauthorized access.
+The system implements \textbf{bcrypt} for password hashing with cost factor 12 (4096 iterations), ensuring secure credential storage through one-way encryption, unique per-password salts, and computational expense that prevents brute-force attacks (~250ms per attempt limits attackers to 4 attempts/second).
 
 \vspace{0.5em}
 
-\textbf{Core Security Principles:}
+\textbf{Implementation:} Node.js bcrypt library provides async password hashing during registration and constant-time comparison during authentication. All passwords hashed with 128-bit cryptographically random salts, producing 60-character strings containing algorithm identifier, cost factor, salt, and hash.
 
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item \textbf{Irreversibility:} Bcrypt is a one-way cryptographic function. Passwords cannot be reverse-engineered from stored hashes, ensuring that even system administrators cannot view user passwords.
-    \item \textbf{Defense Against Rainbow Tables:} Built-in salt generation prevents attackers from using precomputed hash tables to crack passwords efficiently.
-    \item \textbf{Computational Cost:} Bcrypt's adaptive work factor makes brute-force attacks computationally expensive and time-prohibitive.
-    \item \textbf{Future-Proof Security:} The configurable cost factor allows increasing computational complexity as hardware capabilities improve.
+\vspace{0.5em}
+
+\textbf{Security Features:}
+\begin{itemize}[leftmargin=1.5em, itemsep=4pt]
+    \item Rate limiting: 5 login attempts per 15 minutes
+    \item Account lockout after failed attempts
+    \item TLS 1.3 encryption for all authentication traffic
+    \item Password requirements: 8-64 characters, common passwords blacklisted
+    \item Session management with JWT tokens (15-min lifetime)
 \end{itemize}
 
-\subsubsection{Why Bcrypt Over Alternative Approaches}
+\vspace{0.5em}
 
-\textbf{Comparison with Other Hashing Methods:}
+\textbf{Attack Protection:} Bcrypt mitigates database breaches (hashes unusable without massive computational resources), brute-force attacks (cost factor makes systematic attempts infeasible), rainbow tables (unique salts render precomputed tables worthless), and credential stuffing (hashed passwords can't be reused from other breaches).
 
-\begin{description}[leftmargin=2em, itemsep=8pt, style=nextline]
+\vspace{0.5em}
+
+\textbf{Compliance:} Aligns with OWASP recommendations, NIST SP 800-63B guidelines, and GDPR Article 32 security requirements. Audit logs track all authentication events with timestamps, IPs, and failure reasons.
+
+\end{tcolorbox}
+
+\newpage
+
+\subsection{Data Preservation Strategy: Soft Deletes}
+
+\begin{tcolorbox}[colback=primaryblue!5, colframe=primaryblue, boxrule=1pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
+
+The system implements \textbf{soft delete} for data preservation: records are marked as deleted (via \texttt{deleted\_at} timestamp and \texttt{deleted\_by} identifier) rather than physically removed, enabling data recovery, audit trails, and referential integrity.
+
+\vspace{0.5em}
+
+\textbf{Implementation:} Metadata columns (\texttt{deleted\_at}, \texttt{deleted\_by}, \texttt{is\_deleted}) added to menu items, food trucks, users, and orders. Standard queries filter \texttt{WHERE deleted\_at IS NULL}; deletion updates timestamp instead of removing records.
+
+\vspace{0.5em}
+
+\textbf{Benefits:} Accident recovery without database backups, complete historical records for compliance/analysis, preserved order history even after menu changes, trend analysis with full historical data.
+
+\vspace{0.5em}
+
+\textbf{Lifecycle:} Active records (0-12 months) remain in primary tables; older records archived periodically; permanent deletion after retention period with administrative approval.
+
+\end{tcolorbox}
+
+\newpage
+
+% ---------------- Section 4: Functional Requirements ----------------
     \item[\textbf{MD5 and SHA-1 (Rejected):}] These algorithms are cryptographically broken and vulnerable to collision attacks. They hash passwords too quickly, enabling millions of guesses per second with modern GPUs.
     
     \item[\textbf{Plain SHA-256/SHA-512 (Insufficient):}] While cryptographically secure for integrity checking, these algorithms are too fast for password hashing. Without proper salting and key stretching, they remain vulnerable to brute-force attacks.
@@ -1245,43 +1278,20 @@ Future-Proof Architecture & Cost factor adjustable as threats evolve \\
 \textbf{Common Pitfalls Avoided:}
 
 \begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item ❌ \textbf{Using synchronous bcrypt calls:} Blocks event loop, creates performance bottlenecks.
-    \item ✅ \textbf{Our approach:} Async/await with promise-based API.
+    \item $\times$ \textbf{Using synchronous bcrypt calls:} Blocks event loop, creates performance bottlenecks.
+    \item $\checkmark$ \textbf{Our approach:} Async/await with promise-based API.
     
-    \item ❌ \textbf{Comparing passwords with === operator:} Vulnerable to timing attacks.
-    \item ✅ \textbf{Our approach:} bcrypt.compare() uses constant-time comparison.
+    \item $\times$ \textbf{Comparing passwords with === operator:} Vulnerable to timing attacks.
+    \item $\checkmark$ \textbf{Our approach:} bcrypt.compare() uses constant-time comparison.
     
-    \item ❌ \textbf{Setting cost factor too low (<10):} Insufficient protection against modern hardware.
-    \item ✅ \textbf{Our approach:} Cost factor 12 calibrated to current threat landscape.
+    \item $\times$ \textbf{Setting cost factor too low (<10):} Insufficient protection against modern hardware.
+    \item $\checkmark$ \textbf{Our approach:} Cost factor 12 calibrated to current threat landscape.
     
-    \item ❌ \textbf{Logging passwords or hashes:} Creates inadvertent security exposure.
-    \item ✅ \textbf{Our approach:} Log authentication events only, never credentials.
+    \item $\times$ \textbf{Logging passwords or hashes:} Creates inadvertent security exposure.
+    \item $\checkmark$ \textbf{Our approach:} Log authentication events only, never credentials.
     
-    \item ❌ \textbf{Allowing unlimited password length:} DoS vulnerability via excessive computation.
-    \item ✅ \textbf{Our approach:} 64-character maximum prevents abuse.
-\end{itemize}
-
-\end{tcolorbox}
-
-\newpage
-
-\subsection{Data Preservation Strategy: Soft Deletes}
-
-\begin{tcolorbox}[colback=primaryblue!5, colframe=primaryblue, boxrule=1pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
-
-\subsubsection{Purpose and Rationale}
-
-The Food Truck Order Management System implements a \textbf{soft delete} mechanism as a core data preservation strategy to ensure business continuity, regulatory compliance, and operational integrity. Rather than permanently removing records from the database, soft deletes mark data as deleted while maintaining its physical presence in the system.
-
-\vspace{0.5em}
-
-\textbf{Key Objectives:}
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item \textbf{Data Recovery:} Enable restoration of accidentally deleted records without requiring database backups.
-    \item \textbf{Audit Trail:} Maintain complete historical records for compliance, reporting, and analysis purposes.
-    \item \textbf{Referential Integrity:} Preserve relationships between orders, menu items, and users even after logical deletion.
-    \item \textbf{Business Intelligence:} Retain historical data for trend analysis, seasonal patterns, and vendor performance metrics.
-    \item \textbf{Legal Compliance:} Support potential retention policies and dispute resolution requirements.
+    \item $\times$ \textbf{Allowing unlimited password length:} DoS vulnerability via excessive computation.
+    \item $\checkmark$ \textbf{Our approach:} 64-character maximum prevents abuse.
 \end{itemize}
 
 \subsubsection{Implementation Architecture}
@@ -1594,17 +1604,17 @@ The implementation draws from proven patterns used at hyperscale companies:
 \hline
 \textbf{Operation} & \textbf{Customer} & \textbf{Vendor} & \textbf{Admin} & \textbf{System} \\
 \hline
-View active records & ✓ & ✓ & ✓ & ✓ \\
+View active records & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
 \hline
-Soft delete own data & ✓ (limited) & ✓ & ✓ & ✓ \\
+Soft delete own data & $\checkmark$ (limited) & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
 \hline
-View deleted records & ✗ & ✗ & ✓ & ✓ \\
+View deleted records & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ \\
 \hline
-Recover deleted records & ✗ & ✗ & ✓ & ✓ \\
+Recover deleted records & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ \\
 \hline
-Permanent deletion & ✗ & ✗ & ✓ (restricted) & ✓ \\
+Permanent deletion & $\times$ & $\times$ & $\checkmark$ (restricted) & $\checkmark$ \\
 \hline
-Audit log access & ✗ & ✗ & ✓ & ✓ \\
+Audit log access & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ \\
 \hline
 \end{tabular}
 \caption{Role-Based Access Control for Soft Deletes}
@@ -1903,97 +1913,25 @@ The CI/CD pipeline directly addresses critical business and technical requiremen
 
 \subsubsection{Pipeline Stages}
 
-The CI/CD pipeline consists of sequential stages that must pass before code reaches production:
+The CI/CD pipeline consists of 8 sequential stages:
 
 \begin{tcolorbox}[colback=lightgray, colframe=secondaryblue, boxrule=0.8pt, arc=3pt, left=10pt, right=10pt, top=8pt, bottom=8pt]
 
-\textbf{Stage 1: Code Commit and Trigger}
+\textbf{1. Code Commit \& Trigger:} Developer pushes to GitHub; webhook triggers pipeline on PR creation/update or branch merge.
 
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item Developer commits code to feature branch and pushes to GitHub.
-    \item GitHub webhook triggers CI/CD pipeline automatically.
-    \item Pipeline executes on pull request creation, update, or merge to main branches.
-\end{itemize}
+\textbf{2. Build \& Setup:} Checkout code, setup Node.js (v18/v20), install dependencies (\texttt{npm ci}), compile TypeScript, build Docker images.
 
-\vspace{0.5em}
+\textbf{3. Static Analysis:} ESLint for code quality, Prettier for formatting, SonarQube for complexity/maintainability, coverage reports (70\% minimum).
 
-\textbf{Stage 2: Build and Environment Setup}
+\textbf{4. Automated Testing:} Unit tests (80\% coverage target), integration tests (module/DB/API interactions), API contract tests, E2E browser tests. Zero failures required.
 
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item Checkout source code from repository.
-    \item Set up Node.js environment (v18 or v20 LTS).
-    \item Install project dependencies using \texttt{npm ci} for reproducible builds.
-    \item Compile TypeScript (if applicable) and bundle frontend assets.
-    \item Build Docker images for backend and frontend services.
-\end{itemize}
+\textbf{5. Security Scanning:} \texttt{npm audit} for vulnerabilities, OWASP Dependency-Check for CVEs, Docker image scanning (Trivy/Clair). Critical/high-severity issues block deployment.
 
-\vspace{0.5em}
+\textbf{6. Staging Deployment:} Deploy to staging (production-identical config), smoke tests (login/orders/tracking), performance tests, manual approval for critical releases.
 
-\textbf{Stage 3: Static Code Analysis}
+\textbf{7. Production Deployment:} Rolling update to production servers, database migrations (auto-rollback on failure), health checks, error rate monitoring, automatic rollback on threshold violations.
 
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item Run ESLint to detect code quality issues, unused variables, and anti-patterns.
-    \item Execute Prettier to verify code formatting consistency.
-    \item Perform SonarQube analysis for code complexity, duplication, and maintainability metrics.
-    \item Generate code coverage reports to ensure adequate test coverage (minimum 70\% threshold).
-\end{itemize}
-
-\vspace{0.5em}
-
-\textbf{Stage 4: Automated Testing}
-
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item \textbf{Unit Tests:} Execute isolated tests for individual functions and components (target: 80\% coverage).
-    \item \textbf{Integration Tests:} Verify interactions between modules, database operations, and API endpoints.
-    \item \textbf{API Tests:} Validate RESTful API contracts, response formats, and error handling.
-    \item \textbf{End-to-End Tests:} Simulate complete user workflows in headless browser environments.
-    \item All tests must pass with zero failures before proceeding.
-\end{itemize}
-
-\vspace{0.5em}
-
-\textbf{Stage 5: Security Scanning}
-
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item Run \texttt{npm audit} to identify vulnerable dependencies.
-    \item Execute OWASP Dependency-Check for known CVE (Common Vulnerabilities and Exposures).
-    \item Scan Docker images for security vulnerabilities using Trivy or Clair.
-    \item Block deployment if critical or high-severity vulnerabilities detected.
-\end{itemize}
-
-\vspace{0.5em}
-
-\textbf{Stage 6: Staging Deployment}
-
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item Deploy application to staging environment (identical to production configuration).
-    \item Execute smoke tests to verify critical functionality (login, order placement, status updates).
-    \item Run performance tests to ensure response times meet non-functional requirements.
-    \item Manual review and approval required before production deployment (for critical releases).
-\end{itemize}
-
-\vspace{0.5em}
-
-\textbf{Stage 7: Production Deployment}
-
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item Deploy Docker containers to production servers using rolling update strategy.
-    \item Update database schema using migration scripts (with automatic rollback on failure).
-    \item Execute health checks to confirm successful deployment.
-    \item Monitor application logs and error rates during initial deployment period.
-    \item Automatically rollback if error thresholds exceeded or health checks fail.
-\end{itemize}
-
-\vspace{0.5em}
-
-\textbf{Stage 8: Post-Deployment Verification}
-
-\begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item Execute production smoke tests to verify core functionality.
-    \item Monitor key performance indicators (response time, error rate, database connections).
-    \item Send deployment notifications to team via Slack or email.
-    \item Tag release in Git repository with version number and changelog.
-\end{itemize}
+\textbf{8. Post-Deployment:} Production smoke tests, KPI monitoring (response time/errors/connections), team notifications (Slack/email), Git release tagging.
 
 \end{tcolorbox}
 
@@ -2744,15 +2682,15 @@ The Food Truck Order Management System's CI/CD implementation compared against i
 \hline
 \textbf{Maturity Level} & \textbf{Characteristics} & \textbf{Industry Examples} & \textbf{Our Status} \\
 \hline
-Level 1: Manual & Manual testing, deployment & Legacy enterprises & ❌ Surpassed \\
+Level 1: Manual & Manual testing, deployment & Legacy enterprises & $\times$ Surpassed \\
 \hline
-Level 2: Basic CI & Automated builds, tests & Small startups & ❌ Surpassed \\
+Level 2: Basic CI & Automated builds, tests & Small startups & $\times$ Surpassed \\
 \hline
-Level 3: Automated CD & Automated deployment to staging & Mid-size companies & ✅ Achieved \\
+Level 3: Automated CD & Automated deployment to staging & Mid-size companies & $\checkmark$ Achieved \\
 \hline
-Level 4: Full CD & Prod deployment automation & Netflix, Spotify & 🔄 In progress \\
+Level 4: Full CD & Prod deployment automation & Netflix, Spotify & $\circlearrowright$ In progress \\
 \hline
-Level 5: Self-Service & Dev-controlled deployments & Google, Meta & ⏳ Future goal \\
+Level 5: Self-Service & Dev-controlled deployments & Google, Meta & $\cdots$ Future goal \\
 \hline
 \end{tabular}
 \caption{CI/CD Maturity Assessment}
@@ -2801,20 +2739,20 @@ Level 5: Self-Service & Dev-controlled deployments & Google, Meta & ⏳ Future g
 \textbf{Common Pitfalls Avoided:}
 
 \begin{itemize}[leftmargin=2em, itemsep=6pt]
-    \item ❌ \textbf{Over-engineering initially:} Complex pipelines with every feature upfront create maintenance burden.
-    \item ✅ \textbf{Our approach:} MVP pipeline first, add features based on actual pain points.
+    \item $\times$ \textbf{Over-engineering initially:} Complex pipelines with every feature upfront create maintenance burden.
+    \item $\checkmark$ \textbf{Our approach:} MVP pipeline first, add features based on actual pain points.
     
-    \item ❌ \textbf{Ignoring pipeline performance:} Slow pipelines discourage frequent commits and CI usage.
-    \item ✅ \textbf{Our approach:} 8-minute target with aggressive caching and parallelization.
+    \item $\times$ \textbf{Ignoring pipeline performance:} Slow pipelines discourage frequent commits and CI usage.
+    \item $\checkmark$ \textbf{Our approach:} 8-minute target with aggressive caching and parallelization.
     
-    \item ❌ \textbf{Weak test coverage requirements:} Low coverage thresholds allow quality regression.
-    \item ✅ \textbf{Our approach:} 70\% minimum coverage, 80\% for new code, enforced by pipeline.
+    \item $\times$ \textbf{Weak test coverage requirements:} Low coverage thresholds allow quality regression.
+    \item $\checkmark$ \textbf{Our approach:} 70\% minimum coverage, 80\% for new code, enforced by pipeline.
     
-    \item ❌ \textbf{Manual approval for everything:} Excessive gates slow delivery without improving quality.
-    \item ✅ \textbf{Our approach:} Automated staging deployment, manual approval only for production.
+    \item $\times$ \textbf{Manual approval for everything:} Excessive gates slow delivery without improving quality.
+    \item $\checkmark$ \textbf{Our approach:} Automated staging deployment, manual approval only for production.
     
-    \item ❌ \textbf{Insufficient monitoring:} Deployments succeed but application broken in production.
-    \item ✅ \textbf{Our approach:} Health checks, smoke tests, and error rate monitoring post-deployment.
+    \item $\times$ \textbf{Insufficient monitoring:} Deployments succeed but application broken in production.
+    \item $\checkmark$ \textbf{Our approach:} Health checks, smoke tests, and error rate monitoring post-deployment.
 \end{itemize}
 
 \subsubsection{Future Enhancements and Roadmap}
@@ -2853,8 +2791,6 @@ AI-powered test generation & 2027 & Higher coverage, less effort \\
     \item \textbf{Tool Evaluation:} Periodic assessment of new CI/CD tools and services for potential adoption.
     \item \textbf{Knowledge Sharing:} Team members present pipeline learnings and best practices in weekly tech talks.
 \end{itemize}
-
-\end{tcolorbox}
 
 \newpage
 
