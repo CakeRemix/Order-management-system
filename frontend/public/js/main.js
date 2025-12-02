@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function(){
   const schedulePickup = document.getElementById('schedulePickup');
 
   // Order structure: { truck, items, total, pickupTime, status, createdAt }
-  // Cart structure: { owner: null|string, items: [ {name,price,quantity} ] }
-  let cartStore = { owner: null, items: [] };
+  // Cart structure: { owner: null|string, truckId: null|number, items: [ {name,price,quantity,itemId} ] }
+  let cartStore = { owner: null, truckId: null, items: [] };
   let currentOrder = null;
 
   // Load from localStorage
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function(){
     cartStore = JSON.parse(localStorage.getItem('cartStore') || JSON.stringify(cartStore));
     currentOrder = JSON.parse(localStorage.getItem('currentOrder') || 'null');
   } catch (e) {
-    cartStore = { owner: null, items: [] };
+    cartStore = { owner: null, truckId: null, items: [] };
     currentOrder = null;
   }
 
@@ -29,18 +29,31 @@ document.addEventListener('DOMContentLoaded', function(){
     const qty = parseInt(item.quantity || 1, 10) || 1;
     const price = parseFloat(item.price) || 0;
     const truck = item.truck || null;
+    const truckId = item.truckId || null;
+    const itemId = item.itemId || null;
 
     // If cart has an owner and it's different from current truck, confirm
     if (cartStore.owner && truck && cartStore.owner !== truck) {
       const ok = window.confirm('You are ordering from a different truck. This will clear your current cart. Continue?');
       if (!ok) return false;
       cartStore.items = [];
+      cartStore.truckId = null;
     }
 
     if (truck) cartStore.owner = truck;
+    if (truckId) cartStore.truckId = truckId;
+    
     const existing = cartStore.items.find(i => i.name === item.name);
-    if (existing) existing.quantity += qty;
-    else cartStore.items.push({ name: item.name, price: price, quantity: qty });
+    if (existing) {
+      existing.quantity += qty;
+    } else {
+      cartStore.items.push({ 
+        name: item.name, 
+        price: price, 
+        quantity: qty,
+        itemId: itemId
+      });
+    }
 
     saveCart();
     updateCart();
@@ -113,37 +126,104 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // Proceed button click handler
   if (proceedBtn) {
-    proceedBtn.addEventListener('click', () => {
+    proceedBtn.addEventListener('click', async () => {
       if (cartStore.items.length === 0) {
         alert('Your cart is empty!');
+        return;
+      }
+
+      // Get user info from localStorage
+      const userInfo = localStorage.getItem('userInfo');
+      if (!userInfo) {
+        alert('Please log in to place an order');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const user = JSON.parse(userInfo);
+      const userId = user.userid || user.userId;
+
+      if (!userId) {
+        alert('User information is incomplete. Please log in again.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!cartStore.truckId) {
+        alert('Truck information is missing. Please add items to cart again.');
         return;
       }
 
       const pickupTimeInput = document.getElementById('pickupTime');
       const pickupTime = pickupTimeInput ? pickupTimeInput.value : null;
 
-      // Create order
-      const total = cartStore.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-      currentOrder = {
-        truck: cartStore.owner,
-        items: cartStore.items,
-        total: total,
-        pickupTime: pickupTime,
-        status: 'processing',
-        createdAt: new Date().toISOString()
+      // Prepare order data for backend
+      const orderData = {
+        userId: userId,
+        truckId: cartStore.truckId,
+        items: cartStore.items.map(item => ({
+          itemId: item.itemId,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        scheduledPickupTime: pickupTime
       };
 
-      saveOrder();
+      try {
+        // Show loading state
+        proceedBtn.disabled = true;
+        proceedBtn.textContent = 'Processing...';
 
-      // Show success message
-      alert('Order has been processed!');
+        // Send order to backend
+        const response = await fetch('http://localhost:5000/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(orderData)
+        });
 
-      // Clear cart and update UI
-      cartStore.items = [];
-      cartStore.owner = null;
-      saveCart();
+        const result = await response.json();
 
-      updateCart();
+        if (!response.ok) {
+          throw new Error(result.message || 'Failed to create order');
+        }
+
+        // Store order info locally for tracking
+        const total = cartStore.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+        currentOrder = {
+          orderId: result.data.orderId,
+          truck: cartStore.owner,
+          truckId: cartStore.truckId,
+          items: cartStore.items,
+          total: total,
+          pickupTime: result.data.scheduledPickupTime,
+          status: 'processing',
+          createdAt: result.data.createdAt
+        };
+
+        saveOrder();
+
+        // Show success message
+        alert('Order placed successfully! Order ID: ' + result.data.orderId);
+
+        // Clear cart and update UI
+        cartStore.items = [];
+        cartStore.owner = null;
+        cartStore.truckId = null;
+        saveCart();
+
+        updateCart();
+
+      } catch (error) {
+        console.error('Error creating order:', error);
+        alert('Failed to place order: ' + error.message);
+      } finally {
+        // Reset button state
+        proceedBtn.disabled = false;
+        proceedBtn.textContent = 'Proceed to Checkout';
+      }
     });
   }
 

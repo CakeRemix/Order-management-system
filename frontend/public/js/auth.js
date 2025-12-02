@@ -93,7 +93,7 @@ const login = async (email, password) => {
 };
 
 // Signup function
-const signup = async (name, email, password, confirmPassword) => {
+const signup = async (name, email, password, confirmPassword, birthdate) => {
     try {
         const response = await fetch(`${API_URL}/auth/signup`, {
             method: 'POST',
@@ -104,7 +104,8 @@ const signup = async (name, email, password, confirmPassword) => {
                 name,
                 email,
                 password,
-                confirmPassword
+                confirmPassword,
+                birthDate: birthdate // Match backend field name
             })
         });
 

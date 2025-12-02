@@ -27,22 +27,37 @@
                     id="name" 
                     name="name" 
                     class="form-input" 
+                    placeholder="Enter your full name"
                     required
                 >
                 <div class="error-message" id="nameError"></div>
             </div>
 
             <div class="form-group">
-                <label for="email" class="form-label">Email address</label>
+                <label for="email" class="form-label">GIU Email address</label>
                 <input 
                     type="email" 
                     id="email" 
                     name="email" 
                     class="form-input" 
+                    placeholder="your.name@student.giu-uni.de"
                     required 
                     autocomplete="email"
                 >
+                <small class="form-hint">Must be a valid GIU email address</small>
                 <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="birthdate" class="form-label">Birth Date</label>
+                <input 
+                    type="date" 
+                    id="birthdate" 
+                    name="birthdate" 
+                    class="form-input" 
+                    required
+                >
+                <div class="error-message" id="birthdateError"></div>
             </div>
 
             <div class="form-group">
@@ -51,9 +66,11 @@
                     type="password" 
                     id="password" 
                     name="password" 
-                    class="form-input" 
+                    class="form-input"
+                    placeholder="At least 8 characters"
                     required
                 >
+                <small class="form-hint">Must contain uppercase, lowercase, and numbers</small>
                 <div class="error-message" id="passwordError"></div>
             </div>
 
@@ -63,7 +80,8 @@
                     type="password" 
                     id="confirmPassword" 
                     name="confirmPassword" 
-                    class="form-input" 
+                    class="form-input"
+                    placeholder="Re-enter your password"
                     required
                 >
                 <div class="error-message" id="confirmPasswordError"></div>
@@ -116,12 +134,14 @@
                 
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
+                const birthdate = document.getElementById('birthdate').value;
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
 
                 // Reset errors
                 document.getElementById('nameError').textContent = '';
                 document.getElementById('emailError').textContent = '';
+                document.getElementById('birthdateError').textContent = '';
                 document.getElementById('passwordError').textContent = '';
                 document.getElementById('confirmPasswordError').textContent = '';
                 alert.style.display = 'none';
@@ -135,6 +155,29 @@
                 // Validate email
                 if (!validateEmail(email)) {
                     document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                    return;
+                }
+
+                // Validate birthdate
+                if (!birthdate) {
+                    document.getElementById('birthdateError').textContent = 'Birth date is required';
+                    return;
+                }
+
+                // Validate age (must be at least 13 years old)
+                const birthDate = new Date(birthdate);
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                if (age < 13 || (age === 13 && monthDiff < 0)) {
+                    document.getElementById('birthdateError').textContent = 'You must be at least 13 years old';
+                    return;
+                }
+
+                // Validate role
+                if (!role || !['customer', 'truckOwner'].includes(role)) {
+                    document.getElementById('roleError').textContent = 'Please select a valid account type';
                     return;
                 }
 
@@ -155,7 +198,7 @@
                 showLoading(true);
 
                 try {
-                    const response = await signup(name, email, password, confirmPassword);
+                    const response = await signup(name, email, password, confirmPassword, birthdate);
                     if (response.success) {
                         // Show success message
                         alert.className = 'alert alert-success';
