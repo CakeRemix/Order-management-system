@@ -15,6 +15,11 @@ const db = knex({
   pool: {
     min: 2,
     max: 20,
+    afterCreate: function(connection, callback) {
+      connection.query('SET search_path TO foodtruck, public;', function(err) {
+        callback(err, connection);
+      });
+    }
   },
   acquireConnectionTimeout: 10000,
 });
