@@ -122,7 +122,7 @@ const getMenuItemsByTruckId = async (req, res, next) => {
     
     // Using Knex Query Builder - First verify the truck exists
     const truck = await db('public.food_trucks')
-      .select('id', 'name', 'status')
+      .select('id', 'name', 'status', 'is_busy', 'description', 'location')
       .where({ id: id })
       .first();
     
@@ -136,12 +136,13 @@ const getMenuItemsByTruckId = async (req, res, next) => {
     // Get menu items using Knex Query Builder
     const menuItems = await db('public.menu_items')
       .select(
-        'id',
-        'food_truck_id',
+        'id as itemid',
+        'food_truck_id as truckid',
         'name',
         'description',
         'price',
         'category',
+        'image_url',
         'is_available',
         'created_at'
       )
@@ -170,7 +171,7 @@ const getMenuItemsByTruckName = async (req, res, next) => {
     
     // Using Knex Query Builder - First verify the truck exists and get its ID
     const truck = await db('public.food_trucks')
-      .select('id', 'name', 'status')
+      .select('id', 'name', 'status', 'is_busy', 'description', 'location')
       .where({ name: name })
       .first();
     
@@ -184,12 +185,13 @@ const getMenuItemsByTruckName = async (req, res, next) => {
     // Get menu items using Knex Query Builder
     const menuItems = await db('public.menu_items')
       .select(
-        'id',
-        'food_truck_id',
+        'id as itemid',
+        'food_truck_id as truckid',
         'name',
         'description',
         'price',
         'category',
+        'image_url',
         'is_available',
         'created_at'
       )

@@ -83,7 +83,7 @@ const login = (email, password) => {
 };
 
 // Signup function using jQuery AJAX
-const signup = (name, email, password, confirmPassword) => {
+const signup = (name, email, password, confirmPassword, birthdate) => {
     return $.ajax({
         url: `${API_URL}/auth/signup`,
         method: 'POST',
@@ -92,7 +92,8 @@ const signup = (name, email, password, confirmPassword) => {
             name,
             email,
             password,
-            confirmPassword
+            confirmPassword,
+            birthDate: birthdate
         })
     })
     .done((data) => {

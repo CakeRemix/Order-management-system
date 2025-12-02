@@ -28,22 +28,37 @@
                     id="name" 
                     name="name" 
                     class="form-input" 
+                    placeholder="Enter your full name"
                     required
                 >
                 <div class="error-message" id="nameError"></div>
             </div>
 
             <div class="form-group">
-                <label for="email" class="form-label">Email address</label>
+                <label for="email" class="form-label">GIU Email address</label>
                 <input 
                     type="email" 
                     id="email" 
                     name="email" 
                     class="form-input" 
+                    placeholder="your.name@student.giu-uni.de"
                     required 
                     autocomplete="email"
                 >
+                <small class="form-hint">Must be a valid GIU email address</small>
                 <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="birthdate" class="form-label">Birth Date</label>
+                <input 
+                    type="date" 
+                    id="birthdate" 
+                    name="birthdate" 
+                    class="form-input" 
+                    required
+                >
+                <div class="error-message" id="birthdateError"></div>
             </div>
 
             <div class="form-group">
@@ -52,9 +67,11 @@
                     type="password" 
                     id="password" 
                     name="password" 
-                    class="form-input" 
+                    class="form-input"
+                    placeholder="At least 8 characters"
                     required
                 >
+                <small class="form-hint">Must contain uppercase, lowercase, and numbers</small>
                 <div class="error-message" id="passwordError"></div>
             </div>
 
@@ -64,7 +81,8 @@
                     type="password" 
                     id="confirmPassword" 
                     name="confirmPassword" 
-                    class="form-input" 
+                    class="form-input"
+                    placeholder="Re-enter your password"
                     required
                 >
                 <div class="error-message" id="confirmPasswordError"></div>
@@ -123,12 +141,14 @@
                 
                 const name = $('#name').val();
                 const email = $('#email').val();
+                const birthdate = $('#birthdate').val();
                 const password = $('#password').val();
                 const confirmPassword = $('#confirmPassword').val();
 
                 // Reset errors
                 $('#nameError').text('');
                 $('#emailError').text('');
+                $('#birthdateError').text('');
                 $('#passwordError').text('');
                 $('#confirmPasswordError').text('');
                 alert.hide();
@@ -142,6 +162,23 @@
                 // Validate email
                 if (!validateEmail(email)) {
                     $('#emailError').text('Please enter a valid email address');
+                    return;
+                }
+
+                // Validate birthdate
+                if (!birthdate) {
+                    $('#birthdateError').text('Birth date is required');
+                    return;
+                }
+
+                // Validate age (must be at least 13 years old)
+                const birthDate = new Date(birthdate);
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                if (age < 13 || (age === 13 && monthDiff < 0)) {
+                    $('#birthdateError').text('You must be at least 13 years old');
                     return;
                 }
 
@@ -162,7 +199,7 @@
                 // Show loading state
                 showLoading(true);
 
-                signup(name, email, password, confirmPassword)
+                signup(name, email, password, confirmPassword, birthdate)
                     .done(function(response) {
                         if (response.success) {
                             // Show success message

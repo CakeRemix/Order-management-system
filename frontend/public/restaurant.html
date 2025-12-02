@@ -173,7 +173,12 @@
                 <div class=\"item-desc\">${item.description || ''}</div>
                 <div class=\"item-row\">
                   <div class=\"item-price\">L.E ${parseFloat(item.price).toFixed(2)}</div>
-                  <button class=\"add-btn\" data-name=\"${item.name}\" data-price=\"${item.price}\" ${!item.is_available ? 'disabled' : ''}>
+                  <button class=\"add-btn\" 
+                    data-name=\"${item.name}\" 
+                    data-price=\"${item.price}\"
+                    data-item-id=\"${item.itemid}\"
+                    data-truck-id=\"${item.truckid}\"
+                    ${!item.is_available ? 'disabled' : ''}>
                     ${item.is_available ? 'Add' : 'Unavailable'}
                   </button>
                 </div>
@@ -191,10 +196,21 @@
           
           const name = btn.data('name');
           const price = parseFloat(btn.data('price'));
+          const itemId = parseInt(btn.data('itemId'));
+          const truckId = parseInt(btn.data('truckId'));
+          
+          console.log('Add to cart clicked:', { name, price, itemId, truckId });
           
           if (window.addToCart) {
-            // include truck name so cart can enforce single-truck ownership
-            const added = window.addToCart({ name, price, quantity: 1, truck: truckName });
+            // include truck name, itemId, and truckId for backend integration
+            const added = window.addToCart({ 
+              name, 
+              price, 
+              quantity: 1, 
+              truck: truckName,
+              itemId: itemId,
+              truckId: truckId
+            });
             if (added) {
               $('#cartSidebar').addClass('open');
             }

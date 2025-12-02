@@ -98,13 +98,21 @@ exports.login = async (req, res, next) => {
  */
 exports.signup = async (req, res, next) => {
     try {
-        const { name, email, password, confirmPassword, role } = req.body;
+        const { name, email, password, confirmPassword, birthDate } = req.body;
 
         // Input validation
         if (!name || !email || !password || !confirmPassword) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required'
+            });
+        }
+
+        // Validate birthDate
+        if (!birthDate) {
+            return res.status(400).json({
+                success: false,
+                message: 'Birth date is required'
             });
         }
 
@@ -164,9 +172,10 @@ exports.signup = async (req, res, next) => {
                 name,
                 email,
                 password: hashedPassword,
-                role: role || 'customer'
+                role: 'customer',
+                birthdate: birthDate
             })
-            .returning(['userid as id', 'name', 'email', 'role']);
+            .returning(['userid as id', 'name', 'email', 'role', 'birthdate'])
 
         // Generate JWT token
         const token = generateToken(newUser);
@@ -179,7 +188,8 @@ exports.signup = async (req, res, next) => {
                 id: newUser.id,
                 name: newUser.name,
                 email: newUser.email,
-                role: newUser.role
+                role: newUser.role,
+                birthdate: newUser.birthdate
             }
         });
     } catch (error) {
