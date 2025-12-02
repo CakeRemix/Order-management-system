@@ -104,13 +104,21 @@ exports.login = async (req, res, next) => {
  */
 exports.signup = async (req, res, next) => {
     try {
-        const { name, email, password, confirmPassword, role } = req.body;
+        const { name, email, password, confirmPassword, birthDate } = req.body;
 
         // Input validation
         if (!name || !email || !password || !confirmPassword) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required'
+            });
+        }
+
+        // Validate birthDate
+        if (!birthDate) {
+            return res.status(400).json({
+                success: false,
+                message: 'Birth date is required'
             });
         }
 
@@ -164,15 +172,16 @@ exports.signup = async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create new user - default role is customer - Using Knex Query Builder
+        // Create new user with birthDate - All signups are customers
         const [newUser] = await db('public.users')
             .insert({
                 name,
                 email,
                 password: hashedPassword,
-                role: role || 'customer'
+                role: 'customer',
+                birthdate: birthDate
             })
-            .returning(['id', 'name', 'email', 'role']);
+            .returning(['id', 'name', 'email', 'role', 'birthdate']);
 
         // Generate JWT token
         const token = generateToken(newUser);
@@ -185,7 +194,8 @@ exports.signup = async (req, res, next) => {
                 id: newUser.id,
                 name: newUser.name,
                 email: newUser.email,
-                role: newUser.role
+                role: newUser.role,
+                birthdate: newUser.birthdate
             }
         });
     } catch (error) {

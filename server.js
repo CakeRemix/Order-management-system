@@ -13,7 +13,7 @@ const { errorHandler } = require('./middleware');
 const authRoutes = require('./backend/routes/authRoutes');
 const trucksRoutes = require('./backend/routes/trucksRoutes');
 const adminRoutes = require('./backend/routes/adminRoutes');
-// const orderRoutes = require('./backend/routes/orderRoutes');
+const orderRoutes = require('./backend/routes/orderRoutes');
 // const productRoutes = require('./backend/routes/productRoutes');
 
 const app = express();
@@ -57,7 +57,7 @@ app.get('/health', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/trucks', trucksRoutes);
 app.use('/api/admin', adminRoutes);
-// app.use('/api/orders', orderRoutes);
+app.use('/api/orders', orderRoutes);
 // app.use('/api/products', productRoutes);
 
 // Error handling middleware (must be last)
