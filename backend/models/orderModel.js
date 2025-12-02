@@ -11,17 +11,28 @@ const db = require('../config/db');
  * @returns {Promise<Object>} - Created order with orderId
  */
 const createOrder = async (orderData) => {
-    const { userId, truckId, totalPrice, orderStatus = 'pending', scheduledPickupTime } = orderData;
+    const { userId, truckId, totalPrice, orderStatus = 'received', scheduledPickupTime } = orderData;
     
-    const [result] = await db('foodtruck.orders')
+    // Generate order number (max 20 chars)
+    const orderNumber = `ORD${Date.now().toString().slice(-10)}`;
+    
+    // Calculate pickup time: use scheduled time or default to 30 minutes from now
+    const pickupTime = scheduledPickupTime || db.raw("NOW() + INTERVAL '30 minutes'");
+    
+    const [result] = await db('public.orders')
         .insert({
-            userid: userId,
-            truckid: truckId,
-            totalprice: totalPrice,
-            orderstatus: orderStatus,
-            scheduledpickuptime: scheduledPickupTime || null,
-            estimatedearliestpickup: db.raw("NOW() + INTERVAL '30 minutes'"),
-            createdat: db.raw('NOW()')
+            customer_id: userId,
+            food_truck_id: truckId,
+            order_number: orderNumber,
+            status: orderStatus,
+            subtotal: totalPrice,
+            tax: 0, // No tax for now
+            total: totalPrice,
+            pickup_time: pickupTime,
+            estimated_prep_time: 20, // Default 20 minutes
+            is_paid: false,
+            created_at: db.raw('NOW()'),
+            updated_at: db.raw('NOW()')
         })
         .returning('*');
     
@@ -30,7 +41,6 @@ const createOrder = async (orderData) => {
 
 /**
  * Creates order items for a specific order
- * Uses your schema's junction table pattern (Order_Contains_OrderItems)
  * @param {number} orderId - The order ID  
  * @param {Array} items - Array of { itemId, name, quantity, price }
  * @returns {Promise<Array>} - Array of created order items
@@ -38,38 +48,23 @@ const createOrder = async (orderData) => {
 const createOrderItems = async (orderId, items) => {
     const orderItems = [];
     
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
+    for (const item of items) {
+        const unitPrice = parseFloat(item.price);
+        const subtotal = unitPrice * item.quantity;
         
-        // Step 1: Create OrderItem (standalone)
-        const [result] = await db('foodtruck.orderitems')
+        const [result] = await db('public.order_items')
             .insert({
-                name: item.name,
+                order_id: orderId,
+                menu_item_id: item.itemId,
+                item_name: item.name,
                 quantity: item.quantity,
-                price: item.price,
-                createdat: db.raw('NOW()')
+                unit_price: unitPrice,
+                subtotal: subtotal,
+                created_at: db.raw('NOW()')
             })
             .returning('*');
         
         orderItems.push(result);
-        
-        // Step 2: Link OrderItem to Order via junction table
-        await db('foodtruck.order_contains_orderitems')
-            .insert({
-                orderid: orderId,
-                orderitemid: result.orderitemid,
-                linenumber: i + 1,
-                createdat: db.raw('NOW()')
-            });
-        
-        // Step 3: Link Order to MenuItem via junction table  
-        await db('foodtruck.order_contains_menuitems')
-            .insert({
-                orderid: orderId,
-                itemid: item.itemId,
-                quantity: item.quantity,
-                priceatorder: item.price
-            });
     }
     
     return orderItems;
@@ -77,39 +72,31 @@ const createOrderItems = async (orderId, items) => {
 
 /**
  * Gets an order by ID with all its items
- * Uses junction table to retrieve linked order items (INNER JOIN)
  * @param {number} orderId - The order ID
  * @returns {Promise<Object>} - Order with items
  */
 const getOrderById = async (orderId) => {
-    const order = await db('foodtruck.orders as o')
+    const order = await db('public.orders as o')
         .select(
             'o.*',
-            'u.name as customername',
-            'u.email',
-            't.truckname'
+            'u.name as customer_name',
+            'u.email as customer_email',
+            't.name as truck_name'
         )
-        .join('foodtruck.users as u', 'o.userid', 'u.userid')
-        .join('foodtruck.trucks as t', 'o.truckid', 't.truckid')
-        .where('o.orderid', orderId)
+        .join('public.users as u', 'o.customer_id', 'u.id')
+        .join('public.food_trucks as t', 'o.food_truck_id', 't.id')
+        .where('o.id', orderId)
         .first();
     
     if (!order) {
         return null;
     }
     
-    // Get OrderItems via junction table (matches Milestone3 INNER JOIN pattern)
-    const items = await db('foodtruck.orderitems as oi')
-        .select(
-            'oi.orderitemid',
-            'oi.name',
-            'oi.quantity',
-            'oi.price',
-            'ocoi.linenumber'
-        )
-        .join('foodtruck.order_contains_orderitems as ocoi', 'oi.orderitemid', 'ocoi.orderitemid')
-        .where('ocoi.orderid', orderId)
-        .orderBy('ocoi.linenumber');
+    // Get order items
+    const items = await db('public.order_items')
+        .select('*')
+        .where('order_id', orderId)
+        .orderBy('id');
     
     order.items = items;
     
@@ -122,11 +109,11 @@ const getOrderById = async (orderId) => {
  * @returns {Promise<Array>} - Array of orders
  */
 const getOrdersByUserId = async (userId) => {
-    const orders = await db('foodtruck.orders as o')
-        .select('o.*', 't.truckname')
-        .join('foodtruck.trucks as t', 'o.truckid', 't.truckid')
-        .where('o.userid', userId)
-        .orderBy('o.createdat', 'desc');
+    const orders = await db('public.orders as o')
+        .select('o.*', 't.name as truck_name')
+        .join('public.food_trucks as t', 'o.food_truck_id', 't.id')
+        .where('o.customer_id', userId)
+        .orderBy('o.created_at', 'desc');
     
     return orders;
 };

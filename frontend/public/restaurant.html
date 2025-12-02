@@ -196,8 +196,10 @@
           
           const name = btn.data('name');
           const price = parseFloat(btn.data('price'));
-          const itemId = parseInt(btn.data('item-id'));
-          const truckId = parseInt(btn.data('truck-id'));
+          const itemId = parseInt(btn.data('itemId'));
+          const truckId = parseInt(btn.data('truckId'));
+          
+          console.log('Add to cart clicked:', { name, price, itemId, truckId });
           
           if (window.addToCart) {
             // include truck name, itemId, and truckId for backend integration

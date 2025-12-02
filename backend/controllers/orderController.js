@@ -56,8 +56,8 @@ const createOrder = async (req, res) => {
         }, 0);
         
         // Verify user exists
-        const userCheck = await db('foodtruck.users')
-            .where('userid', userId)
+        const userCheck = await db('public.users')
+            .where('id', userId)
             .first();
         
         if (!userCheck) {
@@ -68,8 +68,8 @@ const createOrder = async (req, res) => {
         }
         
         // Verify truck exists and is available
-        const truckCheck = await db('foodtruck.trucks')
-            .where('truckid', truckId)
+        const truckCheck = await db('public.food_trucks')
+            .where('id', truckId)
             .first();
         
         if (!truckCheck) {
@@ -79,7 +79,7 @@ const createOrder = async (req, res) => {
             });
         }
         
-        if (truckCheck.orderstatus === 'unavailable') {
+        if (truckCheck.status === 'closed' || !truckCheck.is_active) {
             return res.status(400).json({
                 success: false,
                 message: 'This food truck is currently not accepting orders'
@@ -88,10 +88,10 @@ const createOrder = async (req, res) => {
         
         // Verify all menu items exist and are available
         for (const item of items) {
-            const itemCheck = await db('foodtruck.menuitems')
+            const itemCheck = await db('public.menu_items')
                 .where({
-                    itemid: item.itemId,
-                    truckid: truckId
+                    id: item.itemId,
+                    food_truck_id: truckId
                 })
                 .first();
             
@@ -102,7 +102,7 @@ const createOrder = async (req, res) => {
                 });
             }
             
-            if (itemCheck.status === 'unavailable') {
+            if (!itemCheck.is_available || !itemCheck.is_active) {
                 return res.status(400).json({
                     success: false,
                     message: `Item "${itemCheck.name}" is currently unavailable`
@@ -115,36 +115,38 @@ const createOrder = async (req, res) => {
             userId,
             truckId,
             totalPrice: parseFloat(totalPrice.toFixed(2)),
-            orderStatus: 'pending',
+            orderStatus: 'received',
             scheduledPickupTime
         };
         
         const newOrder = await orderModel.createOrder(orderData);
         
         // Create order items (stored separately in database)
-        const orderItems = await orderModel.createOrderItems(newOrder.orderid, items);
+        const orderItems = await orderModel.createOrderItems(newOrder.id, items);
         
         // Get complete order
-        const completeOrder = await orderModel.getOrderById(newOrder.orderid);
+        const completeOrder = await orderModel.getOrderById(newOrder.id);
         
         return res.status(201).json({
             success: true,
             message: 'Order created successfully',
             data: {
-                orderId: completeOrder.orderid,
-                userId: completeOrder.userid,
-                truckId: completeOrder.truckid,
-                truckName: completeOrder.truckname,
-                orderStatus: completeOrder.orderstatus,
-                totalPrice: parseFloat(completeOrder.totalprice),
-                scheduledPickupTime: completeOrder.scheduledpickuptime,
-                estimatedEarliestPickup: completeOrder.estimatedearliestpickup,
-                createdAt: completeOrder.createdat,
+                orderId: completeOrder.id,
+                orderNumber: completeOrder.order_number,
+                userId: completeOrder.customer_id,
+                truckId: completeOrder.food_truck_id,
+                truckName: completeOrder.truck_name,
+                orderStatus: completeOrder.status,
+                totalPrice: parseFloat(completeOrder.total),
+                scheduledPickupTime: completeOrder.pickup_time,
+                estimatedPrepTime: completeOrder.estimated_prep_time,
+                createdAt: completeOrder.created_at,
                 items: orderItems.map(item => ({
-                    orderItemId: item.orderitemid,
-                    name: item.name,
+                    orderItemId: item.id,
+                    name: item.item_name,
                     quantity: item.quantity,
-                    price: parseFloat(item.price)
+                    unitPrice: parseFloat(item.unit_price),
+                    subtotal: parseFloat(item.subtotal)
                 }))
             }
         });
@@ -179,22 +181,25 @@ const getOrder = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: {
-                orderId: order.orderid,
-                userId: order.userid,
-                customerName: order.customername,
-                email: order.email,
-                truckId: order.truckid,
-                truckName: order.truckname,
-                orderStatus: order.orderstatus,
-                totalPrice: parseFloat(order.totalprice),
-                scheduledPickupTime: order.scheduledpickuptime,
-                estimatedEarliestPickup: order.estimatedearliestpickup,
-                createdAt: order.createdat,
+                orderId: order.id,
+                orderNumber: order.order_number,
+                userId: order.customer_id,
+                customerName: order.customer_name,
+                email: order.customer_email,
+                truckId: order.food_truck_id,
+                truckName: order.truck_name,
+                orderStatus: order.status,
+                totalPrice: parseFloat(order.total),
+                scheduledPickupTime: order.pickup_time,
+                estimatedPrepTime: order.estimated_prep_time,
+                createdAt: order.created_at,
                 items: order.items.map(item => ({
-                    orderItemId: item.orderitemid,
-                    name: item.name,
+                    orderItemId: item.id,
+                    menuItemId: item.menu_item_id,
+                    name: item.item_name,
                     quantity: item.quantity,
-                    price: parseFloat(item.price)
+                    unitPrice: parseFloat(item.unit_price),
+                    subtotal: parseFloat(item.subtotal)
                 }))
             }
         });
@@ -223,13 +228,14 @@ const getUserOrders = async (req, res) => {
             success: true,
             count: orders.length,
             data: orders.map(order => ({
-                orderId: order.orderid,
-                truckId: order.truckid,
-                truckName: order.truckname,
-                orderStatus: order.orderstatus,
-                totalPrice: parseFloat(order.totalprice),
-                scheduledPickupTime: order.scheduledpickuptime,
-                createdAt: order.createdat
+                orderId: order.id,
+                orderNumber: order.order_number,
+                truckId: order.food_truck_id,
+                truckName: order.truck_name,
+                orderStatus: order.status,
+                totalPrice: parseFloat(order.total),
+                scheduledPickupTime: order.pickup_time,
+                createdAt: order.created_at
             }))
         });
         

@@ -41,7 +41,10 @@ $(document).ready(function(){
     }
 
     if (truck) cartStore.owner = truck;
-    if (truckId) cartStore.truckId = truckId;
+    if (truckId) {
+      cartStore.truckId = truckId;
+      console.log('Setting truckId in cart:', truckId);
+    }
     
     const existing = cartStore.items.find(i => i.name === item.name);
     if (existing) {
@@ -56,6 +59,7 @@ $(document).ready(function(){
     }
 
     saveCart();
+    console.log('Cart saved:', JSON.stringify(cartStore));
     updateCart();
     return true;
   };
@@ -145,9 +149,12 @@ $(document).ready(function(){
     }
 
     if (!cartStore.truckId) {
+      console.error('Missing truckId. Cart state:', JSON.stringify(cartStore));
       alert('Truck information is missing. Please add items to cart again.');
       return;
     }
+    
+    console.log('Order proceeding with truckId:', cartStore.truckId);
 
     const pickupTime = $('#pickupTime').val() || null;
 
