@@ -1,4 +1,4 @@
-// Authentication utilities
+// Authentication utilities using jQuery
 const API_URL = 'http://localhost:5000/api';
 
 // Token management
@@ -28,29 +28,21 @@ const removeUserInfo = () => {
     localStorage.removeItem('userInfo');
 };
 
-// API calls with error handling
-const handleResponse = async (response) => {
-    const data = await response.json();
-    if (!response.ok) {
-        throw new Error(data.message || 'An error occurred');
-    }
-    return data;
-};
-
-// Authentication status check
-const checkAuth = async () => {
+// Authentication status check using jQuery AJAX
+const checkAuth = () => {
     const token = getToken();
     if (!token) {
-        return false;
+        return Promise.resolve(false);
     }
 
-    try {
-        const response = await fetch(`${API_URL}/auth/me`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await handleResponse(response);
+    return $.ajax({
+        url: `${API_URL}/auth/me`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then((data) => {
         if (data.success) {
             if (data.user) {
                 setUserInfo(data.user);
@@ -58,26 +50,24 @@ const checkAuth = async () => {
             return true;
         }
         return false;
-    } catch (error) {
+    })
+    .catch((error) => {
         console.error('Auth check failed:', error);
         removeToken();
         removeUserInfo();
         return false;
-    }
+    });
 };
 
-// Login function
-const login = async (email, password) => {
-    try {
-        const response = await fetch(`${API_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        });
-
-        const data = await handleResponse(response);
+// Login function using jQuery AJAX
+const login = (email, password) => {
+    return $.ajax({
+        url: `${API_URL}/auth/login`,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ email, password })
+    })
+    .then((data) => {
         if (data.success && data.token) {
             setToken(data.token);
             if (data.user) {
@@ -85,39 +75,37 @@ const login = async (email, password) => {
             }
             return data;
         }
-        throw new Error(data.message || 'Login failed');
-    } catch (error) {
-        console.error('Login error:', error);
-        throw error;
-    }
+        return $.Deferred().reject({ responseJSON: { message: data.message || 'Login failed' } });
+    })
+    .fail((xhr) => {
+        console.error('Login error:', xhr.responseJSON?.message || xhr.statusText);
+    });
 };
 
-// Signup function
-const signup = async (name, email, password, confirmPassword) => {
-    try {
-        const response = await fetch(`${API_URL}/auth/signup`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name,
-                email,
-                password,
-                confirmPassword
-            })
-        });
-
-        const data = await handleResponse(response);
+// Signup function using jQuery AJAX
+const signup = (name, email, password, confirmPassword) => {
+    return $.ajax({
+        url: `${API_URL}/auth/signup`,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            name,
+            email,
+            password,
+            confirmPassword
+        })
+    })
+    .done((data) => {
         if (data.success) {
-            // Don't auto-login, just return success
             return data;
         }
         throw new Error(data.message || 'Signup failed');
-    } catch (error) {
+    })
+    .fail((xhr, status, error) => {
         console.error('Signup error:', error);
-        throw error;
-    }
+        const errorMsg = xhr.responseJSON?.message || 'Signup failed';
+        throw new Error(errorMsg);
+    });
 };
 
 // Logout function
@@ -139,11 +127,12 @@ const validatePassword = (password) => {
 };
 
 // Protected route helper
-const requireAuth = async () => {
-    const isAuthenticated = await checkAuth();
-    if (!isAuthenticated) {
-        window.location.href = '/login.html';
-        return false;
-    }
-    return true;
+const requireAuth = () => {
+    return checkAuth().then((isAuthenticated) => {
+        if (!isAuthenticated) {
+            window.location.href = '/login.html';
+            return false;
+        }
+        return true;
+    });
 };

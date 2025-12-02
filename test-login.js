@@ -1,62 +1,25 @@
-require('dotenv').config();
-const http = require('http');
+const axios = require('axios');
 
-function testLogin() {
-  const postData = JSON.stringify({
-    email: 'test@student.giu-uni.de',
-    password: 'Test123!'
-  });
-
-  const options = {
-    hostname: 'localhost',
-    port: 5000,
-    path: '/api/auth/login',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(postData)
-    }
-  };
-
-  console.log('Sending login request...');
-  console.log('Data:', postData);
-
-  const req = http.request(options, (res) => {
-    console.log(`Status Code: ${res.statusCode}`);
-    
-    let data = '';
-    
-    res.on('data', (chunk) => {
-      data += chunk;
-    });
-    
-    res.on('end', () => {
-      console.log('Response:', data);
-      try {
-        const json = JSON.parse(data);
-        console.log('\nParsed Response:');
-        console.log(JSON.stringify(json, null, 2));
+async function testLogin() {
+    try {
+        console.log('🔐 Testing login with deactivated account...\n');
         
-        if (json.success) {
-          console.log('\n✅ Login successful!');
-          console.log('User:', json.user);
-          console.log('Token received:', json.token ? 'Yes' : 'No');
+        const response = await axios.post('http://localhost:5000/api/auth/login', {
+            email: 'test@student.giu-uni.de',
+            password: 'Test1234'
+        });
+        
+        console.log('❌ Login succeeded (this should not happen!)');
+        console.log('Response:', response.data);
+    } catch (error) {
+        if (error.response) {
+            console.log('✅ Login blocked correctly!');
+            console.log('Status:', error.response.status);
+            console.log('Message:', error.response.data.message);
         } else {
-          console.log('\n❌ Login failed:', json.message);
+            console.log('❌ Error:', error.message);
         }
-      } catch (e) {
-        console.log('Could not parse JSON');
-      }
-    });
-  });
-
-  req.on('error', (e) => {
-    console.error(`Problem with request: ${e.message}`);
-  });
-
-  req.write(postData);
-  req.end();
+    }
 }
 
-// Run the test
 testLogin();
