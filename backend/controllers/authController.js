@@ -38,8 +38,8 @@ exports.login = async (req, res, next) => {
         }
 
         // Check if user exists - Using Knex Query Builder
-        const user = await db('foodtruck.users')
-            .select('userid as id', 'email', 'password', 'name', 'role')
+        const user = await db('public.users')
+            .select('id', 'email', 'password', 'name', 'role', 'is_active')
             .where({ email })
             .first();
 
@@ -47,6 +47,14 @@ exports.login = async (req, res, next) => {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid credentials'
+            });
+        }
+
+        // Check if account is active
+        if (!user.is_active) {
+            return res.status(403).json({
+                success: false,
+                message: 'Your account has been deactivated. Please contact support.'
             });
         }
 
@@ -148,8 +156,8 @@ exports.signup = async (req, res, next) => {
         }
 
         // Check if user already exists - Using Knex Query Builder
-        const existingUser = await db('foodtruck.users')
-            .select('userid')
+        const existingUser = await db('public.users')
+            .select('id')
             .where({ email })
             .first();
 
@@ -165,7 +173,7 @@ exports.signup = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Create new user with birthDate - All signups are customers
-        const [newUser] = await db('foodtruck.users')
+        const [newUser] = await db('public.users')
             .insert({
                 name,
                 email,
@@ -173,7 +181,7 @@ exports.signup = async (req, res, next) => {
                 role: 'customer',
                 birthdate: birthDate
             })
-            .returning(['userid as id', 'name', 'email', 'role', 'birthdate']);
+            .returning(['id', 'name', 'email', 'role', 'birthdate']);
 
         // Generate JWT token
         const token = generateToken(newUser);
@@ -205,9 +213,9 @@ exports.getCurrentUser = async (req, res, next) => {
         const user = req.user;
 
         // Get fresh user data from database - Using Knex Query Builder
-        const userData = await db('foodtruck.users')
-            .select('userid as id', 'name', 'email', 'role')
-            .where({ userid: user.id })
+        const userData = await db('public.users')
+            .select('id', 'name', 'email', 'role')
+            .where({ id: user.id })
             .first();
 
         if (!userData) {

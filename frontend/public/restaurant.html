@@ -6,6 +6,7 @@
     <title>Restaurant</title>
     <link rel="stylesheet" href="./css/styles.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   </head>
   <body>
     <header class="site-header">
@@ -67,32 +68,54 @@
       </div>
     </aside>
 
+    <script src="./js/auth.js"></script>
     <script src="./js/main.js" defer></script>
 
     <script>
-      // Read truck query param and render items
+      // Check authentication first
+      $(document).ready(function() {
+        checkAuth().then(function(isAuth) {
+          if (!isAuth) {
+            window.location.href = '/login.html';
+            return;
+          }
+
+          // Prevent admin from accessing this page
+          const userInfo = getUserInfo();
+          if (userInfo && userInfo.role === 'admin') {
+            window.location.href = '/admin.html';
+            return;
+          }
+          
+          // Load menu
+          loadTruckMenu();
+        });
+      });
+
+      // Read truck query param and render items - jQuery way
       function getQueryParam(name) {
-        const url = new URL(window.location.href);
-        return url.searchParams.get(name);
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
       }
 
       const truckName = getQueryParam('truck') || 'Unknown';
-      document.title = truckName + ' — Menu';
-      const titleEl = document.getElementById('restaurantTitle');
-      if (titleEl) titleEl.textContent = truckName;
+      $(document).prop('title', truckName + ' — Menu');
+      const titleEl = $('#restaurantTitle');
+      if (titleEl.length) titleEl.text(truckName);
 
-      const introEl = document.getElementById('restaurantIntro');
-      const itemsGrid = document.getElementById('itemsGrid');
+      const introEl = $('#restaurantIntro');
+      const itemsGrid = $('#itemsGrid');
 
-      // Load truck and menu data from API
-      async function loadTruckMenu() {
-        try {
-          const response = await fetch(`http://localhost:5000/api/trucks/name/${encodeURIComponent(truckName)}/menu`);
-          const result = await response.json();
-          
+      // Load truck and menu data from API using jQuery AJAX
+      function loadTruckMenu() {
+        $.ajax({
+          url: `http://localhost:5000/api/trucks/name/${encodeURIComponent(truckName)}/menu`,
+          method: 'GET'
+        })
+        .done(function(result) {
           if (!result.success) {
-            if (introEl) introEl.innerHTML = `<h1>${truckName}</h1><p class="muted">Food truck not found.</p>`;
-            if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">Food truck not found.</p>';
+            if (introEl.length) introEl.html(`<h1>${truckName}</h1><p class=\"muted\">Food truck not found.</p>`);
+            if (itemsGrid.length) itemsGrid.html('<p class=\"muted\">Food truck not found.</p>');
             return;
           }
           
@@ -100,78 +123,81 @@
           const items = result.data;
           
           // Update title
-          if (titleEl) titleEl.textContent = truck.name;
-          document.title = truck.name + ' — Menu';
+          if (titleEl.length) titleEl.text(truck.name);
+          $(document).prop('title', truck.name + ' — Menu');
           
           // Display intro
-          if (introEl) {
-            introEl.innerHTML = `
+          if (introEl.length) {
+            introEl.html(`
               <h1>${truck.name}</h1>
               <p>${truck.description || 'Delicious items from this truck.'}</p>
-            `;
+            `);
           }
           
           // Check truck status
           if (truck.is_busy) {
-            if (introEl) introEl.innerHTML = `<h1>${truck.name}</h1><p class="muted">The food truck is busy right now.</p>`;
-            if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">The food truck is busy and not taking orders right now.</p>';
+            if (introEl.length) introEl.html(`<h1>${truck.name}</h1><p class=\"muted\">The food truck is busy right now.</p>`);
+            if (itemsGrid.length) itemsGrid.html('<p class=\"muted\">The food truck is busy and not taking orders right now.</p>');
             return;
           } else if (truck.status === 'closed') {
-            if (introEl) introEl.innerHTML = `<h1>${truck.name}</h1><p class="muted">The food truck is closed.</p>`;
-            if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">This food truck is currently closed.</p>';
+            if (introEl.length) introEl.html(`<h1>${truck.name}</h1><p class=\"muted\">The food truck is closed.</p>`);
+            if (itemsGrid.length) itemsGrid.html('<p class=\"muted\">This food truck is currently closed.</p>');
             return;
           }
           
           // Render menu items
           renderItems(items, truck.name);
           
-          // Auto-open cart sidebar when visiting an open restaurant
-          const cartSidebarEl = document.getElementById('cartSidebar');
-          if (cartSidebarEl) cartSidebarEl.classList.add('open');
-          
-        } catch (error) {
+          // Cart will open only when items are added
+        })
+        .fail(function(error) {
           console.error('Error loading menu:', error);
-          if (introEl) introEl.innerHTML = `<h1>${truckName}</h1><p class="muted">Unable to load menu. Please try again later.</p>`;
-          if (itemsGrid) itemsGrid.innerHTML = '<p class="muted">Unable to load menu items.</p>';
-        }
+          if (introEl.length) introEl.html(`<h1>${truckName}</h1><p class=\"muted\">Unable to load menu. Please try again later.</p>`);
+          if (itemsGrid.length) itemsGrid.html('<p class=\"muted\">Unable to load menu items.</p>');
+        });
       }
 
       function renderItems(items, truckName) {
-        if (!itemsGrid) return;
+        if (!itemsGrid.length) return;
         if (items.length === 0) {
-          itemsGrid.innerHTML = '<p class="muted">No items found for this truck.</p>';
+          itemsGrid.html('<p class=\"muted\">No items found for this truck.</p>');
           return;
         }
 
-        itemsGrid.innerHTML = items.map(item => `
-          <div class="item-card">
-            <img src="${item.image_url || './images/images (3).jpeg'}" alt="${item.name}" />
-            <div class="item-body">
-              <div class="item-name">${item.name}</div>
-              <div class="item-desc">${item.description || ''}</div>
-              <div class="item-row">
-                <div class="item-price">L.E ${parseFloat(item.price).toFixed(2)}</div>
-                <button class="add-btn" 
-                  data-name="${item.name}" 
-                  data-price="${item.price}" 
-                  data-item-id="${item.itemid}"
-                  data-truck-id="${item.truckid}"
-                  ${!item.is_available ? 'disabled' : ''}>
-                  ${item.is_available ? 'Add' : 'Unavailable'}
-                </button>
+        const itemsHTML = items.map(function(item) {
+          return `
+            <div class=\"item-card\">
+              <img src=\"${item.image_url || './images/images (3).jpeg'}\" alt=\"${item.name}\" />
+              <div class=\"item-body\">
+                <div class=\"item-name\">${item.name}</div>
+                <div class=\"item-desc\">${item.description || ''}</div>
+                <div class=\"item-row\">
+                  <div class=\"item-price\">L.E ${parseFloat(item.price).toFixed(2)}</div>
+                  <button class=\"add-btn\" 
+                    data-name=\"${item.name}\" 
+                    data-price=\"${item.price}\"
+                    data-item-id=\"${item.itemid}\"
+                    data-truck-id=\"${item.truckid}\"
+                    ${!item.is_available ? 'disabled' : ''}>
+                    ${item.is_available ? 'Add' : 'Unavailable'}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
         
-        // Add button handler: use the shared cart API (window.addToCart)
-        document.addEventListener('click', function(e){
-          const btn = e.target.closest('.add-btn');
-          if (!btn || btn.disabled) return;
-          const name = btn.dataset.name;
-          const price = parseFloat(btn.dataset.price);
-          const itemId = parseInt(btn.dataset.itemId);
-          const truckId = parseInt(btn.dataset.truckId);
+        itemsGrid.html(itemsHTML);
+        
+        // Add button handler using jQuery: use the shared cart API (window.addToCart)
+        $(document).on('click', '.add-btn', function(e) {
+          const btn = $(this);
+          if (btn.prop('disabled')) return;
+          
+          const name = btn.data('name');
+          const price = parseFloat(btn.data('price'));
+          const itemId = parseInt(btn.data('item-id'));
+          const truckId = parseInt(btn.data('truck-id'));
           
           if (window.addToCart) {
             // include truck name, itemId, and truckId for backend integration
@@ -183,16 +209,14 @@
               itemId: itemId,
               truckId: truckId
             });
-            const cartSidebarEl = document.getElementById('cartSidebar');
-            if (added && cartSidebarEl) cartSidebarEl.classList.add('open');
+            if (added) {
+              $('#cartSidebar').addClass('open');
+            }
           } else {
             alert(name + ' added to cart (demo)');
           }
         });
       }
-
-      // Load menu on page load
-      document.addEventListener('DOMContentLoaded', loadTruckMenu);
     </script>
   </body>
 </html>

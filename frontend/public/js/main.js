@@ -1,10 +1,10 @@
-// Food web interactive behaviors and a shared cart API
-document.addEventListener('DOMContentLoaded', function(){
-  const cartToggle = document.getElementById('cartToggle');
-  const cartSidebar = document.getElementById('cartSidebar');
-  const closeCart = document.getElementById('closeCart');
-  const proceedBtn = document.getElementById('proceedBtn');
-  const schedulePickup = document.getElementById('schedulePickup');
+// Food web interactive behaviors and a shared cart API using jQuery
+$(document).ready(function(){
+  const cartToggle = $('#cartToggle');
+  const cartSidebar = $('#cartSidebar');
+  const closeCart = $('#closeCart');
+  const proceedBtn = $('#proceedBtn');
+  const schedulePickup = $('#schedulePickup');
 
   // Order structure: { truck, items, total, pickupTime, status, createdAt }
   // Cart structure: { owner: null|string, truckId: null|number, items: [ {name,price,quantity,itemId} ] }
@@ -61,49 +61,46 @@ document.addEventListener('DOMContentLoaded', function(){
   };
 
   function updateCart() {
-    const cartItems = document.querySelector('.cart-items');
-    const totalAmount = document.querySelector('.total-amount');
-    const grandTotalAmount = document.querySelector('.grand-total-amount');
-    const estimatedTimeEl = document.querySelector('.estimated-time');
-    const cartCount = document.querySelector('.cart-count');
+    const cartItems = $('.cart-items');
+    const totalAmount = $('.total-amount');
+    const grandTotalAmount = $('.grand-total-amount');
+    const estimatedTimeEl = $('.estimated-time');
+    const cartCount = $('.cart-count');
 
     // If there's an active order, show order status instead of cart items
     if (currentOrder && currentOrder.status === 'processing') {
-      if (cartItems) {
-        cartItems.innerHTML = `
+      if (cartItems.length) {
+        cartItems.html(`
           <div class="order-status-display">
             <p style="font-weight: 600; color: #22c55e; margin-bottom: 0.5rem;">✓ Order in Progress</p>
             <p style="color: #64748b; margin-bottom: 0.75rem;">Your order is being prepared.</p>
             <button class="track-btn" style="width: 100%; padding: 0.6rem; background: #22c55e; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Track Order</button>
           </div>
-        `;
+        `);
 
-        // Track button handler
-        const trackBtn = cartItems.querySelector('.track-btn');
-        if (trackBtn) {
-          trackBtn.addEventListener('click', () => {
-            window.location.href = 'track.html';
-          });
-        }
+        // Track button handler using jQuery
+        cartItems.find('.track-btn').on('click', function() {
+          window.location.href = 'track.html';
+        });
       }
 
-      if (proceedBtn) proceedBtn.style.display = 'none';
-      if (schedulePickup) schedulePickup.style.display = 'none';
-      if (totalAmount) totalAmount.textContent = `L.E ${currentOrder.total.toFixed(2)}`;
-      if (grandTotalAmount) grandTotalAmount.textContent = `L.E ${currentOrder.total.toFixed(2)}`;
-      if (estimatedTimeEl) estimatedTimeEl.textContent = currentOrder.pickupTime ? new Date(currentOrder.pickupTime).toLocaleString() : 'ASAP';
+      proceedBtn.hide();
+      schedulePickup.hide();
+      totalAmount.text(`L.E ${currentOrder.total.toFixed(2)}`);
+      grandTotalAmount.text(`L.E ${currentOrder.total.toFixed(2)}`);
+      estimatedTimeEl.text(currentOrder.pickupTime ? new Date(currentOrder.pickupTime).toLocaleString() : 'ASAP');
       return;
     }
 
     // Normal cart display
-    if (proceedBtn) proceedBtn.style.display = 'block';
-    if (schedulePickup) schedulePickup.style.display = 'block';
+    proceedBtn.show();
+    schedulePickup.show();
 
     const totalQty = cartStore.items.reduce((sum, item) => sum + item.quantity, 0);
-    if (cartCount) cartCount.textContent = totalQty;
+    cartCount.text(totalQty);
 
-    if (cartItems) {
-      cartItems.innerHTML = cartStore.items.map(item => `
+    if (cartItems.length) {
+      const cartHTML = cartStore.items.map(item => `
         <div class="cart-item">
           <div class="item-info">
             <span class="cart-item-title">${item.quantity} x ${item.name}</span>
@@ -111,140 +108,136 @@ document.addEventListener('DOMContentLoaded', function(){
           </div>
         </div>
       `).join('') || '<p class="muted">Your cart is empty.</p>';
+      cartItems.html(cartHTML);
     }
 
     const subtotal = cartStore.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-    if (totalAmount) totalAmount.textContent = `L.E ${subtotal.toFixed(2)}`;
-    if (grandTotalAmount) grandTotalAmount.textContent = `L.E ${subtotal.toFixed(2)}`;
+    totalAmount.text(`L.E ${subtotal.toFixed(2)}`);
+    grandTotalAmount.text(`L.E ${subtotal.toFixed(2)}`);
 
-    if (estimatedTimeEl) {
-      const minMinutes = 10 + totalQty * 3;
-      const maxMinutes = minMinutes + 10;
-      estimatedTimeEl.textContent = totalQty > 0 ? `${minMinutes} - ${maxMinutes} min` : '--';
-    }
+    const minMinutes = 10 + totalQty * 3;
+    const maxMinutes = minMinutes + 10;
+    estimatedTimeEl.text(totalQty > 0 ? `${minMinutes} - ${maxMinutes} min` : '--');
   }
 
-  // Proceed button click handler
-  if (proceedBtn) {
-    proceedBtn.addEventListener('click', async () => {
-      if (cartStore.items.length === 0) {
-        alert('Your cart is empty!');
-        return;
+  // Proceed button click handler using jQuery
+  proceedBtn.on('click', async function() {
+    if (cartStore.items.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+
+    // Get user info from localStorage
+    const userInfo = localStorage.getItem('userInfo');
+    if (!userInfo) {
+      alert('Please log in to place an order');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const user = JSON.parse(userInfo);
+    const userId = user.id || user.userid || user.userId;
+
+    if (!userId) {
+      alert('User information is incomplete. Please log in again.');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    if (!cartStore.truckId) {
+      alert('Truck information is missing. Please add items to cart again.');
+      return;
+    }
+
+    const pickupTime = $('#pickupTime').val() || null;
+
+    // Prepare order data for backend
+    const orderData = {
+      userId: userId,
+      truckId: cartStore.truckId,
+      items: cartStore.items.map(item => ({
+        itemId: item.itemId,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      scheduledPickupTime: pickupTime
+    };
+
+    try {
+      // Show loading state
+      proceedBtn.prop('disabled', true);
+      proceedBtn.text('Processing...');
+
+      // Send order to backend using jQuery AJAX
+      const result = await $.ajax({
+        url: 'http://localhost:5000/api/orders',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(orderData)
+      });
+
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to create order');
       }
 
-      // Get user info from localStorage
-      const userInfo = localStorage.getItem('userInfo');
-      if (!userInfo) {
-        alert('Please log in to place an order');
-        window.location.href = 'login.html';
-        return;
-      }
-
-      const user = JSON.parse(userInfo);
-      const userId = user.userid || user.userId;
-
-      if (!userId) {
-        alert('User information is incomplete. Please log in again.');
-        window.location.href = 'login.html';
-        return;
-      }
-
-      if (!cartStore.truckId) {
-        alert('Truck information is missing. Please add items to cart again.');
-        return;
-      }
-
-      const pickupTimeInput = document.getElementById('pickupTime');
-      const pickupTime = pickupTimeInput ? pickupTimeInput.value : null;
-
-      // Prepare order data for backend
-      const orderData = {
-        userId: userId,
+      // Store order info locally for tracking
+      const total = cartStore.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+      currentOrder = {
+        orderId: result.data.orderId,
+        truck: cartStore.owner,
         truckId: cartStore.truckId,
-        items: cartStore.items.map(item => ({
-          itemId: item.itemId,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price
-        })),
-        scheduledPickupTime: pickupTime
+        items: cartStore.items,
+        total: total,
+        pickupTime: result.data.scheduledPickupTime,
+        status: 'processing',
+        createdAt: result.data.createdAt
       };
 
-      try {
-        // Show loading state
-        proceedBtn.disabled = true;
-        proceedBtn.textContent = 'Processing...';
+      saveOrder();
 
-        // Send order to backend
-        const response = await fetch('http://localhost:5000/api/orders', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(orderData)
-        });
+      // Show success message
+      alert('Order placed successfully! Order ID: ' + result.data.orderId);
 
-        const result = await response.json();
+      // Clear cart and update UI
+      cartStore.items = [];
+      cartStore.owner = null;
+      cartStore.truckId = null;
+      saveCart();
 
-        if (!response.ok) {
-          throw new Error(result.message || 'Failed to create order');
-        }
+      updateCart();
 
-        // Store order info locally for tracking
-        const total = cartStore.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-        currentOrder = {
-          orderId: result.data.orderId,
-          truck: cartStore.owner,
-          truckId: cartStore.truckId,
-          items: cartStore.items,
-          total: total,
-          pickupTime: result.data.scheduledPickupTime,
-          status: 'processing',
-          createdAt: result.data.createdAt
-        };
+    } catch (error) {
+      console.error('Error creating order:', error);
+      alert('Failed to place order: ' + (error.responseJSON?.message || error.message));
+    } finally {
+      // Reset button state
+      proceedBtn.prop('disabled', false);
+      proceedBtn.text('Proceed to Checkout');
+    }
+  });
 
-        saveOrder();
-
-        // Show success message
-        alert('Order placed successfully! Order ID: ' + result.data.orderId);
-
-        // Clear cart and update UI
-        cartStore.items = [];
-        cartStore.owner = null;
-        cartStore.truckId = null;
-        saveCart();
-
-        updateCart();
-
-      } catch (error) {
-        console.error('Error creating order:', error);
-        alert('Failed to place order: ' + error.message);
-      } finally {
-        // Reset button state
-        proceedBtn.disabled = false;
-        proceedBtn.textContent = 'Proceed to Checkout';
-      }
-    });
-  }
-
-  // Toggle cart sidebar
-  if (cartToggle) cartToggle.addEventListener('click', () => {
-    if (cartSidebar) cartSidebar.classList.add('open');
+  // Toggle cart sidebar using jQuery
+  cartToggle.on('click', function() {
+    cartSidebar.addClass('open');
     updateCart();
   });
-  if (closeCart) closeCart.addEventListener('click', () => {
-    if (cartSidebar) cartSidebar.classList.remove('open');
+  
+  closeCart.on('click', function() {
+    cartSidebar.removeClass('open');
   });
 
-  // Header brand dropdown toggle
-  const brandToggle = document.querySelector('.brand-toggle');
-  const brandMenu = document.querySelector('.brand-menu');
-  if (brandToggle && brandMenu) {
-    brandToggle.addEventListener('click', function(e){
+  // Header brand dropdown toggle using jQuery
+  const brandToggle = $('.brand-toggle');
+  const brandMenu = $('.brand-menu');
+  if (brandToggle.length && brandMenu.length) {
+    brandToggle.on('click', function(e){
       e.stopPropagation();
-      brandMenu.classList.toggle('open');
+      brandMenu.toggleClass('open');
     });
-    document.addEventListener('click', function(){ brandMenu.classList.remove('open'); });
+    $(document).on('click', function(){ 
+      brandMenu.removeClass('open'); 
+    });
   }
 
   // Initialize
