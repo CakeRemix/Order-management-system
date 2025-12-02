@@ -1664,7 +1664,24 @@ Payback Period: 2.3 months
 \begin{storybox}
 \begin{itemize}[leftmargin=1em, itemsep=6pt]
     \item As a customer, I want to schedule my lunch order in advance so that I can check the order status through the website and know when my order is ready for pickup.
-    \item As a customer, I want to browse all the food trucks available on campus, see all options.
+    \item As a customer, I should be able to view all trucks that have truckStatus as “available” and orderStatus as “available” . The server should respond with an array of truck objects. The results should be sorted according to column truckId in table Trucks.
+    \item As a customer, I should be able to place an order from my shopping cart with a scheduled pickup time. You must use the function getUser to retrieve the current customer id (userId).
+    \item As a customer, I should be able to add any available menu item to my shopping cart. You need to insert a new cart record in your database table Carts. You must use the getUser function to retrieve the current customer id (userId). Before adding the menu item to cart, verify that all items in the cart belong to the same truck (truckId). If items are from different trucks, respond with error message “Cannot order from multiple trucks” . Otherwise, the server should respond with a message “ item added to cart successfully” .
+    \item As a customer, I should be able to view all items in my shopping cart based on my userId. You must use the function getUser to retrieve the current customer id (userId). The server should respond with an array of cartItem objects. This array should be sorted according to column cartId in table Carts.
+    \item As a customer, I should be able to remove any item from my shopping cart. You need to delete a cart record using request params cartId. You must verify that the cart item belongs to the current user before deleting. The server should respond with a message " item removed from cart successfully" .
+\end{itemize}
+\end{storybox}
+
+\newpage
+
+\begin{storybox}
+\begin{itemize}[leftmargin=1em, itemsep=6pt]
+    \item As a customer, I should be able to edit the quantity of items in my shopping cart. You need to update a cart record using request params cartId. You must verify that the cart item belongs to the current user before updating. The server should respond with a message "cart updated successfully" .
+    \item As a customer, I should be able to view all my past and current orders. You must use the function getUser to retrieve the current customer id (userId). The server should respond with an array of order objects including the truck name by joining with the Trucks table. The results should be sorted by orderId in descending order (most recent first).
+    \item As a customer, I should be able to view the full details of a specific order including all items. You must verify that the order belongs to the current user before returning the details. The server should respond with an orderDetails object that includes order information and an array of items from the OrderItems table joined with MenuItems table.
+    \item As a customer, I should be able to search and filter menu items by category for a specific truck. Only items with status “available” should be returned. The server should respond with an array of menuItem objects matching the specified category. The results should be sorted according to column itemId in table MenuItems.
+    \item As a customer, I should be able to view all menu items for a specific truck where status is “available” . The server should respond with an array of menuItem objects. The results should be sorted according to column itemId in table MenuItems.    
+    
 \end{itemize}
 \end{storybox}
 
@@ -1673,8 +1690,24 @@ Payback Period: 2.3 months
 \subsubsection{Food Truck Service Provider User Stories}
 \begin{storybox}
 \begin{itemize}[leftmargin=1em, itemsep=6pt]
-    \item As a food truck staff member, I want to receive new orders through the system and update order status (received, preparing, ready) so customers can track their orders via polling.
-    \item As a food truck owner, I want to create my menu with items, prices, and cooking times.
+    \item As a truck owner, I should be able to add items in to my menu. You need to insert a new menu item record in your MenuItems database table. You must use the default value of status column and createdAt column. The server should respond with a message that “menu item was created successfully”.
+    \item As a truck owner, I should be able to view all my menu items where status has a value of “available” . I am not allowed to view other truck owner’s menu items. The server should respond with an array of menuItem objects. The results should be sorted according to column itemId in table MenuItems.
+    \item As a truck owner, I should be able to view all information of a specific menu item using its itemId. I am not allowed to view menu items from other truck owners. The server should respond with a menuItem object.
+    \item As a truck owner, I should be able to edit my menu items only. I am not allowed to edit other truck owner’s menu items. You need to update a menu item record in your table MenuItems. You are allowed to edit name, price, category, and description only. The server should respond with a message “menu item updated successfully” .
+    \item As a truck owner, I should be able to delete my menu items only. I am not allowed to delete other truck owner's menu items. You need to update a menu item record in your table MenuItems by setting its status to "unavailable" . The server should respond with a message "menu item deleted successfully" .
+\end{itemize}
+\end{storybox}
+
+\newpage
+
+\begin{storybox}
+\begin{itemize}[leftmargin=1em, itemsep=6pt]
+    \item As a truck owner, I should be able to view all orders placed for my truck. You must use the function getUser to retrieve the current truck owner's truckId. The server should respond with an array of truckOrder objects including the customer name by joining with the Users table. The results should be sorted by orderId in descending order (most recent first).
+    \item As a truck owner, I should be able to update the status of orders for my own truck only. Valid values for orderStatus are “pending” , “preparing” , “ready” , “completed” , and “cancelled” . Before updating an order, the server must verify that the order belongs to the currently logged-in truck owner’s truck. The estimatedEarliestPickup field may also be included in the update, but it is optional and should only be updated if provided. After successfully applying the update, the server should respond with the message: “order status updated successfully” .
+    \item As a truck owner, I should be able to view the full details of a specific order including all items. You must verify that the order belongs to the current truck owner before returning the details. The server should respond with an orderDetails object that includes order information and an array of items from the OrderItems table joined with MenuItems table.
+    \item As a truck owner, I should be able to toggle my truck’s order availability. Valid orderStatus values are: “available” or “unavailable” . You must use the function getUser to retrieve the current truck owner’s truckId. You need to update the orderStatus column in the Trucks table for your truck only. The server should respond with a message “truck order status updated successfully” .
+    \item As a truck owner, I should be able to view my truck’s information including current status settings. You must use the function getUser to retrieve the current truck owner’s truckId. The server should respond with a truck object containing all information about the truck owner’s truck.
+
 \end{itemize}
 \end{storybox}
 
