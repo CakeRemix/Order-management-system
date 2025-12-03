@@ -168,7 +168,7 @@
         const trucksGrid = $('#trucksGrid');
         
         $.ajax({
-          url: 'http://localhost:5000/api/trucks',
+          url: 'http://localhost:5000/api/v1/trucks/view',
           method: 'GET'
         })
         .done(function(result) {
@@ -181,22 +181,22 @@
           
           // Render truck cards
           const trucksHTML = trucks.map(function(truck) {
-            // Determine status label and class based on truckstatus
+            // Determine status label and class based on truckStatus and orderStatus
             let statusLabel = 'Closed';
             let statusClass = 'closed';
             
-            if (truck.status === 'available') {
+            if (truck.isAvailable) {
               statusLabel = 'Open';
               statusClass = 'open';
-            } else if (truck.status === 'unavailable') {
-              statusLabel = 'Closed';
-              statusClass = 'closed';
+            } else if (truck.truckStatus === 'available' && truck.orderStatus === 'unavailable') {
+              statusLabel = 'Not Taking Orders';
+              statusClass = 'busy';
             }
             
             return `
-              <a href="restaurant.html?truck=${encodeURIComponent(truck.name)}" class="category-item" data-status="${statusClass}">
+              <a href="restaurant.html?truck=${encodeURIComponent(truck.truckName)}&id=${truck.truckId}" class="category-item" data-status="${statusClass}">
                 <div class="category-icon">
-                  <span class="icon-text">${truck.name}</span>
+                  <span class="icon-text">${truck.truckName}</span>
                 </div>
                 <div class="truck-status" data-status="${statusClass}">
                   <span class="status-dot" aria-hidden="true"></span>
