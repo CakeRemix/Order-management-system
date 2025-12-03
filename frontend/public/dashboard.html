@@ -138,6 +138,12 @@
             window.location.href = '/admin.html';
             return;
           }
+          
+          // Prevent vendors/truck owners from accessing customer dashboard
+          if (user && user.role === 'truckOwner') {
+            window.location.href = '/vendor-dashboard.html';
+            return;
+          }
           if (user) {
             const breadcrumb = $('#userBreadcrumb');
             if (breadcrumb.length) {
