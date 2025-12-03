@@ -56,8 +56,8 @@ const createOrder = async (req, res) => {
         }, 0);
         
         // Verify user exists
-        const userCheck = await db('public.users')
-            .where('id', userId)
+        const userCheck = await db('foodtruck.users')
+            .where('userid', userId)
             .first();
         
         if (!userCheck) {
@@ -68,8 +68,8 @@ const createOrder = async (req, res) => {
         }
         
         // Verify truck exists and is available
-        const truckCheck = await db('public.food_trucks')
-            .where('id', truckId)
+        const truckCheck = await db('foodtruck.trucks')
+            .where('truckid', truckId)
             .first();
         
         if (!truckCheck) {
@@ -79,7 +79,7 @@ const createOrder = async (req, res) => {
             });
         }
         
-        if (truckCheck.status === 'closed' || !truckCheck.is_active) {
+        if (truckCheck.truckstatus === 'unavailable' || truckCheck.orderstatus === 'unavailable') {
             return res.status(400).json({
                 success: false,
                 message: 'This food truck is currently not accepting orders'
@@ -88,10 +88,10 @@ const createOrder = async (req, res) => {
         
         // Verify all menu items exist and are available
         for (const item of items) {
-            const itemCheck = await db('public.menu_items')
+            const itemCheck = await db('foodtruck.menuitems')
                 .where({
-                    id: item.itemId,
-                    food_truck_id: truckId
+                    itemid: item.itemId,
+                    truckid: truckId
                 })
                 .first();
             
@@ -102,7 +102,7 @@ const createOrder = async (req, res) => {
                 });
             }
             
-            if (!itemCheck.is_available || !itemCheck.is_active) {
+            if (itemCheck.status !== 'available') {
                 return res.status(400).json({
                     success: false,
                     message: `Item "${itemCheck.name}" is currently unavailable`
@@ -115,38 +115,35 @@ const createOrder = async (req, res) => {
             userId,
             truckId,
             totalPrice: parseFloat(totalPrice.toFixed(2)),
-            orderStatus: 'received',
+            orderStatus: 'pending',
             scheduledPickupTime
         };
         
         const newOrder = await orderModel.createOrder(orderData);
         
         // Create order items (stored separately in database)
-        const orderItems = await orderModel.createOrderItems(newOrder.id, items);
+        const orderItems = await orderModel.createOrderItems(newOrder.orderid, items);
         
         // Get complete order
-        const completeOrder = await orderModel.getOrderById(newOrder.id);
+        const completeOrder = await orderModel.getOrderById(newOrder.orderid);
         
         return res.status(201).json({
             success: true,
             message: 'Order created successfully',
             data: {
-                orderId: completeOrder.id,
-                orderNumber: completeOrder.order_number,
-                userId: completeOrder.customer_id,
-                truckId: completeOrder.food_truck_id,
+                orderId: completeOrder.orderid,
+                userId: completeOrder.userid,
+                truckId: completeOrder.truckid,
                 truckName: completeOrder.truck_name,
-                orderStatus: completeOrder.status,
-                totalPrice: parseFloat(completeOrder.total),
-                scheduledPickupTime: completeOrder.pickup_time,
-                estimatedPrepTime: completeOrder.estimated_prep_time,
-                createdAt: completeOrder.created_at,
+                orderStatus: completeOrder.orderstatus,
+                totalPrice: parseFloat(completeOrder.totalprice),
+                scheduledPickupTime: completeOrder.scheduledpickuptime,
+                createdAt: completeOrder.createdat,
                 items: orderItems.map(item => ({
-                    orderItemId: item.id,
-                    name: item.item_name,
+                    orderItemId: item.orderitemid,
+                    itemId: item.itemid,
                     quantity: item.quantity,
-                    unitPrice: parseFloat(item.unit_price),
-                    subtotal: parseFloat(item.subtotal)
+                    price: parseFloat(item.price)
                 }))
             }
         });

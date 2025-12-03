@@ -175,16 +175,16 @@
           
           // Render truck cards
           const trucksHTML = trucks.map(function(truck) {
-            // Determine status label and class
+            // Determine status label and class based on truckstatus
             let statusLabel = 'Closed';
             let statusClass = 'closed';
             
-            if (truck.is_busy) {
-              statusLabel = 'Busy';
-              statusClass = 'busy';
-            } else if (truck.status === 'open') {
+            if (truck.status === 'available') {
               statusLabel = 'Open';
               statusClass = 'open';
+            } else if (truck.status === 'unavailable') {
+              statusLabel = 'Closed';
+              statusClass = 'closed';
             }
             
             return `

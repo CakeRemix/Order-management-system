@@ -54,7 +54,7 @@ const getMyMenuItems = async (req, res, next) => {
         
         // Get menu items for this truck
         const menuItems = await db('foodtruck.menuitems')
-            .select('itemid', 'name', 'price', 'description', 'category', 'status', 'image', 'createdat')
+            .select('itemid', 'name', 'price', 'description', 'category', 'status', 'createdat')
             .where({ truckid: truck.truckid })
             .orderBy('createdat', 'desc');
         
@@ -114,7 +114,6 @@ const addMenuItem = async (req, res, next) => {
         
         // Insert menu item
         const status = isavailable !== false ? 'available' : 'unavailable';
-        const { image } = req.body;
         const [newItem] = await db('foodtruck.menuitems')
             .insert({
                 truckid: truck.truckid,
@@ -122,10 +121,9 @@ const addMenuItem = async (req, res, next) => {
                 description: description || null,
                 price: price,
                 category: 'main',
-                status: status,
-                image: image || null
+                status: status
             })
-            .returning(['itemid', 'name', 'price', 'description', 'category', 'status', 'image', 'createdat']);
+            .returning(['itemid', 'name', 'price', 'description', 'category', 'status', 'createdat']);
         
         res.status(201).json({
             success: true,
@@ -188,7 +186,7 @@ const updateMenuItem = async (req, res, next) => {
         const [updatedItem] = await db('foodtruck.menuitems')
             .where({ itemid: itemId })
             .update(updateData)
-            .returning(['itemid', 'name', 'price', 'description', 'category', 'status', 'image']);
+            .returning(['itemid', 'name', 'price', 'description', 'category', 'status']);
         
         res.json({
             success: true,
@@ -356,7 +354,7 @@ const toggleBusyMode = async (req, res, next) => {
         }
         
         // Update truck status based on busy mode
-        const newStatus = busy ? 'busy' : 'available';
+        const newStatus = busy ? 'unavailable' : 'available';
         
         await db('foodtruck.trucks')
             .where({ truckid: truck.truckid })
