@@ -151,6 +151,12 @@ async function loadTruckInfo() {
             currentTruck = data.truck;
             document.getElementById('truckName').textContent = currentTruck.truckname || 'Your Truck';
             
+            // Set busy mode checkbox based on truck status
+            const busyModeCheckbox = document.getElementById('busyMode');
+            if (busyModeCheckbox) {
+                busyModeCheckbox.checked = currentTruck.truckstatus === 'unavailable';
+            }
+            
             // Populate settings form
             if (document.getElementById('truckNameInput')) {
                 document.getElementById('truckNameInput').value = currentTruck.truckname || '';
@@ -380,7 +386,6 @@ function openMenuItemModal(itemId = null) {
             document.getElementById('itemName').value = item.name || '';
             document.getElementById('itemDescription').value = item.description || '';
             document.getElementById('itemPrice').value = item.price || '';
-            document.getElementById('itemImage').value = item.image || '';
             document.getElementById('itemAvailable').checked = item.isavailable !== false;
         }
     }
@@ -399,7 +404,6 @@ async function handleMenuItemSubmit(e) {
         name: document.getElementById('itemName').value,
         description: document.getElementById('itemDescription').value,
         price: parseFloat(document.getElementById('itemPrice').value),
-        image: document.getElementById('itemImage').value || null,
         isavailable: document.getElementById('itemAvailable').checked
     };
     
@@ -493,11 +497,21 @@ async function handleBusyModeToggle() {
         });
         
         if (response.ok) {
+            const data = await response.json();
+            // Update current truck status
+            if (currentTruck) {
+                currentTruck.truckstatus = data.status;
+            }
             alert(`Busy mode ${isBusy ? 'enabled' : 'disabled'}`);
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to toggle busy mode');
         }
     } catch (error) {
         console.error('Error toggling busy mode:', error);
-        alert('Failed to toggle busy mode');
+        alert('Failed to toggle busy mode: ' + error.message);
+        // Revert checkbox state on error
+        document.getElementById('busyMode').checked = !isBusy;
     }
 }
 

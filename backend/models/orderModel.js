@@ -19,20 +19,14 @@ const createOrder = async (orderData) => {
     // Calculate pickup time: use scheduled time or default to 30 minutes from now
     const pickupTime = scheduledPickupTime || db.raw("NOW() + INTERVAL '30 minutes'");
     
-    const [result] = await db('public.orders')
+    const [result] = await db('foodtruck.orders')
         .insert({
-            customer_id: userId,
-            food_truck_id: truckId,
-            order_number: orderNumber,
-            status: orderStatus,
-            subtotal: totalPrice,
-            tax: 0, // No tax for now
-            total: totalPrice,
-            pickup_time: pickupTime,
-            estimated_prep_time: 20, // Default 20 minutes
-            is_paid: false,
-            created_at: db.raw('NOW()'),
-            updated_at: db.raw('NOW()')
+            userid: userId,
+            truckid: truckId,
+            orderstatus: orderStatus,
+            totalprice: totalPrice,
+            scheduledpickuptime: pickupTime,
+            createdat: db.raw('NOW()')
         })
         .returning('*');
     
@@ -50,21 +44,27 @@ const createOrderItems = async (orderId, items) => {
     
     for (const item of items) {
         const unitPrice = parseFloat(item.price);
-        const subtotal = unitPrice * item.quantity;
         
-        const [result] = await db('public.order_items')
+        // First, create the order item
+        const [orderItem] = await db('foodtruck.orderitems')
             .insert({
-                order_id: orderId,
-                menu_item_id: item.itemId,
-                item_name: item.name,
+                name: item.name,
                 quantity: item.quantity,
-                unit_price: unitPrice,
-                subtotal: subtotal,
-                created_at: db.raw('NOW()')
+                price: unitPrice,
+                createdat: db.raw('NOW()')
             })
             .returning('*');
         
-        orderItems.push(result);
+        // Then, link it to the order via junction table
+        await db('foodtruck.order_contains_orderitems')
+            .insert({
+                orderid: orderId,
+                orderitemid: orderItem.orderitemid,
+                linenumber: orderItems.length + 1,
+                createdat: db.raw('NOW()')
+            });
+        
+        orderItems.push(orderItem);
     }
     
     return orderItems;
@@ -76,27 +76,28 @@ const createOrderItems = async (orderId, items) => {
  * @returns {Promise<Object>} - Order with items
  */
 const getOrderById = async (orderId) => {
-    const order = await db('public.orders as o')
+    const order = await db('foodtruck.orders as o')
         .select(
             'o.*',
             'u.name as customer_name',
             'u.email as customer_email',
-            't.name as truck_name'
+            't.truckname as truck_name'
         )
-        .join('public.users as u', 'o.customer_id', 'u.id')
-        .join('public.food_trucks as t', 'o.food_truck_id', 't.id')
-        .where('o.id', orderId)
+        .join('foodtruck.users as u', 'o.userid', 'u.userid')
+        .join('foodtruck.trucks as t', 'o.truckid', 't.truckid')
+        .where('o.orderid', orderId)
         .first();
     
     if (!order) {
         return null;
     }
     
-    // Get order items
-    const items = await db('public.order_items')
-        .select('*')
-        .where('order_id', orderId)
-        .orderBy('id');
+    // Get order items through the junction table
+    const items = await db('foodtruck.orderitems as oi')
+        .select('oi.*', 'oco.linenumber')
+        .join('foodtruck.order_contains_orderitems as oco', 'oi.orderitemid', 'oco.orderitemid')
+        .where('oco.orderid', orderId)
+        .orderBy('oco.linenumber');
     
     order.items = items;
     
@@ -109,11 +110,11 @@ const getOrderById = async (orderId) => {
  * @returns {Promise<Array>} - Array of orders
  */
 const getOrdersByUserId = async (userId) => {
-    const orders = await db('public.orders as o')
-        .select('o.*', 't.name as truck_name')
-        .join('public.food_trucks as t', 'o.food_truck_id', 't.id')
-        .where('o.customer_id', userId)
-        .orderBy('o.created_at', 'desc');
+    const orders = await db('foodtruck.orders as o')
+        .select('o.*', 't.truckname as truck_name')
+        .join('foodtruck.trucks as t', 'o.truckid', 't.truckid')
+        .where('o.userid', userId)
+        .orderBy('o.createdat', 'desc');
     
     return orders;
 };
