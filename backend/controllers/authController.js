@@ -96,7 +96,9 @@ exports.login = async (req, res, next) => {
  */
 exports.signup = async (req, res, next) => {
     try {
-        const { name, email, password, confirmPassword, role } = req.body;
+        const { name, email, password, confirmPassword, role, birthDate } = req.body;
+        
+        console.log('Signup request body:', { name, email, role, birthDate });
 
         // Input validation
         if (!name || !email || !password || !confirmPassword) {
@@ -163,6 +165,7 @@ exports.signup = async (req, res, next) => {
                 email,
                 password: hashedPassword,
                 role: role || 'customer',
+                birthdate: birthDate || null,
                 createdat: db.raw('NOW()')
             })
             .returning(['userid', 'name', 'email', 'role']);
