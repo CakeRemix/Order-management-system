@@ -249,8 +249,148 @@ const getUserOrders = async (req, res) => {
     }
 };
 
+/**
+ * Get new orders for vendor (pending, preparing, ready statuses only)
+ * GET /api/orders/vendor/:ownerId/new
+ */
+const getNewOrdersForVendor = async (req, res) => {
+    try {
+        const { ownerId } = req.params;
+        
+        // Authorization: Ensure the authenticated user is the vendor/owner
+        if (req.user.id !== parseInt(ownerId)) {
+            return res.status(403).json({
+                success: false,
+                message: 'Forbidden: You can only view orders for your own trucks'
+            });
+        }
+        
+        // Verify user is a truck owner
+        if (req.user.role !== 'truckOwner' && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Forbidden: Only truck owners can access this endpoint'
+            });
+        }
+        
+        const orders = await orderModel.getNewOrdersForVendor(parseInt(ownerId));
+        
+        return res.status(200).json({
+            success: true,
+            count: orders.length,
+            data: orders.map(order => ({
+                orderId: order.id,
+                orderNumber: order.order_number,
+                customerId: order.customer_id,
+                customerName: order.customer_name,
+                customerEmail: order.customer_email,
+                customerPhone: order.customer_phone,
+                truckId: order.food_truck_id,
+                truckName: order.truck_name,
+                orderStatus: order.status,
+                totalPrice: parseFloat(order.total),
+                scheduledPickupTime: order.pickup_time,
+                estimatedPrepTime: order.estimated_prep_time,
+                createdAt: order.created_at,
+                items: order.items.map(item => ({
+                    orderItemId: item.id,
+                    menuItemId: item.menu_item_id,
+                    name: item.item_name,
+                    quantity: item.quantity,
+                    unitPrice: parseFloat(item.unit_price),
+                    subtotal: parseFloat(item.subtotal)
+                }))
+            }))
+        });
+        
+    } catch (error) {
+        console.error('Error fetching vendor orders:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to fetch vendor orders',
+            error: error.message
+        });
+    }
+};
+
+/**
+ * Update order status
+ * PATCH /api/orders/:orderId/status
+ * 
+ * Request body: { "status": "preparing" | "ready" | "completed" | "cancelled" }
+ */
+const updateOrderStatus = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { status } = req.body;
+        
+        // Validate status
+        const validStatuses = ['pending', 'preparing', 'ready', 'completed', 'cancelled'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+            });
+        }
+        
+        // Verify user is a truck owner or admin
+        if (req.user.role !== 'truckOwner' && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Forbidden: Only truck owners can update order status'
+            });
+        }
+        
+        // Verify the order belongs to one of the vendor's trucks
+        const order = await db('public.orders')
+            .where('id', parseInt(orderId))
+            .first();
+        
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+        
+        const truck = await db('public.food_trucks')
+            .where('id', order.food_truck_id)
+            .first();
+        
+        if (truck.owner_id !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Forbidden: You can only update orders for your own trucks'
+            });
+        }
+        
+        const updatedOrder = await orderModel.updateOrderStatus(parseInt(orderId), status);
+        
+        return res.status(200).json({
+            success: true,
+            message: `Order status updated to ${status}`,
+            data: {
+                orderId: updatedOrder.id,
+                orderNumber: updatedOrder.order_number,
+                orderStatus: updatedOrder.status,
+                updatedAt: updatedOrder.updated_at
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to update order status',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     createOrder,
     getOrder,
-    getUserOrders
+    getUserOrders,
+    getNewOrdersForVendor,
+    updateOrderStatus
 };
