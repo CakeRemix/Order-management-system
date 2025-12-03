@@ -9,7 +9,7 @@ const ALLOWED_DOMAINS = ['@student.giu-uni.de', '@giu-uni.de', '@giu.edu.eg'];
 // Generate JWT token
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
+    { id: user.userid, email: user.email, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRATION || '24h' }
   );
@@ -37,9 +37,9 @@ exports.login = async (req, res, next) => {
             });
         }
 
-        // Check if user exists - Using Knex Query Builder
-        const user = await db('public.users')
-            .select('id', 'email', 'password', 'name', 'role', 'is_active')
+        // Check if user exists - Using Knex Query Builder with FoodTruck schema
+        const user = await db('foodtruck.users')
+            .select('userid', 'email', 'password', 'name', 'role')
             .where({ email })
             .first();
 
@@ -47,14 +47,6 @@ exports.login = async (req, res, next) => {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid credentials'
-            });
-        }
-
-        // Check if account is active
-        if (!user.is_active) {
-            return res.status(403).json({
-                success: false,
-                message: 'Your account has been deactivated. Please contact support.'
             });
         }
 
@@ -71,7 +63,7 @@ exports.login = async (req, res, next) => {
         // Generate JWT token
         const token = jwt.sign(
             {
-                id: user.id,
+                id: user.userid,
                 email: user.email,
                 role: user.role,
                 name: user.name
@@ -87,7 +79,7 @@ exports.login = async (req, res, next) => {
             success: true,
             token,
             user: {
-                id: user.id,
+                id: user.userid,
                 name: user.name,
                 email: user.email,
                 role: user.role
@@ -147,9 +139,9 @@ exports.signup = async (req, res, next) => {
             });
         }
 
-        // Check if user already exists - Using Knex Query Builder
-        const existingUser = await db('public.users')
-            .select('id')
+        // Check if user already exists - Using Knex Query Builder with FoodTruck schema
+        const existingUser = await db('foodtruck.users')
+            .select('userid')
             .where({ email })
             .first();
 
@@ -164,15 +156,16 @@ exports.signup = async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create new user - default role is customer - Using Knex Query Builder
-        const [newUser] = await db('public.users')
+        // Create new user - default role is customer - Using Knex Query Builder with FoodTruck schema
+        const [newUser] = await db('foodtruck.users')
             .insert({
                 name,
                 email,
                 password: hashedPassword,
-                role: role || 'customer'
+                role: role || 'customer',
+                createdat: db.raw('NOW()')
             })
-            .returning(['id', 'name', 'email', 'role']);
+            .returning(['userid', 'name', 'email', 'role']);
 
         // Generate JWT token
         const token = generateToken(newUser);
@@ -182,7 +175,7 @@ exports.signup = async (req, res, next) => {
             message: 'User registered successfully',
             token,
             user: {
-                id: newUser.id,
+                id: newUser.userid,
                 name: newUser.name,
                 email: newUser.email,
                 role: newUser.role
@@ -202,10 +195,10 @@ exports.getCurrentUser = async (req, res, next) => {
         // User information is attached by auth middleware
         const user = req.user;
 
-        // Get fresh user data from database - Using Knex Query Builder
-        const userData = await db('public.users')
-            .select('id', 'name', 'email', 'role')
-            .where({ id: user.id })
+        // Get fresh user data from database - Using Knex Query Builder with FoodTruck schema
+        const userData = await db('foodtruck.users')
+            .select('userid', 'name', 'email', 'role')
+            .where({ userid: user.id })
             .first();
 
         if (!userData) {
@@ -217,7 +210,12 @@ exports.getCurrentUser = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            user: userData
+            user: {
+                id: userData.userid,
+                name: userData.name,
+                email: userData.email,
+                role: userData.role
+            }
         });
     } catch (error) {
         next(error);

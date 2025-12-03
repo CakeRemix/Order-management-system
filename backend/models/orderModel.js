@@ -126,20 +126,20 @@ const getOrdersByUserId = async (userId) => {
  * @returns {Promise<Array>} - Array of orders
  */
 const getOrdersByTruckId = async (truckId, statuses = null) => {
-    let query = db('public.orders as o')
+    let query = db('foodtruck.orders as o')
         .select(
             'o.*',
             'u.name as customer_name',
             'u.email as customer_email'
         )
-        .join('public.users as u', 'o.customer_id', 'u.id')
-        .where('o.food_truck_id', truckId);
+        .join('foodtruck.users as u', 'o.userid', 'u.userid')
+        .where('o.truckid', truckId);
     
     if (statuses && statuses.length > 0) {
-        query = query.whereIn('o.status', statuses);
+        query = query.whereIn('o.orderstatus', statuses);
     }
     
-    return await query.orderBy('o.created_at', 'desc');
+    return await query.orderBy('o.createdat', 'desc');
 };
 
 /**
@@ -149,37 +149,37 @@ const getOrdersByTruckId = async (truckId, statuses = null) => {
  */
 const getNewOrdersForVendor = async (ownerId) => {
     // Get all trucks owned by this vendor
-    const trucks = await db('public.food_trucks')
-        .select('id')
-        .where('owner_id', ownerId);
+    const trucks = await db('foodtruck.trucks')
+        .select('truckid')
+        .where('ownerid', ownerId);
     
     if (trucks.length === 0) {
         return [];
     }
     
-    const truckIds = trucks.map(truck => truck.id);
+    const truckIds = trucks.map(truck => truck.truckid);
     
     // Get orders with pending, preparing, or ready status
-    const orders = await db('public.orders as o')
+    const orders = await db('foodtruck.orders as o')
         .select(
             'o.*',
             'u.name as customer_name',
             'u.email as customer_email',
-            'u.phone_number as customer_phone',
-            't.name as truck_name'
+            't.truckname as truck_name'
         )
-        .join('public.users as u', 'o.customer_id', 'u.id')
-        .join('public.food_trucks as t', 'o.food_truck_id', 't.id')
-        .whereIn('o.food_truck_id', truckIds)
-        .whereIn('o.status', ['pending', 'preparing', 'ready'])
-        .orderBy('o.created_at', 'desc');
+        .join('foodtruck.users as u', 'o.userid', 'u.userid')
+        .join('foodtruck.trucks as t', 'o.truckid', 't.truckid')
+        .whereIn('o.truckid', truckIds)
+        .whereIn('o.orderstatus', ['pending', 'preparing', 'ready'])
+        .orderBy('o.createdat', 'desc');
     
-    // Get items for each order
+    // Get items for each order through junction table
     for (const order of orders) {
-        const items = await db('public.order_items')
-            .select('*')
-            .where('order_id', order.id)
-            .orderBy('id');
+        const items = await db('foodtruck.orderitems as oi')
+            .select('oi.*', 'oco.linenumber')
+            .join('foodtruck.order_contains_orderitems as oco', 'oi.orderitemid', 'oco.orderitemid')
+            .where('oco.orderid', order.orderid)
+            .orderBy('oco.linenumber');
         
         order.items = items;
     }

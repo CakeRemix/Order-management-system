@@ -178,25 +178,23 @@ const getOrder = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: {
-                orderId: order.id,
-                orderNumber: order.order_number,
-                userId: order.customer_id,
+                orderId: order.orderid,
+                userId: order.userid,
                 customerName: order.customer_name,
                 email: order.customer_email,
-                truckId: order.food_truck_id,
+                truckId: order.truckid,
                 truckName: order.truck_name,
-                orderStatus: order.status,
-                totalPrice: parseFloat(order.total),
-                scheduledPickupTime: order.pickup_time,
-                estimatedPrepTime: order.estimated_prep_time,
-                createdAt: order.created_at,
+                orderStatus: order.orderstatus,
+                totalPrice: parseFloat(order.totalprice),
+                scheduledPickupTime: order.scheduledpickuptime,
+                estimatedEarliestPickup: order.estimatedearliestpickup,
+                createdAt: order.createdat,
                 items: order.items.map(item => ({
-                    orderItemId: item.id,
-                    menuItemId: item.menu_item_id,
-                    name: item.item_name,
+                    orderItemId: item.orderitemid,
+                    name: item.name,
                     quantity: item.quantity,
-                    unitPrice: parseFloat(item.unit_price),
-                    subtotal: parseFloat(item.subtotal)
+                    price: parseFloat(item.price),
+                    lineNumber: item.linenumber
                 }))
             }
         });
@@ -225,14 +223,13 @@ const getUserOrders = async (req, res) => {
             success: true,
             count: orders.length,
             data: orders.map(order => ({
-                orderId: order.id,
-                orderNumber: order.order_number,
-                truckId: order.food_truck_id,
+                orderId: order.orderid,
+                truckId: order.truckid,
                 truckName: order.truck_name,
-                orderStatus: order.status,
-                totalPrice: parseFloat(order.total),
-                scheduledPickupTime: order.pickup_time,
-                createdAt: order.created_at
+                orderStatus: order.orderstatus,
+                totalPrice: parseFloat(order.totalprice),
+                scheduledPickupTime: order.scheduledpickuptime,
+                createdAt: order.createdat
             }))
         });
         
@@ -276,26 +273,23 @@ const getNewOrdersForVendor = async (req, res) => {
             success: true,
             count: orders.length,
             data: orders.map(order => ({
-                orderId: order.id,
-                orderNumber: order.order_number,
-                customerId: order.customer_id,
+                orderId: order.orderid,
+                customerId: order.userid,
                 customerName: order.customer_name,
                 customerEmail: order.customer_email,
-                customerPhone: order.customer_phone,
-                truckId: order.food_truck_id,
+                truckId: order.truckid,
                 truckName: order.truck_name,
-                orderStatus: order.status,
-                totalPrice: parseFloat(order.total),
-                scheduledPickupTime: order.pickup_time,
-                estimatedPrepTime: order.estimated_prep_time,
-                createdAt: order.created_at,
+                orderStatus: order.orderstatus,
+                totalPrice: parseFloat(order.totalprice),
+                scheduledPickupTime: order.scheduledpickuptime,
+                estimatedEarliestPickup: order.estimatedearliestpickup,
+                createdAt: order.createdat,
                 items: order.items.map(item => ({
-                    orderItemId: item.id,
-                    menuItemId: item.menu_item_id,
-                    name: item.item_name,
+                    orderItemId: item.orderitemid,
+                    name: item.name,
                     quantity: item.quantity,
-                    unitPrice: parseFloat(item.unit_price),
-                    subtotal: parseFloat(item.subtotal)
+                    price: parseFloat(item.price),
+                    lineNumber: item.linenumber
                 }))
             }))
         });

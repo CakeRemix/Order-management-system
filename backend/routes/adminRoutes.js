@@ -8,7 +8,8 @@ router.use(verifyToken, adminOnly);
 
 // User management
 router.get('/users', adminController.getAllUsers);
-router.patch('/users/:id/toggle-active', adminController.toggleUserActive);
+router.patch('/users/:id/role', adminController.updateUserRole);
+router.delete('/users/:id', adminController.deleteUser);
 
 // Food truck management
 router.get('/trucks', adminController.getAllTrucksAdmin);

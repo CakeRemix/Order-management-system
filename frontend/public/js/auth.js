@@ -89,6 +89,10 @@ const login = (email, password) => {
             if (data.user) {
                 setUserInfo(data.user);
             }
+            // Reload user-specific cart after login
+            if (typeof window.reloadUserCart === 'function') {
+                window.reloadUserCart();
+            }
             return data;
         }
         return $.Deferred().reject({ responseJSON: { message: data.message || 'Login failed' } });
@@ -127,6 +131,10 @@ const signup = (name, email, password, confirmPassword, birthdate) => {
 
 // Logout function
 const logout = () => {
+    // Clear guest cart data (prevents data leak between users)
+    localStorage.removeItem('cartStore_guest');
+    localStorage.removeItem('currentOrder_guest');
+    
     removeToken();
     removeUserInfo();
     window.location.href = '/login.html';
