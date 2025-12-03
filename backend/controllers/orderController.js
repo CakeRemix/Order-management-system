@@ -7,6 +7,22 @@ const db = require('../config/db');
  */
 
 /**
+ * Reusable error handler for controller operations
+ * @param {object} res - Express response object
+ * @param {string} operation - Description of the operation that failed
+ * @param {Error} error - The error object
+ * @returns {object} JSON response with error details
+ */
+const handleControllerError = (res, operation, error) => {
+    console.error(`Error ${operation}:`, error);
+    return res.status(500).json({
+        success: false,
+        message: `Failed to ${operation}`,
+        error: error.message
+    });
+};
+
+/**
  * Create a new order
  * POST /api/orders
  * 
@@ -152,12 +168,7 @@ const createOrder = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('Error creating order:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to create order',
-            error: error.message
-        });
+        return handleControllerError(res, 'create order', error);
     }
 };
 
@@ -205,12 +216,7 @@ const getOrder = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('Error fetching order:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to fetch order',
-            error: error.message
-        });
+        return handleControllerError(res, 'fetch order', error);
     }
 };
 
@@ -240,12 +246,7 @@ const getUserOrders = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('Error fetching user orders:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to fetch orders',
-            error: error.message
-        });
+        return handleControllerError(res, 'fetch orders', error);
     }
 };
 
@@ -304,12 +305,7 @@ const getNewOrdersForVendor = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('Error fetching vendor orders:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to fetch vendor orders',
-            error: error.message
-        });
+        return handleControllerError(res, 'fetch vendor orders', error);
     }
 };
 
@@ -378,12 +374,7 @@ const updateOrderStatus = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('Error updating order status:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to update order status',
-            error: error.message
-        });
+        return handleControllerError(res, 'update order status', error);
     }
 };
 
