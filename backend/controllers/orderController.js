@@ -322,7 +322,7 @@ const updateOrderStatus = async (req, res) => {
         const { status } = req.body;
         
         // Validate status
-        const validStatuses = ['pending', 'preparing', 'ready', 'completed', 'cancelled'];
+        const validStatuses = ['pending', 'confirmed', 'ready', 'completed', 'cancelled'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({
                 success: false,
@@ -339,8 +339,8 @@ const updateOrderStatus = async (req, res) => {
         }
         
         // Verify the order belongs to one of the vendor's trucks
-        const order = await db('public.orders')
-            .where('id', parseInt(orderId))
+        const order = await db('foodtruck.orders')
+            .where('orderid', parseInt(orderId))
             .first();
         
         if (!order) {
@@ -350,11 +350,11 @@ const updateOrderStatus = async (req, res) => {
             });
         }
         
-        const truck = await db('public.food_trucks')
-            .where('id', order.food_truck_id)
+        const truck = await db('foodtruck.trucks')
+            .where('truckid', order.truckid)
             .first();
         
-        if (truck.owner_id !== req.user.id && req.user.role !== 'admin') {
+        if (truck.ownerid !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
                 message: 'Forbidden: You can only update orders for your own trucks'
@@ -367,10 +367,8 @@ const updateOrderStatus = async (req, res) => {
             success: true,
             message: `Order status updated to ${status}`,
             data: {
-                orderId: updatedOrder.id,
-                orderNumber: updatedOrder.order_number,
-                orderStatus: updatedOrder.status,
-                updatedAt: updatedOrder.updated_at
+                orderId: updatedOrder.orderid,
+                orderStatus: updatedOrder.orderstatus
             }
         });
         
