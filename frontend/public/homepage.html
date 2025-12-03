@@ -67,6 +67,8 @@
                     const userInfo = getUserInfo();
                     if (userInfo.role === 'admin') {
                         window.location.href = '/admin.html';
+                    } else if (userInfo.role === 'truckOwner') {
+                        window.location.href = '/vendor-dashboard.html';
                     } else {
                         window.location.href = '/dashboard.html';
                     }
