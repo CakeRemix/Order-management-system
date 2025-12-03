@@ -194,11 +194,10 @@ const getNewOrdersForVendor = async (ownerId) => {
  * @returns {Promise<Object>} - Updated order
  */
 const updateOrderStatus = async (orderId, status) => {
-    const [updatedOrder] = await db('public.orders')
-        .where('id', orderId)
+    const [updatedOrder] = await db('foodtruck.orders')
+        .where('orderid', orderId)
         .update({
-            status: status,
-            updated_at: db.raw('NOW()')
+            orderstatus: status
         })
         .returning('*');
     
