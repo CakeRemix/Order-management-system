@@ -135,13 +135,13 @@
           }
           
           // Check truck status
-          if (truck.is_busy) {
-            if (introEl.length) introEl.html(`<h1>${truck.name}</h1><p class=\"muted\">The food truck is busy right now.</p>`);
-            if (itemsGrid.length) itemsGrid.html('<p class=\"muted\">The food truck is busy and not taking orders right now.</p>');
+          if (truck.status === 'unavailable') {
+            if (introEl.length) introEl.html(`<h1>${truck.name}</h1><p class="muted" style="font-size: 1.2rem; font-weight: 500;">🔒 I am closed yasta</p>`);
+            if (itemsGrid.length) itemsGrid.html('<div style="text-align: center; padding: 3rem;"><p class="muted" style="font-size: 1.1rem;">This food truck is currently closed and not taking orders.</p><p class="muted">Please check back later!</p></div>');
             return;
-          } else if (truck.status === 'closed') {
-            if (introEl.length) introEl.html(`<h1>${truck.name}</h1><p class=\"muted\">The food truck is closed.</p>`);
-            if (itemsGrid.length) itemsGrid.html('<p class=\"muted\">This food truck is currently closed.</p>');
+          } else if (truck.orderstatus === 'unavailable') {
+            if (introEl.length) introEl.html(`<h1>${truck.name}</h1><p class="muted">Not taking orders right now.</p>`);
+            if (itemsGrid.length) itemsGrid.html('<p class="muted">This food truck is currently not taking orders.</p>');
             return;
           }
           
