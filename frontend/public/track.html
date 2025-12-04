@@ -79,84 +79,170 @@
             return;
           }
 
-          // Display order status
-          const createdAt = new Date(currentOrder.createdAt);
-          const now = new Date();
-          const elapsedMs = now - createdAt;
-          const elapsedMin = Math.floor(elapsedMs / 60000);
-
-          let pickupDisplay = 'ASAP';
-          let remainingTime = '';
-
-          if (currentOrder.pickupTime) {
-            const pickupDate = new Date(currentOrder.pickupTime);
-            pickupDisplay = pickupDate.toLocaleString();
-            const remainingMs = pickupDate - now;
-            if (remainingMs > 0) {
-              const remainingMin = Math.ceil(remainingMs / 60000);
-              remainingTime = `<p style="margin-top: 0.5rem; color: #ea580c;">Time remaining: <strong>${remainingMin} minutes</strong></p>`;
-            } else {
-              remainingTime = '<p style="margin-top: 0.5rem; color: #ef4444;">Pickup time has passed.</p>';
-            }
-          } else {
-            remainingTime = `<p style="margin-top: 0.5rem; color: #64748b;">Estimated time: ${10 + (10 * 3)} - ${20 + (10 * 3)} minutes</p>`;
-          }
-
-          // Build HTML
-          let itemsHtml = currentOrder.items.map(function(item) {
-            return `
-              <tr>
-                <td>${item.quantity} x ${item.name}</td>
-                <td>L.E ${(item.quantity * item.price).toFixed(2)}</td>
-              </tr>
-            `;
-          }).join('');
-
-          trackContent.html(`
-            <div class="track-card">
-              <div class="track-status">
-                <div class="status-icon">✓</div>
-                <h2>Order Confirmed</h2>
-                <p style="color: #64748b; margin: 0;">Status: <strong>Processing</strong></p>
-              </div>
-
-              <div class="track-info">
-                <h3>Order Details</h3>
-                <p><strong>Truck:</strong> ${currentOrder.truck}</p>
-                <p><strong>Total:</strong> L.E ${currentOrder.total.toFixed(2)}</p>
-                <p><strong>Pickup Time:</strong> ${pickupDisplay}</p>
-                ${remainingTime}
-              </div>
-
-              <div class="track-items">
-                <h3>Items</h3>
-                <table style="width: 100%; border-collapse: collapse;">
-                  <thead>
-                    <tr style="border-bottom: 1px solid #e2e8f0;">
-                      <th style="text-align: left; padding: 0.5rem 0;">Item</th>
-                      <th style="text-align: right; padding: 0.5rem 0;">Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${itemsHtml}
-                  </tbody>
-                </table>
-              </div>
-
-              <div style="margin-top: 1.5rem; text-align: center;">
-                <a href="dashboard.html" style="display: inline-block; padding: 0.6rem 1.2rem; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; margin-right: 0.5rem;">Back to Home</a>
-                <button id="clearOrderBtn" style="padding: 0.6rem 1.2rem; background: #ef4444; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Clear Order</button>
-              </div>
-            </div>
-          `);
-
-          // Add clear order button handler using jQuery
-          $('#clearOrderBtn').on('click', function() {
-            if (window.confirm('Are you sure you want to clear this order?')) {
-              localStorage.removeItem(getOrderKey());
-              window.location.href = 'dashboard.html';
+          // Fetch real-time order details from backend
+          const token = localStorage.getItem('token');
+          $.ajax({
+            url: `http://localhost:5000/api/orders/${currentOrder.orderId}`,
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + token
+            },
+            success: function(response) {
+              if (response.success) {
+                const orderData = response.data;
+                displayOrderDetails(orderData);
+              } else {
+                displayOrderFromLocalStorage();
+              }
+            },
+            error: function() {
+              // Fallback to localStorage if API fails
+              displayOrderFromLocalStorage();
             }
           });
+
+          function displayOrderFromLocalStorage() {
+            // Display order status from localStorage (fallback)
+            const now = new Date();
+
+            let pickupDisplay = 'ASAP';
+            let remainingTime = '';
+
+            if (currentOrder.pickupTime) {
+              const pickupDate = new Date(currentOrder.pickupTime);
+              pickupDisplay = pickupDate.toLocaleString();
+              const remainingMs = pickupDate - now;
+              if (remainingMs > 0) {
+                const remainingMin = Math.ceil(remainingMs / 60000);
+                remainingTime = `<p style="margin-top: 0.5rem; color: #ea580c;">Time remaining: <strong>${remainingMin} minutes</strong></p>`;
+              } else {
+                remainingTime = '<p style="margin-top: 0.5rem; color: #ef4444;">Pickup time has passed.</p>';
+              }
+            } else {
+              remainingTime = `<p style="margin-top: 0.5rem; color: #64748b;">Waiting for confirmation...</p>`;
+            }
+
+            displayOrder(currentOrder.items, currentOrder.total, currentOrder.truck, pickupDisplay, remainingTime, 'Processing');
+          }
+
+          function displayOrderDetails(orderData) {
+            // Display order with real-time data from backend
+            const now = new Date();
+            let pickupDisplay = 'ASAP';
+            let remainingTime = '';
+            let statusDisplay = orderData.orderstatus || 'pending';
+
+            // Convert status to display format
+            const statusMap = {
+              'pending': 'Pending Confirmation',
+              'confirmed': 'Confirmed - Being Prepared',
+              'ready': 'Ready for Pickup',
+              'completed': 'Completed',
+              'cancelled': 'Cancelled'
+            };
+            statusDisplay = statusMap[orderData.orderstatus] || orderData.orderstatus;
+
+            if (orderData.scheduledpickuptime) {
+              const pickupDate = new Date(orderData.scheduledpickuptime);
+              pickupDisplay = pickupDate.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+              });
+              
+              const remainingMs = pickupDate - now;
+              if (remainingMs > 0) {
+                const remainingMin = Math.ceil(remainingMs / 60000);
+                
+                // Show estimated preparation time if available
+                if (orderData.estimatedpreparationminutes) {
+                  remainingTime = `<p style="margin-top: 0.5rem; color: #ea580c;">Estimated preparation time: <strong>${orderData.estimatedpreparationminutes} minutes</strong></p>`;
+                  remainingTime += `<p style="margin-top: 0.25rem; color: #ea580c;">Time remaining: <strong>${remainingMin} minutes</strong></p>`;
+                } else {
+                  remainingTime = `<p style="margin-top: 0.5rem; color: #ea580c;">Time remaining: <strong>${remainingMin} minutes</strong></p>`;
+                }
+              } else {
+                if (orderData.orderstatus === 'ready') {
+                  remainingTime = '<p style="margin-top: 0.5rem; color: #22c55e;">✓ Ready for pickup now!</p>';
+                } else {
+                  remainingTime = '<p style="margin-top: 0.5rem; color: #ef4444;">Pickup time has passed.</p>';
+                }
+              }
+            } else {
+              // Show estimated time if order is pending
+              if (orderData.estimatedpreparationminutes) {
+                remainingTime = `<p style="margin-top: 0.5rem; color: #64748b;">Estimated preparation time: <strong>${orderData.estimatedpreparationminutes} minutes</strong></p>`;
+              } else {
+                remainingTime = `<p style="margin-top: 0.5rem; color: #64748b;">Waiting for confirmation...</p>`;
+              }
+            }
+
+            displayOrder(orderData.items || currentOrder.items, orderData.totalprice || currentOrder.total, currentOrder.truck, pickupDisplay, remainingTime, statusDisplay);
+          }
+
+          function displayOrder(items, total, truck, pickupDisplay, remainingTime, status) {
+
+            // Build HTML
+            let itemsHtml = items.map(function(item) {
+              return `
+                <tr>
+                  <td>${item.quantity} x ${item.name}</td>
+                  <td>L.E ${(item.quantity * item.price).toFixed(2)}</td>
+                </tr>
+              `;
+            }).join('');
+
+            trackContent.html(`
+              <div class="track-card">
+                <div class="track-status">
+                  <div class="status-icon">✓</div>
+                  <h2>Order Received</h2>
+                  <p style="color: #64748b; margin: 0;">Status: <strong>${status}</strong></p>
+                </div>
+
+                <div class="track-info">
+                  <h3>Order Details</h3>
+                  <p><strong>Truck:</strong> ${truck}</p>
+                  <p><strong>Total:</strong> L.E ${total.toFixed(2)}</p>
+                  <p><strong>Pickup Time:</strong> ${pickupDisplay}</p>
+                  ${remainingTime}
+                </div>
+
+                <div class="track-items">
+                  <h3>Items</h3>
+                  <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                      <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <th style="text-align: left; padding: 0.5rem 0;">Item</th>
+                        <th style="text-align: right; padding: 0.5rem 0;">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${itemsHtml}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div style="margin-top: 1.5rem; text-align: center;">
+                  <button id="refreshOrderBtn" style="padding: 0.6rem 1.2rem; background: #3b82f6; color: #fff; border: none; border-radius: 8px; cursor: pointer; margin-right: 0.5rem;">Refresh Status</button>
+                  <a href="dashboard.html" style="display: inline-block; padding: 0.6rem 1.2rem; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; margin-right: 0.5rem;">Back to Home</a>
+                  <button id="clearOrderBtn" style="padding: 0.6rem 1.2rem; background: #ef4444; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Clear Order</button>
+                </div>
+              </div>
+            `);
+
+            // Add button handlers using jQuery
+            $('#refreshOrderBtn').on('click', function() {
+              location.reload();
+            });
+
+            $('#clearOrderBtn').on('click', function() {
+              if (window.confirm('Are you sure you want to clear this order?')) {
+                localStorage.removeItem(getOrderKey());
+                window.location.href = 'dashboard.html';
+              }
+            });
+          }
         });
       });
     </script>
