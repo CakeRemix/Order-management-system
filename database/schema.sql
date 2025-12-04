@@ -76,11 +76,15 @@ CREATE TABLE FoodTruck.MenuItems (
     price NUMERIC(10,2) NOT NULL,
     category TEXT NOT NULL, -- 'Main Course', 'Sides', 'Beverages', etc.
     status TEXT DEFAULT 'available', -- 'available', 'unavailable'
+    preparationTimeMinutes INTEGER DEFAULT 10, -- Base preparation time in minutes
+    complexity TEXT DEFAULT 'medium', -- 'simple', 'medium', 'complex'
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     -- Constraints
     CONSTRAINT price_positive CHECK (price >= 0),
-    CONSTRAINT status_check CHECK (status IN ('available', 'unavailable'))
+    CONSTRAINT status_check CHECK (status IN ('available', 'unavailable')),
+    CONSTRAINT preparation_time_valid CHECK (preparationTimeMinutes >= 0 AND preparationTimeMinutes <= 120),
+    CONSTRAINT complexity_check CHECK (complexity IN ('simple', 'medium', 'complex'))
 );
 
 -- Indexes for MenuItems table
@@ -100,11 +104,15 @@ CREATE TABLE FoodTruck.Orders (
     totalPrice NUMERIC(10,2) NOT NULL,
     scheduledPickupTime TIMESTAMP,
     estimatedEarliestPickup TIMESTAMP,
+    estimatedPreparationMinutes INTEGER DEFAULT 0, -- Auto-calculated preparation time
+    estimatedCompletionTime TIMESTAMP, -- Auto-calculated completion timestamp
+    actualCompletionTime TIMESTAMP, -- Actual completion for analytics
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     -- Constraints
     CONSTRAINT total_price_positive CHECK (totalPrice >= 0),
-    CONSTRAINT order_status_check CHECK (orderStatus IN ('pending', 'confirmed', 'ready', 'completed', 'cancelled'))
+    CONSTRAINT order_status_check CHECK (orderStatus IN ('pending', 'confirmed', 'ready', 'completed', 'cancelled')),
+    CONSTRAINT preparation_minutes_valid CHECK (estimatedPreparationMinutes >= 0)
 );
 
 -- Indexes for Orders table

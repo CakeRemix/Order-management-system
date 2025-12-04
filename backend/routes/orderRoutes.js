@@ -8,6 +8,14 @@ const { verifyToken } = require('../../middleware/authMiddleware');
  * Base path: /api/orders
  */
 
+// Get preparation time estimate for cart items (before order placement)
+// POST /api/orders/estimate
+router.post('/estimate', orderController.getPreparationEstimate);
+
+// Get estimation accuracy metrics for vendor dashboard
+// GET /api/orders/metrics/:truckId
+router.get('/metrics/:truckId', verifyToken, orderController.getEstimationMetrics);
+
 // Create a new order
 // POST /api/orders
 router.post('/', orderController.createOrder);

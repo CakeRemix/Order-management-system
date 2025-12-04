@@ -376,10 +376,148 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
+/**
+ * Get preparation time estimate for cart items
+ * POST /api/orders/estimate
+ * 
+ * Request body:
+ * {
+ *   "truckId": 1,
+ *   "items": [
+ *     { "itemId": 1, "quantity": 2 },
+ *     { "itemId": 2, "quantity": 1 }
+ *   ]
+ * }
+ * 
+ * Response:
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "estimatedMinutes": 25,
+ *     "estimatedCompletionTime": "2025-12-04T12:25:00Z",
+ *     "breakdown": {
+ *       "baseTime": 18,
+ *       "queueDelay": 4,
+ *       "peakHourMultiplier": 1.3,
+ *       "items": [...]
+ *     }
+ *   }
+ * }
+ */
+const getPreparationEstimate = async (req, res) => {
+    try {
+        const { truckId, items } = req.body;
+        
+        // Validation
+        if (!truckId || !items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required fields. Need: truckId and items array'
+            });
+        }
+        
+        // Validate truck exists
+        const truck = await db('foodtruck.trucks')
+            .where('truckid', truckId)
+            .first();
+        
+        if (!truck) {
+            return res.status(404).json({
+                success: false,
+                message: 'Food truck not found'
+            });
+        }
+        
+        // Get estimation
+        const estimation = await orderModel.getEstimationForCart(items, truckId);
+        
+        return res.status(200).json({
+            success: true,
+            message: 'Preparation time estimated successfully',
+            data: {
+                estimatedMinutes: estimation.estimatedMinutes,
+                estimatedCompletionTime: estimation.estimatedCompletionTime,
+                readableEstimate: `${estimation.estimatedMinutes} minutes`,
+                breakdown: estimation.breakdown
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error estimating preparation time:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to estimate preparation time',
+            error: error.message
+        });
+    }
+};
+
+/**
+ * Get estimation accuracy metrics for vendor dashboard
+ * GET /api/orders/metrics/:truckId
+ * 
+ * Query params:
+ * - days: Number of days to analyze (default: 30)
+ * 
+ * Response:
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "totalOrders": 150,
+ *     "averageVarianceMinutes": 3,
+ *     "accuracyPercentage": 85
+ *   }
+ * }
+ */
+const getEstimationMetrics = async (req, res) => {
+    try {
+        const { truckId } = req.params;
+        const { days = 30 } = req.query;
+        
+        // Validate truck exists and user has permission
+        const truck = await db('foodtruck.trucks')
+            .where('truckid', truckId)
+            .first();
+        
+        if (!truck) {
+            return res.status(404).json({
+                success: false,
+                message: 'Food truck not found'
+            });
+        }
+        
+        // Check authorization (owner or admin)
+        if (req.user && truck.ownerid !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Forbidden: You can only view metrics for your own trucks'
+            });
+        }
+        
+        const metrics = await orderModel.getEstimationMetrics(parseInt(truckId), parseInt(days));
+        
+        return res.status(200).json({
+            success: true,
+            message: 'Estimation metrics retrieved successfully',
+            data: metrics
+        });
+        
+    } catch (error) {
+        console.error('Error retrieving estimation metrics:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve estimation metrics',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     createOrder,
     getOrder,
     getUserOrders,
     getNewOrdersForVendor,
-    updateOrderStatus
+    updateOrderStatus,
+    getPreparationEstimate,
+    getEstimationMetrics
 };
