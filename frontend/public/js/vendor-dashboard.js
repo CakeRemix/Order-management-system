@@ -683,13 +683,15 @@ function filterOrders(status) {
 }
 
 // Edit menu item
-function editMenuItem(itemId) {
+// Make globally accessible for inline onclick handlers
+window.editMenuItem = function editMenuItem(itemId) {
     console.log('Editing item:', itemId);
     openMenuItemModal(itemId);
 }
 
 // Delete menu item
-async function deleteMenuItem(itemId) {
+// Make globally accessible for inline onclick handlers
+window.deleteMenuItem = async function deleteMenuItem(itemId) {
     if (!confirm('Are you sure you want to delete this menu item?')) return;
     
     const token = localStorage.getItem('token');
@@ -714,7 +716,8 @@ async function deleteMenuItem(itemId) {
 }
 
 // Toggle item availability
-async function toggleItemAvailability(itemId, currentStatus) {
+// Make globally accessible for inline onclick handlers
+window.toggleItemAvailability = async function toggleItemAvailability(itemId, currentStatus) {
     const token = localStorage.getItem('token');
     
     try {
@@ -737,12 +740,14 @@ async function toggleItemAvailability(itemId, currentStatus) {
 }
 
 // View order details
-function viewOrder(orderId) {
+// Make globally accessible for inline onclick handlers
+window.viewOrder = function viewOrder(orderId) {
     viewOrderDetails(orderId);
-}
+};
 
 // View detailed order information
-async function viewOrderDetails(orderId) {
+// Make globally accessible for inline onclick handlers
+window.viewOrderDetails = async function viewOrderDetails(orderId) {
     const token = localStorage.getItem('token');
     
     try {
@@ -859,7 +864,8 @@ async function viewOrderDetails(orderId) {
 }
 
 // Close order details modal
-function closeOrderModal() {
+// Make globally accessible for inline onclick handlers
+window.closeOrderModal = function closeOrderModal() {
     const modal = document.getElementById('orderDetailsModal');
     if (modal) {
         modal.style.display = 'none';
@@ -868,7 +874,8 @@ function closeOrderModal() {
 }
 
 // Update order status with UI feedback
-async function updateOrderStatusUI(orderId, newStatus) {
+// Make globally accessible for inline onclick handlers
+window.updateOrderStatusUI = async function updateOrderStatusUI(orderId, newStatus) {
     const token = localStorage.getItem('token');
     
     // Confirmation messages
@@ -884,6 +891,8 @@ async function updateOrderStatusUI(orderId, newStatus) {
     }
     
     try {
+        console.log('📤 Updating order status:', { orderId, newStatus, token: token ? 'Present' : 'Missing' });
+        
         const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
             method: 'PATCH',
             headers: {
@@ -893,8 +902,11 @@ async function updateOrderStatusUI(orderId, newStatus) {
             body: JSON.stringify({ status: newStatus })
         });
         
+        console.log('📥 Response status:', response.status, response.statusText);
+        
         if (response.ok) {
             const data = await response.json();
+            console.log('✅ Order updated successfully:', data);
             
             // Show success message
             showNotification(`Order #${orderId} ${newStatus} successfully!`, 'success');
@@ -911,11 +923,35 @@ async function updateOrderStatusUI(orderId, newStatus) {
             loadStatistics();
         } else {
             const error = await response.json();
-            throw new Error(error.message || 'Failed to update order status');
+            console.error('❌ Server error:', error);
+            throw new Error(error.message || `Server returned ${response.status}: ${response.statusText}`);
         }
     } catch (error) {
-        console.error('Error updating order status:', error);
-        showNotification('Failed to update order status: ' + error.message, 'error');
+        console.error('❌ Error updating order status:', {
+            orderId,
+            newStatus,
+            error: error.message,
+            stack: error.stack
+        });
+        
+        let errorMessage = 'Failed to update order status';
+        
+        // Provide more specific error messages
+        if (error.message.includes('401') || error.message.includes('Authentication')) {
+            errorMessage = 'Authentication failed. Please login again.';
+            setTimeout(() => {
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }, 2000);
+        } else if (error.message.includes('403') || error.message.includes('Forbidden')) {
+            errorMessage = 'Access denied. You can only update orders for your own truck.';
+        } else if (error.message.includes('404')) {
+            errorMessage = 'Order not found or has been deleted.';
+        } else {
+            errorMessage = error.message || 'Failed to update order status';
+        }
+        
+        showNotification(errorMessage, 'error');
     }
 }
 
@@ -1126,7 +1162,8 @@ window.addEventListener('beforeunload', () => {
 });
 
 // Manual refresh function
-function refreshOrders() {
+// Make globally accessible for inline onclick handlers
+window.refreshOrders = function refreshOrders() {
     const activeSection = document.querySelector('.vendor-section.active');
     if (activeSection?.id === 'orders') {
         showNotification('Refreshing orders...', 'info');

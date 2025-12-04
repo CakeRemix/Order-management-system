@@ -65,8 +65,6 @@ const createOrder = async (orderData) => {
             orderstatus: orderStatus,
             totalprice: totalPrice,
             scheduledpickuptime: pickupTime,
-            estimatedpreparationminutes: estimatedMinutes,
-            estimatedcompletiontime: estimatedCompletionTime,
             createdat: db.raw('NOW()')
         })
         .returning('*');

@@ -332,6 +332,15 @@ const updateOrderStatus = async (req, res) => {
         const { orderId } = req.params;
         const { status } = req.body;
         
+        // Debug logging
+        console.log('📋 Order status update request:', {
+            orderId,
+            status,
+            userId: req.user?.id,
+            userRole: req.user?.role,
+            hasUser: !!req.user
+        });
+        
         // Validate status
         const validStatuses = ['pending', 'confirmed', 'ready', 'completed', 'cancelled'];
         if (!validStatuses.includes(status)) {
@@ -341,11 +350,20 @@ const updateOrderStatus = async (req, res) => {
             });
         }
         
+        // Check if user is authenticated
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Authentication required. User not found in request.'
+            });
+        }
+        
         // Verify user is a truck owner or admin
         if (req.user.role !== 'truckOwner' && req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
-                message: 'Forbidden: Only truck owners can update order status'
+                message: 'Forbidden: Only truck owners can update order status',
+                userRole: req.user.role
             });
         }
         
@@ -355,17 +373,40 @@ const updateOrderStatus = async (req, res) => {
             .first();
         
         if (!order) {
+            console.error(`❌ Order not found: ${orderId}`);
             return res.status(404).json({
                 success: false,
                 message: 'Order not found'
             });
         }
         
+        console.log('🔍 Order found:', {
+            orderId: order.orderid,
+            truckId: order.truckid,
+            currentStatus: order.orderstatus
+        });
+        
         const truck = await db('foodtruck.trucks')
             .where('truckid', order.truckid)
             .first();
         
+        if (!truck) {
+            console.error(`❌ Truck not found: ${order.truckid}`);
+            return res.status(404).json({
+                success: false,
+                message: 'Food truck not found'
+            });
+        }
+        
+        console.log('🚚 Truck found:', {
+            truckId: truck.truckid,
+            ownerId: truck.ownerid,
+            requestUserId: req.user.id,
+            isOwner: truck.ownerid === req.user.id
+        });
+        
         if (truck.ownerid !== req.user.id && req.user.role !== 'admin') {
+            console.error(`❌ Access denied: User ${req.user.id} tried to update order for truck owned by ${truck.ownerid}`);
             return res.status(403).json({
                 success: false,
                 message: 'Forbidden: You can only update orders for your own trucks'
@@ -373,6 +414,12 @@ const updateOrderStatus = async (req, res) => {
         }
         
         const updatedOrder = await orderModel.updateOrderStatus(parseInt(orderId), status);
+        
+        console.log('✅ Order status updated successfully:', {
+            orderId: updatedOrder.orderid,
+            newStatus: updatedOrder.orderstatus,
+            previousStatus: order.orderstatus
+        });
         
         return res.status(200).json({
             success: true,
@@ -384,11 +431,18 @@ const updateOrderStatus = async (req, res) => {
         });
         
     } catch (error) {
-        console.error('Error updating order status:', error);
+        console.error('❌ Error updating order status:', {
+            error: error.message,
+            stack: error.stack,
+            orderId: req.params.orderId,
+            status: req.body.status,
+            userId: req.user?.id
+        });
         return res.status(500).json({
             success: false,
             message: 'Failed to update order status',
-            error: error.message
+            error: error.message,
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 };
