@@ -220,6 +220,8 @@ router.get('/details/:orderId', verifyToken, async (req, res, next) => {
                 orderStatus: order.orderstatus,
                 totalPrice: parseFloat(order.totalprice),
                 scheduledPickupTime: order.scheduledpickuptime,
+                estimatedPreparationMinutes: order.estimatedpreparationminutes,
+                estimatedCompletionTime: order.estimatedcompletiontime,
                 estimatedEarliestPickup: order.estimatedearliestpickup,
                 createdAt: order.createdat,
                 items: orderItems.map(item => ({
@@ -295,6 +297,8 @@ router.get('/truckOwner/:orderId', verifyToken, verifyRole('truckOwner'), async 
                 orderStatus: order.orderstatus,
                 totalPrice: parseFloat(order.totalprice),
                 scheduledPickupTime: order.scheduledpickuptime,
+                estimatedPreparationMinutes: order.estimatedpreparationminutes,
+                estimatedCompletionTime: order.estimatedcompletiontime,
                 estimatedEarliestPickup: order.estimatedearliestpickup,
                 createdAt: order.createdat,
                 items: orderItems.map(item => ({

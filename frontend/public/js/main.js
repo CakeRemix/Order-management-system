@@ -123,10 +123,10 @@ $(document).ready(function(){
 
     // If there's an active order, show order status instead of cart items
     if (currentOrder && currentOrder.status === 'processing') {
-      // Fetch real-time order details
+      // Fetch real-time order details using v1 API
       const token = localStorage.getItem('token');
       $.ajax({
-        url: `http://localhost:5000/api/orders/${currentOrder.orderId}`,
+        url: `http://localhost:5000/api/v1/order/details/${currentOrder.orderId}`,
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + token
@@ -137,18 +137,18 @@ $(document).ready(function(){
             const now = new Date();
             let timeInfo = '';
             
-            if (orderData.scheduledpickuptime) {
-              const pickupDate = new Date(orderData.scheduledpickuptime);
+            if (orderData.scheduledPickupTime) {
+              const pickupDate = new Date(orderData.scheduledPickupTime);
               const remainingMs = pickupDate - now;
               
               if (remainingMs > 0) {
                 const remainingMin = Math.ceil(remainingMs / 60000);
                 timeInfo = `<p style="color: #ea580c; margin-bottom: 0.5rem; font-size: 0.9rem;">Ready in ${remainingMin} minutes</p>`;
-              } else if (orderData.orderstatus === 'ready') {
+              } else if (orderData.orderStatus === 'ready') {
                 timeInfo = `<p style="color: #22c55e; margin-bottom: 0.5rem; font-size: 0.9rem;">✓ Ready for pickup!</p>`;
               }
-            } else if (orderData.estimatedpreparationminutes) {
-              timeInfo = `<p style="color: #64748b; margin-bottom: 0.5rem; font-size: 0.9rem;">Estimated: ${orderData.estimatedpreparationminutes} minutes</p>`;
+            } else if (orderData.estimatedPreparationMinutes) {
+              timeInfo = `<p style="color: #64748b; margin-bottom: 0.5rem; font-size: 0.9rem;">Estimated: ${orderData.estimatedPreparationMinutes} minutes</p>`;
             }
             
             const statusMap = {
@@ -158,7 +158,7 @@ $(document).ready(function(){
               'completed': '✓ Completed',
               'cancelled': '✗ Cancelled'
             };
-            const statusDisplay = statusMap[orderData.orderstatus] || 'Processing';
+            const statusDisplay = statusMap[orderData.orderStatus] || 'Processing';
             
             cartItems.html(`
               <div class="order-status-display">
@@ -174,8 +174,8 @@ $(document).ready(function(){
               window.location.href = 'track.html';
             });
             
-            estimatedTimeEl.text(orderData.scheduledpickuptime ? 
-              new Date(orderData.scheduledpickuptime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : 
+            estimatedTimeEl.text(orderData.scheduledPickupTime ? 
+              new Date(orderData.scheduledPickupTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : 
               'ASAP');
           }
         },

@@ -79,10 +79,10 @@
             return;
           }
 
-          // Fetch real-time order details from backend
+          // Fetch real-time order details from backend using v1 API
           const token = localStorage.getItem('token');
           $.ajax({
-            url: `http://localhost:5000/api/orders/${currentOrder.orderId}`,
+            url: `http://localhost:5000/api/v1/order/details/${currentOrder.orderId}`,
             method: 'GET',
             headers: {
               'Authorization': 'Bearer ' + token
@@ -126,11 +126,11 @@
           }
 
           function displayOrderDetails(orderData) {
-            // Display order with real-time data from backend
+            // Display order with real-time data from backend v1 API
             const now = new Date();
             let pickupDisplay = 'ASAP';
             let remainingTime = '';
-            let statusDisplay = orderData.orderstatus || 'pending';
+            let statusDisplay = orderData.orderStatus || 'pending';
 
             // Convert status to display format
             const statusMap = {
@@ -140,10 +140,10 @@
               'completed': 'Completed',
               'cancelled': 'Cancelled'
             };
-            statusDisplay = statusMap[orderData.orderstatus] || orderData.orderstatus;
+            statusDisplay = statusMap[orderData.orderStatus] || orderData.orderStatus;
 
-            if (orderData.scheduledpickuptime) {
-              const pickupDate = new Date(orderData.scheduledpickuptime);
+            if (orderData.scheduledPickupTime) {
+              const pickupDate = new Date(orderData.scheduledPickupTime);
               pickupDisplay = pickupDate.toLocaleTimeString('en-US', { 
                 hour: 'numeric', 
                 minute: '2-digit',
@@ -155,14 +155,14 @@
                 const remainingMin = Math.ceil(remainingMs / 60000);
                 
                 // Show estimated preparation time if available
-                if (orderData.estimatedpreparationminutes) {
-                  remainingTime = `<p style="margin-top: 0.5rem; color: #ea580c;">Estimated preparation time: <strong>${orderData.estimatedpreparationminutes} minutes</strong></p>`;
+                if (orderData.estimatedPreparationMinutes) {
+                  remainingTime = `<p style="margin-top: 0.5rem; color: #ea580c;">Estimated preparation time: <strong>${orderData.estimatedPreparationMinutes} minutes</strong></p>`;
                   remainingTime += `<p style="margin-top: 0.25rem; color: #ea580c;">Time remaining: <strong>${remainingMin} minutes</strong></p>`;
                 } else {
                   remainingTime = `<p style="margin-top: 0.5rem; color: #ea580c;">Time remaining: <strong>${remainingMin} minutes</strong></p>`;
                 }
               } else {
-                if (orderData.orderstatus === 'ready') {
+                if (orderData.orderStatus === 'ready') {
                   remainingTime = '<p style="margin-top: 0.5rem; color: #22c55e;">✓ Ready for pickup now!</p>';
                 } else {
                   remainingTime = '<p style="margin-top: 0.5rem; color: #ef4444;">Pickup time has passed.</p>';
@@ -170,14 +170,14 @@
               }
             } else {
               // Show estimated time if order is pending
-              if (orderData.estimatedpreparationminutes) {
-                remainingTime = `<p style="margin-top: 0.5rem; color: #64748b;">Estimated preparation time: <strong>${orderData.estimatedpreparationminutes} minutes</strong></p>`;
+              if (orderData.estimatedPreparationMinutes) {
+                remainingTime = `<p style="margin-top: 0.5rem; color: #64748b;">Estimated preparation time: <strong>${orderData.estimatedPreparationMinutes} minutes</strong></p>`;
               } else {
                 remainingTime = `<p style="margin-top: 0.5rem; color: #64748b;">Waiting for confirmation...</p>`;
               }
             }
 
-            displayOrder(orderData.items || currentOrder.items, orderData.totalprice || currentOrder.total, currentOrder.truck, pickupDisplay, remainingTime, statusDisplay);
+            displayOrder(orderData.items || currentOrder.items, orderData.totalPrice || currentOrder.total, currentOrder.truck, pickupDisplay, remainingTime, statusDisplay);
           }
 
           function displayOrder(items, total, truck, pickupDisplay, remainingTime, status) {
