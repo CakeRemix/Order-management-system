@@ -429,6 +429,7 @@
                         <th>Name</th>
                         <th>Email</th>
                             <th>Role</th>
+                            <th>Birth Date</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -634,12 +635,16 @@
                                 ${user.is_active ? 'Deactivate' : 'Activate'}
                             </button>`;
                         
+                        // Format birthdate
+                        const birthDate = user.birthDate ? new Date(user.birthDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+                        
                         const row = `
                             <tr>
                                 <td>${user.id}</td>
                                 <td>${user.name}</td>
                                 <td>${user.email}</td>
                                 <td>${user.role}</td>
+                                <td>${birthDate}</td>
                                 <td>${user.is_active ? 'Active' : 'Inactive'}</td>
                                 <td>
                                     ${actionButton}
