@@ -6,25 +6,32 @@ const db = require('../config/db');
  */
 const getAllTrucks = async (req, res, next) => {
   try {
-    // Using Knex Query Builder
-    const trucks = await db('public.food_trucks')
+    // Using Knex Query Builder with correct schema
+    const trucks = await db('foodtruck.trucks')
       .select(
-        'id',
-        'name',
-        'description',
-        'location',
-        'image_url',
-        'vendor_id',
-        'status',
-        'is_busy',
-        'created_at'
+        'truckid',
+        'truckname',
+        'trucklogo',
+        'truckstatus',
+        'orderstatus',
+        'ownerid',
+        'createdat'
       )
-      .orderBy('name', 'asc');
+      .orderBy('truckname', 'asc');
     
     res.json({
       success: true,
       count: trucks.length,
-      data: trucks
+      data: trucks.map(truck => ({
+        truckId: truck.truckid,
+        truckName: truck.truckname,
+        truckLogo: truck.trucklogo,
+        truckStatus: truck.truckstatus,
+        orderStatus: truck.orderstatus,
+        isAvailable: truck.truckstatus === 'available' && truck.orderstatus === 'available',
+        ownerId: truck.ownerid,
+        createdAt: truck.createdat
+      }))
     });
   } catch (error) {
     console.error('Error fetching food trucks:', error);
@@ -40,20 +47,18 @@ const getTruckById = async (req, res, next) => {
   try {
     const { id } = req.params;
     
-    // Using Knex Query Builder
-    const truck = await db('public.food_trucks')
+    // Using Knex Query Builder with correct schema
+    const truck = await db('foodtruck.trucks')
       .select(
-        'id',
-        'name',
-        'description',
-        'location',
-        'image_url',
-        'vendor_id',
-        'status',
-        'is_busy',
-        'created_at'
+        'truckid',
+        'truckname',
+        'trucklogo',
+        'truckstatus',
+        'orderstatus',
+        'ownerid',
+        'createdat'
       )
-      .where({ id: id })
+      .where({ truckid: id })
       .first();
     
     if (!truck) {
@@ -65,7 +70,16 @@ const getTruckById = async (req, res, next) => {
     
     res.json({
       success: true,
-      data: truck
+      data: {
+        truckId: truck.truckid,
+        truckName: truck.truckname,
+        truckLogo: truck.trucklogo,
+        truckStatus: truck.truckstatus,
+        orderStatus: truck.orderstatus,
+        isAvailable: truck.truckstatus === 'available' && truck.orderstatus === 'available',
+        ownerId: truck.ownerid,
+        createdAt: truck.createdat
+      }
     });
   } catch (error) {
     console.error('Error fetching food truck:', error);
@@ -81,20 +95,18 @@ const getTruckByName = async (req, res, next) => {
   try {
     const { name } = req.params;
     
-    // Using Knex Query Builder
-    const truck = await db('public.food_trucks')
+    // Using Knex Query Builder with correct schema
+    const truck = await db('foodtruck.trucks')
       .select(
-        'id',
-        'name',
-        'description',
-        'location',
-        'image_url',
-        'vendor_id',
-        'status',
-        'is_busy',
-        'created_at'
+        'truckid',
+        'truckname',
+        'trucklogo',
+        'truckstatus',
+        'orderstatus',
+        'ownerid',
+        'createdat'
       )
-      .where({ name: name })
+      .where({ truckname: name })
       .first();
     
     if (!truck) {
@@ -106,7 +118,16 @@ const getTruckByName = async (req, res, next) => {
     
     res.json({
       success: true,
-      data: truck
+      data: {
+        truckId: truck.truckid,
+        truckName: truck.truckname,
+        truckLogo: truck.trucklogo,
+        truckStatus: truck.truckstatus,
+        orderStatus: truck.orderstatus,
+        isAvailable: truck.truckstatus === 'available' && truck.orderstatus === 'available',
+        ownerId: truck.ownerid,
+        createdAt: truck.createdat
+      }
     });
   } catch (error) {
     console.error('Error fetching food truck by name:', error);
@@ -123,9 +144,9 @@ const getMenuItemsByTruckId = async (req, res, next) => {
     const { id } = req.params;
     
     // Using Knex Query Builder - First verify the truck exists
-    const truck = await db('public.food_trucks')
-      .select('id', 'name', 'status')
-      .where({ id: id })
+    const truck = await db('foodtruck.trucks')
+      .select('truckid as id', 'truckname as name', 'truckstatus as status', 'orderstatus')
+      .where({ truckid: id })
       .first();
     
     if (!truck) {
@@ -136,18 +157,18 @@ const getMenuItemsByTruckId = async (req, res, next) => {
     }
     
     // Get menu items using Knex Query Builder
-    const menuItems = await db('public.menu_items')
+    const menuItems = await db('foodtruck.menuitems')
       .select(
-        'id',
-        'food_truck_id',
+        'itemid',
+        'truckid',
         'name',
         'description',
         'price',
         'category',
-        'is_available',
-        'created_at'
+        'status as is_available',
+        'createdat as created_at'
       )
-      .where({ food_truck_id: id })
+      .where({ truckid: id })
       .orderBy(['category', 'name']);
     
     res.json({

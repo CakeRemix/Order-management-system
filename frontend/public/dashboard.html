@@ -168,7 +168,7 @@
         const trucksGrid = $('#trucksGrid');
         
         $.ajax({
-          url: 'http://localhost:5000/api/trucks',
+          url: 'http://localhost:5000/api/v1/trucks/view',
           method: 'GET'
         })
         .done(function(result) {
