@@ -3,32 +3,40 @@ const bcrypt = require('bcrypt');
 
 class UserModel {
   // Create a new user
-  static async create({ email, password, role = 'customer' }) {
+  static async create({ name, email, password, role = 'customer', birthDate = null }) {
     const saltRounds = parseInt(process.env.BCRYPT_ROUNDS) || 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const query = `
-      INSERT INTO users (email, password, role, created_at, updated_at)
-      VALUES ($1, $2, $3, NOW(), NOW())
-      RETURNING id, email, role, created_at
-    `;
-
-    const result = await db.query(query, [email, hashedPassword, role]);
-    return result.rows[0];
+    const [result] = await db('foodtruck.users')
+      .insert({
+        name: name || email.split('@')[0], // Use email prefix if name not provided
+        email,
+        password: hashedPassword,
+        role,
+        birthdate: birthDate,
+        createdat: db.raw('NOW()')
+      })
+      .returning(['userid', 'name', 'email', 'role', 'createdat']);
+    
+    return result;
   }
 
   // Find user by email
   static async findByEmail(email) {
-    const query = 'SELECT * FROM users WHERE email = $1';
-    const result = await db.query(query, [email]);
-    return result.rows[0];
+    const result = await db('foodtruck.users')
+      .select('*')
+      .where('email', email)
+      .first();
+    return result;
   }
 
   // Find user by ID
   static async findById(id) {
-    const query = 'SELECT id, email, role, created_at, updated_at FROM users WHERE id = $1';
-    const result = await db.query(query, [id]);
-    return result.rows[0];
+    const result = await db('foodtruck.users')
+      .select('userid', 'name', 'email', 'role', 'birthdate', 'createdat')
+      .where('userid', id)
+      .first();
+    return result;
   }
 
   // Verify password
@@ -38,25 +46,37 @@ class UserModel {
 
   // Update user
   static async update(id, updates) {
-    const { email, role } = updates;
-    const query = `
-      UPDATE users 
-      SET email = COALESCE($1, email),
-          role = COALESCE($2, role),
-          updated_at = NOW()
-      WHERE id = $3
-      RETURNING id, email, role, updated_at
-    `;
-
-    const result = await db.query(query, [email, role, id]);
-    return result.rows[0];
+    const { name, email, role } = updates;
+    
+    const [result] = await db('foodtruck.users')
+      .where('userid', id)
+      .update({
+        name: name || db.raw('name'),
+        email: email || db.raw('email'),
+        role: role || db.raw('role')
+      })
+      .returning(['userid', 'name', 'email', 'role', 'createdat']);
+    
+    return result;
   }
 
   // Delete user
   static async delete(id) {
-    const query = 'DELETE FROM users WHERE id = $1 RETURNING id';
-    const result = await db.query(query, [id]);
-    return result.rows[0];
+    const [result] = await db('foodtruck.users')
+      .where('userid', id)
+      .del()
+      .returning('userid');
+    
+    return result;
+  }
+
+  // Get user's truck (for truckOwner role)
+  static async getUserTruck(userId) {
+    const result = await db('foodtruck.trucks')
+      .select('*')
+      .where('ownerid', userId)
+      .first();
+    return result;
   }
 }
 

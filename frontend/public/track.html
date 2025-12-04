@@ -55,9 +55,16 @@
           const trackContent = $('#trackContent');
           let currentOrder = null;
 
-          // Load order from localStorage
+          // Helper function to get user-specific order key
+          function getOrderKey() {
+            const userInfo = getUserInfo();
+            const userId = userInfo ? (userInfo.id || userInfo.userid || userInfo.userId) : null;
+            return userId ? `currentOrder_${userId}` : 'currentOrder_guest';
+          }
+
+          // Load order from localStorage using user-specific key
           try {
-            currentOrder = JSON.parse(localStorage.getItem('currentOrder') || 'null');
+            currentOrder = JSON.parse(localStorage.getItem(getOrderKey()) || 'null');
           } catch (e) {
             currentOrder = null;
           }
@@ -146,7 +153,7 @@
           // Add clear order button handler using jQuery
           $('#clearOrderBtn').on('click', function() {
             if (window.confirm('Are you sure you want to clear this order?')) {
-              localStorage.removeItem('currentOrder');
+              localStorage.removeItem(getOrderKey());
               window.location.href = 'dashboard.html';
             }
           });

@@ -7,14 +7,21 @@ const bcrypt = require('bcrypt');
  */
 exports.getAllUsers = async (req, res, next) => {
     try {
-        const users = await db('public.users')
-            .select('id', 'name', 'email', 'role', 'phone', 'is_active', 'email_verified', 'created_at', 'last_login')
-            .orderBy('created_at', 'desc');
+        const users = await db('foodtruck.users')
+            .select('userid', 'name', 'email', 'role', 'birthdate', 'createdat')
+            .orderBy('createdat', 'desc');
         
         res.json({
             success: true,
             count: users.length,
-            data: users
+            data: users.map(user => ({
+                id: user.userid,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                birthDate: user.birthdate,
+                createdAt: user.createdat
+            }))
         });
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -29,29 +36,28 @@ exports.getAllUsers = async (req, res, next) => {
 exports.getSystemStats = async (req, res, next) => {
     try {
         // Get user counts by role
-        const users = await db('public.users')
+        const users = await db('foodtruck.users')
             .select('role')
             .count('* as count')
             .groupBy('role');
         
         // Get total food trucks with status breakdown
-        const trucksData = await db('public.food_trucks')
-            .where('is_active', true)
+        const trucksData = await db('foodtruck.trucks')
             .select(
                 db.raw("COUNT(*) as total"),
-                db.raw("COUNT(*) FILTER (WHERE status = 'open') as open"),
-                db.raw("COUNT(*) FILTER (WHERE status = 'closed') as closed"),
-                db.raw("COUNT(*) FILTER (WHERE status = 'busy') as busy")
+                db.raw("COUNT(*) FILTER (WHERE truckstatus = 'available') as available"),
+                db.raw("COUNT(*) FILTER (WHERE truckstatus = 'unavailable') as unavailable")
             )
             .first();
         
         // Get total orders with status breakdown
-        const ordersData = await db('public.orders')
+        const ordersData = await db('foodtruck.orders')
             .select(
                 db.raw("COUNT(*) as total"),
-                db.raw("COUNT(*) FILTER (WHERE status = 'completed') as completed"),
-                db.raw("COUNT(*) FILTER (WHERE status = 'preparing') as preparing"),
-                db.raw("COUNT(*) FILTER (WHERE status = 'received') as received")
+                db.raw("COUNT(*) FILTER (WHERE orderstatus = 'completed') as completed"),
+                db.raw("COUNT(*) FILTER (WHERE orderstatus = 'confirmed') as confirmed"),
+                db.raw("COUNT(*) FILTER (WHERE orderstatus = 'pending') as pending"),
+                db.raw("COUNT(*) FILTER (WHERE orderstatus = 'ready') as ready")
             )
             .first();
         
@@ -77,9 +83,6 @@ exports.createTruckWithVendor = async (req, res, next) => {
     try {
         const {
             truckName,
-            description,
-            location,
-            prepTimeMinutes,
             vendorName,
             vendorEmail,
             vendorPassword
@@ -104,8 +107,8 @@ exports.createTruckWithVendor = async (req, res, next) => {
         }
 
         // Check if email exists
-        const emailCheck = await db('public.users')
-            .select('id')
+        const emailCheck = await db('foodtruck.users')
+            .select('userid')
             .where('email', vendorEmail)
             .first();
             
@@ -117,9 +120,9 @@ exports.createTruckWithVendor = async (req, res, next) => {
         }
 
         // Check if truck name exists
-        const truckCheck = await db('public.food_trucks')
-            .select('id')
-            .where('name', truckName)
+        const truckCheck = await db('foodtruck.trucks')
+            .select('truckid')
+            .where('truckname', truckName)
             .first();
             
         if (truckCheck) {
@@ -135,36 +138,42 @@ exports.createTruckWithVendor = async (req, res, next) => {
             const hashedPassword = await bcrypt.hash(vendorPassword, 10);
 
             // Create vendor user
-            const vendors = await trx('public.users')
+            const [vendor] = await trx('foodtruck.users')
                 .insert({
                     name: vendorName,
                     email: vendorEmail,
                     password: hashedPassword,
-                    role: 'vendor',
-                    is_active: true,
-                    email_verified: true
+                    role: 'truckOwner',
+                    createdat: trx.raw('NOW()')
                 })
-                .returning(['id', 'name', 'email', 'role']);
-            
-            const vendor = vendors[0];
+                .returning(['userid', 'name', 'email', 'role']);
 
             // Create food truck
-            const trucks = await trx('public.food_trucks')
+            const [truck] = await trx('foodtruck.trucks')
                 .insert({
-                    name: truckName,
-                    description: description || '',
-                    location: location || '',
-                    vendor_id: vendor.id,
-                    status: 'closed',
-                    is_busy: false,
-                    prep_time_minutes: prepTimeMinutes || 15,
-                    is_active: true
+                    truckname: truckName,
+                    ownerid: vendor.userid,
+                    truckstatus: 'available',
+                    orderstatus: 'available',
+                    createdat: trx.raw('NOW()')
                 })
-                .returning(['id', 'name', 'description', 'location', 'vendor_id', 'status', 'prep_time_minutes']);
-            
-            const truck = trucks[0];
+                .returning(['truckid', 'truckname', 'ownerid', 'truckstatus', 'orderstatus']);
 
-            return { truck, vendor };
+            return { 
+                truck: {
+                    id: truck.truckid,
+                    name: truck.truckname,
+                    ownerId: truck.ownerid,
+                    truckStatus: truck.truckstatus,
+                    orderStatus: truck.orderstatus
+                }, 
+                vendor: {
+                    id: vendor.userid,
+                    name: vendor.name,
+                    email: vendor.email,
+                    role: vendor.role
+                }
+            };
         });
 
         res.status(201).json({
@@ -187,9 +196,9 @@ exports.deleteTruck = async (req, res, next) => {
         const { id } = req.params;
 
         // Get truck with vendor info
-        const truck = await db('public.food_trucks')
-            .select('id', 'name', 'vendor_id')
-            .where('id', id)
+        const truck = await db('foodtruck.trucks')
+            .select('truckid', 'truckname', 'ownerid')
+            .where('truckid', id)
             .first();
 
         if (!truck) {
@@ -199,27 +208,17 @@ exports.deleteTruck = async (req, res, next) => {
             });
         }
 
-        // Use Knex transaction
+        // Use Knex transaction - cascade delete will handle related records
         await db.transaction(async (trx) => {
-            // Delete menu items (cascade will handle order_items)
-            await trx('public.menu_items')
-                .where('food_truck_id', id)
-                .del();
-
-            // Delete orders and order_items (cascade)
-            await trx('public.orders')
-                .where('food_truck_id', id)
-                .del();
-
-            // Delete food truck
-            await trx('public.food_trucks')
-                .where('id', id)
+            // Delete food truck (cascade will handle menuitems, orders, etc.)
+            await trx('foodtruck.trucks')
+                .where('truckid', id)
                 .del();
 
             // Delete vendor user if exists
-            if (truck.vendor_id) {
-                await trx('public.users')
-                    .where('id', truck.vendor_id)
+            if (truck.ownerid) {
+                await trx('foodtruck.users')
+                    .where('userid', truck.ownerid)
                     .del();
             }
         });
@@ -235,32 +234,40 @@ exports.deleteTruck = async (req, res, next) => {
 };
 
 /**
- * Get all food trucks for admin (including inactive)
+ * Get all food trucks for admin
  * GET /api/admin/trucks
  */
 exports.getAllTrucksAdmin = async (req, res, next) => {
     try {
-        const trucks = await db('public.food_trucks as ft')
-            .leftJoin('public.users as u', 'ft.vendor_id', 'u.id')
+        const trucks = await db('foodtruck.trucks as ft')
+            .leftJoin('foodtruck.users as u', 'ft.ownerid', 'u.userid')
             .select(
-                'ft.id',
-                'ft.name',
-                'ft.description',
-                'ft.location',
-                'ft.status',
-                'ft.is_busy',
-                'ft.prep_time_minutes',
-                'ft.vendor_id',
+                'ft.truckid',
+                'ft.truckname',
+                'ft.trucklogo',
+                'ft.truckstatus',
+                'ft.orderstatus',
+                'ft.ownerid',
                 'u.name as vendor_name',
                 'u.email as vendor_email',
-                'ft.created_at'
+                'ft.createdat'
             )
-            .orderBy('ft.created_at', 'desc');
+            .orderBy('ft.createdat', 'desc');
         
         res.json({
             success: true,
             count: trucks.length,
-            data: trucks
+            data: trucks.map(truck => ({
+                id: truck.truckid,
+                name: truck.truckname,
+                logo: truck.trucklogo,
+                truckStatus: truck.truckstatus,
+                orderStatus: truck.orderstatus,
+                ownerId: truck.ownerid,
+                vendorName: truck.vendor_name,
+                vendorEmail: truck.vendor_email,
+                createdAt: truck.createdat
+            }))
         });
     } catch (error) {
         console.error('Error fetching trucks:', error);
@@ -269,21 +276,29 @@ exports.getAllTrucksAdmin = async (req, res, next) => {
 };
 
 /**
- * Toggle user active status (Admin only)
- * PATCH /api/admin/users/:id/toggle-active
+ * Update user role (Admin only)
+ * PATCH /api/admin/users/:id/role
  */
-exports.toggleUserActive = async (req, res, next) => {
+exports.updateUserRole = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const { role } = req.body;
 
-        const users = await db('public.users')
-            .where('id', id)
-            .update({
-                is_active: db.raw('NOT is_active')
-            })
-            .returning(['id', 'name', 'email', 'is_active']);
+        // Validate role
+        const validRoles = ['customer', 'truckOwner', 'admin'];
+        if (!validRoles.includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid role. Must be one of: ${validRoles.join(', ')}`
+            });
+        }
 
-        if (users.length === 0) {
+        const [user] = await db('foodtruck.users')
+            .where('userid', id)
+            .update({ role })
+            .returning(['userid', 'name', 'email', 'role']);
+
+        if (!user) {
             return res.status(404).json({
                 success: false,
                 message: 'User not found'
@@ -292,11 +307,54 @@ exports.toggleUserActive = async (req, res, next) => {
 
         res.json({
             success: true,
-            message: 'User status updated',
-            data: users[0]
+            message: 'User role updated',
+            data: {
+                id: user.userid,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         });
     } catch (error) {
-        console.error('Error toggling user status:', error);
+        console.error('Error updating user role:', error);
+        next(error);
+    }
+};
+
+/**
+ * Delete user (Admin only)
+ * DELETE /api/admin/users/:id
+ */
+exports.deleteUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        // Prevent deleting self
+        if (req.user.id === parseInt(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot delete your own account'
+            });
+        }
+
+        const [deleted] = await db('foodtruck.users')
+            .where('userid', id)
+            .del()
+            .returning('userid');
+
+        if (!deleted) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'User deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error deleting user:', error);
         next(error);
     }
 };

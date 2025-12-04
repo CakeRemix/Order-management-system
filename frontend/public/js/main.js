@@ -6,22 +6,58 @@ $(document).ready(function(){
   const proceedBtn = $('#proceedBtn');
   const schedulePickup = $('#schedulePickup');
 
+  // Get current user ID for user-specific storage keys
+  function getCurrentUserId() {
+    try {
+      const userInfo = localStorage.getItem('userInfo');
+      if (userInfo) {
+        const user = JSON.parse(userInfo);
+        return user.id || user.userid || user.userId || null;
+      }
+    } catch (e) {
+      console.error('Error getting user ID:', e);
+    }
+    return null;
+  }
+
+  // Generate user-specific storage keys
+  function getCartKey() {
+    const userId = getCurrentUserId();
+    return userId ? `cartStore_${userId}` : 'cartStore_guest';
+  }
+
+  function getOrderKey() {
+    const userId = getCurrentUserId();
+    return userId ? `currentOrder_${userId}` : 'currentOrder_guest';
+  }
+
   // Order structure: { truck, items, total, pickupTime, status, createdAt }
   // Cart structure: { owner: null|string, truckId: null|number, items: [ {name,price,quantity,itemId} ] }
   let cartStore = { owner: null, truckId: null, items: [] };
   let currentOrder = null;
 
-  // Load from localStorage
-  try {
-    cartStore = JSON.parse(localStorage.getItem('cartStore') || JSON.stringify(cartStore));
-    currentOrder = JSON.parse(localStorage.getItem('currentOrder') || 'null');
-  } catch (e) {
-    cartStore = { owner: null, truckId: null, items: [] };
-    currentOrder = null;
+  // Load from localStorage using user-specific keys
+  function loadUserCart() {
+    try {
+      cartStore = JSON.parse(localStorage.getItem(getCartKey()) || JSON.stringify({ owner: null, truckId: null, items: [] }));
+      currentOrder = JSON.parse(localStorage.getItem(getOrderKey()) || 'null');
+    } catch (e) {
+      cartStore = { owner: null, truckId: null, items: [] };
+      currentOrder = null;
+    }
   }
 
-  function saveCart() { localStorage.setItem('cartStore', JSON.stringify(cartStore)); }
-  function saveOrder() { localStorage.setItem('currentOrder', JSON.stringify(currentOrder)); }
+  // Initial load
+  loadUserCart();
+
+  function saveCart() { localStorage.setItem(getCartKey(), JSON.stringify(cartStore)); }
+  function saveOrder() { localStorage.setItem(getOrderKey(), JSON.stringify(currentOrder)); }
+
+  // Expose reload function for when user logs in/out
+  window.reloadUserCart = function() {
+    loadUserCart();
+    updateCart();
+  };
 
   // Public API to add items to the cart from other pages
   window.addToCart = function(item) {

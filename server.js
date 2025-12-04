@@ -15,6 +15,8 @@ const trucksRoutes = require('./backend/routes/trucksRoutes');
 const adminRoutes = require('./backend/routes/adminRoutes');
 const vendorRoutes = require('./backend/routes/vendorRoutes');
 const orderRoutes = require('./backend/routes/orderRoutes');
+const cartRoutes = require('./backend/routes/cartRoutes');
+const v1Routes = require('./backend/routes/v1');
 // const productRoutes = require('./backend/routes/productRoutes');
 
 const app = express();
@@ -60,6 +62,8 @@ app.use('/api/trucks', trucksRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/vendor', vendorRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/v1', v1Routes);
 // app.use('/api/products', productRoutes);
 
 // Error handling middleware (must be last)
