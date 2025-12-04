@@ -110,13 +110,14 @@ const createOrder = async (req, res) => {
             }
         }
         
-        // Create the order
+        // Create the order with items for intelligent estimation
         const orderData = {
             userId,
             truckId,
             totalPrice: parseFloat(totalPrice.toFixed(2)),
             orderStatus: 'pending',
-            scheduledPickupTime
+            scheduledPickupTime,
+            items // Pass items array to enable automatic preparation time estimation
         };
         
         const newOrder = await orderModel.createOrder(orderData);
@@ -127,25 +128,41 @@ const createOrder = async (req, res) => {
         // Get complete order
         const completeOrder = await orderModel.getOrderById(newOrder.orderid);
         
+        // Build response with estimation details
+        const responseData = {
+            orderId: completeOrder.orderid,
+            userId: completeOrder.userid,
+            truckId: completeOrder.truckid,
+            truckName: completeOrder.truck_name,
+            orderStatus: completeOrder.orderstatus,
+            totalPrice: parseFloat(completeOrder.totalprice),
+            scheduledPickupTime: completeOrder.scheduledpickuptime,
+            estimatedPreparationMinutes: completeOrder.estimatedpreparationminutes,
+            estimatedCompletionTime: completeOrder.estimatedcompletiontime,
+            createdAt: completeOrder.createdat,
+            items: orderItems.map(item => ({
+                orderItemId: item.orderitemid,
+                itemId: item.itemid,
+                quantity: item.quantity,
+                price: parseFloat(item.price)
+            }))
+        };
+        
+        // Include estimation breakdown if available (from auto-estimation)
+        if (newOrder.estimationBreakdown) {
+            responseData.estimation = {
+                estimatedMinutes: completeOrder.estimatedpreparationminutes,
+                breakdown: newOrder.estimationBreakdown,
+                message: scheduledPickupTime 
+                    ? 'Estimation calculated but scheduled time was provided'
+                    : 'Automatic preparation time estimated'
+            };
+        }
+        
         return res.status(201).json({
             success: true,
             message: 'Order created successfully',
-            data: {
-                orderId: completeOrder.orderid,
-                userId: completeOrder.userid,
-                truckId: completeOrder.truckid,
-                truckName: completeOrder.truck_name,
-                orderStatus: completeOrder.orderstatus,
-                totalPrice: parseFloat(completeOrder.totalprice),
-                scheduledPickupTime: completeOrder.scheduledpickuptime,
-                createdAt: completeOrder.createdat,
-                items: orderItems.map(item => ({
-                    orderItemId: item.orderitemid,
-                    itemId: item.itemid,
-                    quantity: item.quantity,
-                    price: parseFloat(item.price)
-                }))
-            }
+            data: responseData
         });
         
     } catch (error) {

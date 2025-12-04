@@ -23,6 +23,7 @@ const createOrder = async (orderData) => {
     let estimatedCompletionTime = null;
     let estimationBreakdown = null;
     
+    // Auto-estimate preparation time when items are provided
     if (items && items.length > 0) {
         try {
             // Enrich items with preparation metadata from menu
@@ -35,17 +36,24 @@ const createOrder = async (orderData) => {
             estimatedCompletionTime = estimation.estimatedCompletionTime;
             estimationBreakdown = estimation.breakdown;
             
-            console.log('Preparation time estimated:', {
+            console.log('✅ Auto-estimated preparation time:', {
                 orderId: orderNumber,
-                estimatedMinutes,
+                estimatedMinutes: `${estimatedMinutes} minutes`,
+                completionTime: estimatedCompletionTime,
+                hasScheduledTime: !!scheduledPickupTime,
                 breakdown: estimationBreakdown
             });
         } catch (error) {
-            console.error('Error during preparation estimation, using fallback:', error);
+            console.error('⚠️ Error during preparation estimation, using fallback:', error);
+            // Calculate fallback completion time based on default minutes
+            const fallbackDate = new Date();
+            fallbackDate.setMinutes(fallbackDate.getMinutes() + estimatedMinutes);
+            estimatedCompletionTime = fallbackDate.toISOString();
         }
     }
     
-    // Calculate pickup time: use scheduled time or estimated completion time
+    // Priority: 1) scheduledPickupTime, 2) estimatedCompletionTime, 3) 30-min default
+    // When no scheduled time is provided, use intelligent estimation
     const pickupTime = scheduledPickupTime || 
                       estimatedCompletionTime || 
                       db.raw("NOW() + INTERVAL '30 minutes'");
