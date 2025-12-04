@@ -418,16 +418,31 @@ const updateOrderStatus = async (req, res) => {
         console.log('✅ Order status updated successfully:', {
             orderId: updatedOrder.orderid,
             newStatus: updatedOrder.orderstatus,
-            previousStatus: order.orderstatus
+            previousStatus: order.orderstatus,
+            estimatedMinutes: updatedOrder.estimatedpreparationminutes,
+            scheduledPickupTime: updatedOrder.scheduledpickuptime
         });
+        
+        // Build response with additional timing information for confirmed orders
+        const responseData = {
+            orderId: updatedOrder.orderid,
+            orderStatus: updatedOrder.orderstatus
+        };
+        
+        // Include pickup time and estimation info when order is confirmed
+        if (status === 'confirmed' && updatedOrder.scheduledpickuptime) {
+            responseData.scheduledPickupTime = updatedOrder.scheduledpickuptime;
+            responseData.estimatedPreparationMinutes = updatedOrder.estimatedpreparationminutes;
+            responseData.estimatedCompletionTime = updatedOrder.estimatedcompletiontime;
+            responseData.message = `Order confirmed! Estimated ready in ${updatedOrder.estimatedpreparationminutes} minutes`;
+        }
         
         return res.status(200).json({
             success: true,
-            message: `Order status updated to ${status}`,
-            data: {
-                orderId: updatedOrder.orderid,
-                orderStatus: updatedOrder.orderstatus
-            }
+            message: status === 'confirmed' 
+                ? `Order confirmed! Ready in ${updatedOrder.estimatedpreparationminutes || 30} minutes` 
+                : `Order status updated to ${status}`,
+            data: responseData
         });
         
     } catch (error) {

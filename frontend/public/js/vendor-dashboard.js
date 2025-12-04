@@ -908,8 +908,20 @@ window.updateOrderStatusUI = async function updateOrderStatusUI(orderId, newStat
             const data = await response.json();
             console.log('✅ Order updated successfully:', data);
             
-            // Show success message
-            showNotification(`Order #${orderId} ${newStatus} successfully!`, 'success');
+            // Show success message with timing info for confirmed orders
+            let successMessage = `Order #${orderId} ${newStatus} successfully!`;
+            if (newStatus === 'confirmed' && data.data?.estimatedPreparationMinutes) {
+                const minutes = data.data.estimatedPreparationMinutes;
+                const pickupTime = new Date(data.data.scheduledPickupTime);
+                const timeString = pickupTime.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                successMessage = `Order #${orderId} confirmed! Ready in ${minutes} minutes (by ${timeString})`;
+            }
+            
+            showNotification(successMessage, 'success');
             
             // Reload orders to reflect changes
             const activeSection = document.querySelector('.vendor-section.active');

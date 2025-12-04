@@ -231,6 +231,7 @@ const getNewOrdersForVendor = async (ownerId) => {
 
 /**
  * Updates order status and records completion time for analytics
+ * Also updates scheduledPickupTime based on estimated preparation time when confirming
  * @param {number} orderId - The order ID
  * @param {string} status - New status (pending, preparing, ready, completed, cancelled)
  * @returns {Promise<Object>} - Updated order
@@ -239,6 +240,40 @@ const updateOrderStatus = async (orderId, status) => {
     const updateData = {
         orderstatus: status
     };
+    
+    // When confirming an order, update pickup time based on estimated preparation time
+    if (status === 'confirmed') {
+        const order = await db('foodtruck.orders')
+            .where('orderid', orderId)
+            .first();
+        
+        if (order && order.estimatedpreparationminutes) {
+            // Use the intelligent estimation already calculated
+            const estimatedMinutes = order.estimatedpreparationminutes;
+            const newPickupTime = new Date();
+            newPickupTime.setMinutes(newPickupTime.getMinutes() + estimatedMinutes);
+            
+            updateData.scheduledpickuptime = newPickupTime.toISOString();
+            updateData.estimatedcompletiontime = newPickupTime.toISOString();
+            
+            console.log('✅ Order confirmed - Pickup time updated based on estimation:', {
+                orderId,
+                estimatedMinutes: `${estimatedMinutes} minutes`,
+                newPickupTime: newPickupTime.toISOString(),
+                previousPickupTime: order.scheduledpickuptime
+            });
+        } else {
+            // Fallback: If no estimation exists, use 30 minutes as backup
+            const fallbackMinutes = 30;
+            const fallbackTime = new Date();
+            fallbackTime.setMinutes(fallbackTime.getMinutes() + fallbackMinutes);
+            
+            updateData.scheduledpickuptime = fallbackTime.toISOString();
+            updateData.estimatedpreparationminutes = fallbackMinutes;
+            
+            console.warn('⚠️ No estimation found, using 30-minute fallback for order:', orderId);
+        }
+    }
     
     // Record actual completion time when order is marked as ready or completed
     // This enables ML-style feedback loop for improving future estimates
