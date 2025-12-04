@@ -41,6 +41,20 @@ $(document).ready(function(){
     try {
       cartStore = JSON.parse(localStorage.getItem(getCartKey()) || JSON.stringify({ owner: null, truckId: null, items: [] }));
       currentOrder = JSON.parse(localStorage.getItem(getOrderKey()) || 'null');
+      
+      // Migrate old cart items: remove items without itemId
+      if (cartStore.items && cartStore.items.length > 0) {
+        const validItems = cartStore.items.filter(item => item.itemId);
+        if (validItems.length !== cartStore.items.length) {
+          console.warn('Removed', cartStore.items.length - validItems.length, 'items without itemId from cart');
+          cartStore.items = validItems;
+          if (cartStore.items.length === 0) {
+            cartStore.owner = null;
+            cartStore.truckId = null;
+          }
+          saveCart();
+        }
+      }
     } catch (e) {
       cartStore = { owner: null, truckId: null, items: [] };
       currentOrder = null;
@@ -167,9 +181,18 @@ $(document).ready(function(){
       return;
     }
 
-    // Get user info from localStorage
+    // Validate all items have itemId
+    const invalidItems = cartStore.items.filter(item => !item.itemId);
+    if (invalidItems.length > 0) {
+      alert('Some items in your cart are invalid. Please clear your cart and add items again.');
+      console.error('Invalid cart items:', invalidItems);
+      return;
+    }
+
+    // Get user info and token from localStorage
     const userInfo = localStorage.getItem('userInfo');
-    if (!userInfo) {
+    const token = localStorage.getItem('token');
+    if (!userInfo || !token) {
       alert('Please log in to place an order');
       window.location.href = 'login.html';
       return;
@@ -207,6 +230,9 @@ $(document).ready(function(){
       scheduledPickupTime: pickupTime
     };
 
+    console.log('Sending order data:', JSON.stringify(orderData, null, 2));
+    console.log('Cart items:', JSON.stringify(cartStore.items, null, 2));
+
     try {
       // Show loading state
       proceedBtn.prop('disabled', true);
@@ -217,6 +243,9 @@ $(document).ready(function(){
         url: 'http://localhost:5000/api/orders',
         method: 'POST',
         contentType: 'application/json',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
         data: JSON.stringify(orderData)
       });
 

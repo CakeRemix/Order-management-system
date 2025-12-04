@@ -105,6 +105,7 @@
       }
 
       const truckName = getQueryParam('truck') || 'Unknown';
+      const truckId = getQueryParam('id');
       $(document).prop('title', truckName + ' — Menu');
       const titleEl = $('#restaurantTitle');
       if (titleEl.length) titleEl.text(truckName);
@@ -114,8 +115,13 @@
 
       // Load truck and menu data from API using jQuery AJAX
       function loadTruckMenu() {
+        if (!truckId) {
+          if (introEl.length) introEl.html(`<h1>${truckName}</h1><p class="muted">Truck ID not found.</p>`);
+          return;
+        }
+        
         $.ajax({
-          url: `http://localhost:5000/api/trucks/name/${encodeURIComponent(truckName)}/menu`,
+          url: `http://localhost:5000/api/v1/menuItem/truck/${truckId}`,
           method: 'GET'
         })
         .done(function(result) {
@@ -128,31 +134,31 @@
           const truck = result.truck;
           const items = result.data;
           
-          // Update title
-          if (titleEl.length) titleEl.text(truck.name);
-          $(document).prop('title', truck.name + ' — Menu');
+          // Update title (v1 API returns truckName)
+          if (titleEl.length) titleEl.text(truck.truckName);
+          $(document).prop('title', truck.truckName + ' — Menu');
           
           // Display intro
           if (introEl.length) {
             introEl.html(`
-              <h1>${truck.name}</h1>
-              <p>${truck.description || 'Delicious items from this truck.'}</p>
+              <h1>${truck.truckName}</h1>
+              <p>Delicious items from this truck.</p>
             `);
           }
           
-          // Check truck status
-          if (truck.status === 'unavailable') {
-            if (introEl.length) introEl.html(`<h1>${truck.name}</h1><p class="muted" style="font-size: 1.2rem; font-weight: 500;">🔒 I am closed yasta</p>`);
+          // Check truck status (v1 API returns truckStatus/orderStatus)
+          if (truck.truckStatus === 'unavailable') {
+            if (introEl.length) introEl.html(`<h1>${truck.truckName}</h1><p class="muted" style="font-size: 1.2rem; font-weight: 500;">🔒 I am closed yasta</p>`);
             if (itemsGrid.length) itemsGrid.html('<div style="text-align: center; padding: 3rem;"><p class="muted" style="font-size: 1.1rem;">This food truck is currently closed and not taking orders.</p><p class="muted">Please check back later!</p></div>');
             return;
-          } else if (truck.orderstatus === 'unavailable') {
-            if (introEl.length) introEl.html(`<h1>${truck.name}</h1><p class="muted">Not taking orders right now.</p>`);
+          } else if (truck.orderStatus === 'unavailable') {
+            if (introEl.length) introEl.html(`<h1>${truck.truckName}</h1><p class="muted">Not taking orders right now.</p>`);
             if (itemsGrid.length) itemsGrid.html('<p class="muted">This food truck is currently not taking orders.</p>');
             return;
           }
           
-          // Render menu items
-          renderItems(items, truck.name);
+          // Render menu items (v1 API returns itemId instead of itemid)
+          renderItems(items, truck.truckName, truck.truckId);
           
           // Cart will open only when items are added
         })
@@ -163,7 +169,7 @@
         });
       }
 
-      function renderItems(items, truckName) {
+      function renderItems(items, truckName, truckId) {
         if (!itemsGrid.length) return;
         if (items.length === 0) {
           itemsGrid.html('<p class=\"muted\">No items found for this truck.</p>');
@@ -171,6 +177,8 @@
         }
 
         const itemsHTML = items.map(function(item) {
+          // v1 API returns itemId, isAvailable instead of itemid, is_available
+          const isAvailable = item.isAvailable !== false && item.status === 'available';
           return `
             <div class=\"item-card\">
               <img src=\"${item.image_url || './images/images (3).jpeg'}\" alt=\"${item.name}\" />
@@ -182,10 +190,10 @@
                   <button class=\"add-btn\" 
                     data-name=\"${item.name}\" 
                     data-price=\"${item.price}\"
-                    data-item-id=\"${item.itemid}\"
-                    data-truck-id=\"${item.truckid}\"
-                    ${!item.is_available ? 'disabled' : ''}>
-                    ${item.is_available ? 'Add' : 'Unavailable'}
+                    data-item-id=\"${item.itemId}\"
+                    data-truck-id=\"${truckId}\"
+                    ${!isAvailable ? 'disabled' : ''}>
+                    ${isAvailable ? 'Add' : 'Unavailable'}
                   </button>
                 </div>
               </div>
@@ -202,10 +210,10 @@
           
           const name = btn.data('name');
           const price = parseFloat(btn.data('price'));
-          const itemId = parseInt(btn.data('itemId'));
-          const truckId = parseInt(btn.data('truckId'));
+          const itemId = parseInt(btn.attr('data-item-id'));
+          const btnTruckId = parseInt(btn.attr('data-truck-id'));
           
-          console.log('Add to cart clicked:', { name, price, itemId, truckId });
+          console.log('Add to cart clicked:', { name, price, itemId, truckId: btnTruckId });
           
           if (window.addToCart) {
             // include truck name, itemId, and truckId for backend integration
