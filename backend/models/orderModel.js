@@ -1,23 +1,62 @@
 const db = require('../config/db');
+const preparationEstimator = require('../services/preparationTimeEstimator');
 
 /**
  * Order Model
  * Handles all database operations for orders
+ * Enhanced with intelligent preparation time estimation
  */
 
 /**
- * Creates a new order in the database
- * @param {Object} orderData - { userId, truckId, totalPrice, orderStatus, scheduledPickupTime }
- * @returns {Promise<Object>} - Created order with orderId
+ * Creates a new order in the database with auto-estimated preparation time
+ * @param {Object} orderData - { userId, truckId, totalPrice, orderStatus, scheduledPickupTime, items }
+ * @returns {Promise<Object>} - Created order with orderId and estimation data
  */
 const createOrder = async (orderData) => {
-    const { userId, truckId, totalPrice, orderStatus = 'received', scheduledPickupTime } = orderData;
+    const { userId, truckId, totalPrice, orderStatus = 'received', scheduledPickupTime, items = [] } = orderData;
     
     // Generate order number (max 20 chars)
     const orderNumber = `ORD${Date.now().toString().slice(-10)}`;
     
-    // Calculate pickup time: use scheduled time or default to 30 minutes from now
-    const pickupTime = scheduledPickupTime || db.raw("NOW() + INTERVAL '30 minutes'");
+    // Calculate intelligent preparation time estimate
+    let estimatedMinutes = 20; // Fallback default
+    let estimatedCompletionTime = null;
+    let estimationBreakdown = null;
+    
+    // Auto-estimate preparation time when items are provided
+    if (items && items.length > 0) {
+        try {
+            // Enrich items with preparation metadata from menu
+            const enrichedItems = await preparationEstimator.enrichItemsWithPreparationData(items);
+            
+            // Calculate intelligent estimate based on items, complexity, and queue
+            const estimation = await preparationEstimator.estimatePreparationTime(enrichedItems, truckId);
+            
+            estimatedMinutes = estimation.estimatedMinutes;
+            estimatedCompletionTime = estimation.estimatedCompletionTime;
+            estimationBreakdown = estimation.breakdown;
+            
+            console.log('✅ Auto-estimated preparation time:', {
+                orderId: orderNumber,
+                estimatedMinutes: `${estimatedMinutes} minutes`,
+                completionTime: estimatedCompletionTime,
+                hasScheduledTime: !!scheduledPickupTime,
+                breakdown: estimationBreakdown
+            });
+        } catch (error) {
+            console.error('⚠️ Error during preparation estimation, using fallback:', error);
+            // Calculate fallback completion time based on default minutes
+            const fallbackDate = new Date();
+            fallbackDate.setMinutes(fallbackDate.getMinutes() + estimatedMinutes);
+            estimatedCompletionTime = fallbackDate.toISOString();
+        }
+    }
+    
+    // Priority: 1) scheduledPickupTime, 2) estimatedCompletionTime, 3) 30-min default
+    // When no scheduled time is provided, use intelligent estimation
+    const pickupTime = scheduledPickupTime || 
+                      estimatedCompletionTime || 
+                      db.raw("NOW() + INTERVAL '30 minutes'");
     
     const [result] = await db('foodtruck.orders')
         .insert({
@@ -29,6 +68,9 @@ const createOrder = async (orderData) => {
             createdat: db.raw('NOW()')
         })
         .returning('*');
+    
+    // Attach estimation breakdown to result for API response
+    result.estimationBreakdown = estimationBreakdown;
     
     return result;
 };
@@ -188,20 +230,46 @@ const getNewOrdersForVendor = async (ownerId) => {
 };
 
 /**
- * Updates order status
+ * Updates order status and records completion time for analytics
+ * Also updates scheduledPickupTime based on estimated preparation time when confirming
  * @param {number} orderId - The order ID
  * @param {string} status - New status (pending, preparing, ready, completed, cancelled)
  * @returns {Promise<Object>} - Updated order
  */
 const updateOrderStatus = async (orderId, status) => {
+    const updateData = {
+        orderstatus: status
+    };
+    
+    // Update the order status
     const [updatedOrder] = await db('foodtruck.orders')
         .where('orderid', orderId)
-        .update({
-            orderstatus: status
-        })
+        .update(updateData)
         .returning('*');
     
     return updatedOrder;
+};
+
+/**
+ * Get preparation time estimation for cart items before order placement
+ * Useful for showing estimated time during checkout
+ * @param {Array} items - Array of cart items
+ * @param {number} truckId - Food truck ID
+ * @returns {Promise<Object>} - Estimation with breakdown
+ */
+const getEstimationForCart = async (items, truckId) => {
+    const enrichedItems = await preparationEstimator.enrichItemsWithPreparationData(items);
+    return await preparationEstimator.estimatePreparationTime(enrichedItems, truckId);
+};
+
+/**
+ * Get estimation accuracy metrics for a truck
+ * @param {number} truckId - Food truck ID
+ * @param {number} days - Number of days to analyze
+ * @returns {Promise<Object>} - Accuracy metrics
+ */
+const getEstimationMetrics = async (truckId, days = 30) => {
+    return await preparationEstimator.getEstimationAccuracyMetrics(truckId, days);
 };
 
 module.exports = {
@@ -211,5 +279,7 @@ module.exports = {
     getOrdersByUserId,
     getOrdersByTruckId,
     getNewOrdersForVendor,
-    updateOrderStatus
+    updateOrderStatus,
+    getEstimationForCart,
+    getEstimationMetrics
 };
