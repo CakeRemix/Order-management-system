@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/db');
 const { verifyToken, verifyRole } = require('../../../middleware/authMiddleware');
+const preparationEstimator = require('../../services/preparationTimeEstimator');
 
 /**
  * Order Routes - /api/v1/order
@@ -17,7 +18,7 @@ router.post('/new', verifyToken, async (req, res, next) => {
         const userId = req.user.id;
         const { scheduledPickupTime } = req.body;
 
-        // Get cart items
+        // Get cart items with menu item details for estimation
         const cartItems = await db('foodtruck.carts as c')
             .select(
                 'c.cartid',
@@ -25,7 +26,10 @@ router.post('/new', verifyToken, async (req, res, next) => {
                 'c.quantity',
                 'c.price',
                 'm.name',
-                'm.truckid'
+                'm.truckid',
+                'm.category',
+                'm.preparationtimeminutes',
+                'm.complexity'
             )
             .join('foodtruck.menuitems as m', 'c.itemid', 'm.itemid')
             .where('c.userid', userId);
@@ -57,6 +61,38 @@ router.post('/new', verifyToken, async (req, res, next) => {
             return sum + (parseFloat(item.price) * item.quantity);
         }, 0);
 
+        // Calculate estimated preparation time if no scheduled time provided
+        let estimatedMinutes = null;
+        let estimatedCompletionTime = null;
+        let pickupTime = scheduledPickupTime;
+
+        if (!scheduledPickupTime) {
+            // Use intelligent estimation
+            const estimation = await preparationEstimator.estimatePreparationTime(
+                cartItems.map(item => ({
+                    itemId: item.itemid,
+                    name: item.name,
+                    category: item.category,
+                    preparationTimeMinutes: item.preparationtimeminutes,
+                    complexity: item.complexity,
+                    quantity: item.quantity
+                })),
+                truckId
+            );
+
+            estimatedMinutes = estimation.estimatedMinutes;
+            const completionDate = new Date();
+            completionDate.setMinutes(completionDate.getMinutes() + estimatedMinutes);
+            estimatedCompletionTime = completionDate;
+            pickupTime = completionDate;
+
+            console.log('✅ Auto-estimated preparation time:', {
+                estimatedMinutes,
+                estimatedCompletionTime: estimatedCompletionTime.toISOString(),
+                breakdown: estimation.breakdown
+            });
+        }
+
         // Create order in transaction
         const result = await db.transaction(async (trx) => {
             // Create order
@@ -66,7 +102,9 @@ router.post('/new', verifyToken, async (req, res, next) => {
                     truckid: truckId,
                     orderstatus: 'pending',
                     totalprice: parseFloat(totalPrice.toFixed(2)),
-                    scheduledpickuptime: scheduledPickupTime || trx.raw("NOW() + INTERVAL '30 minutes'"),
+                    scheduledpickuptime: pickupTime || trx.raw("NOW() + INTERVAL '30 minutes'"),
+                    estimatedpreparationminutes: estimatedMinutes,
+                    estimatedcompletiontime: estimatedCompletionTime,
                     createdat: trx.raw('NOW()')
                 })
                 .returning('*');
@@ -113,7 +151,9 @@ router.post('/new', verifyToken, async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'Order placed successfully',
+            message: scheduledPickupTime 
+                ? 'Order placed successfully with scheduled pickup time'
+                : `Order placed successfully! Estimated preparation time: ${estimatedMinutes} minutes`,
             data: {
                 orderId: result.order.orderid,
                 userId: result.order.userid,
@@ -122,6 +162,8 @@ router.post('/new', verifyToken, async (req, res, next) => {
                 orderStatus: result.order.orderstatus,
                 totalPrice: parseFloat(result.order.totalprice),
                 scheduledPickupTime: result.order.scheduledpickuptime,
+                estimatedPreparationMinutes: result.order.estimatedpreparationminutes,
+                estimatedCompletionTime: result.order.estimatedcompletiontime,
                 createdAt: result.order.createdat,
                 items: result.orderItems.map(item => ({
                     orderItemId: item.orderitemid,
@@ -220,6 +262,8 @@ router.get('/details/:orderId', verifyToken, async (req, res, next) => {
                 orderStatus: order.orderstatus,
                 totalPrice: parseFloat(order.totalprice),
                 scheduledPickupTime: order.scheduledpickuptime,
+                estimatedPreparationMinutes: order.estimatedpreparationminutes,
+                estimatedCompletionTime: order.estimatedcompletiontime,
                 estimatedEarliestPickup: order.estimatedearliestpickup,
                 createdAt: order.createdat,
                 items: orderItems.map(item => ({
@@ -295,6 +339,8 @@ router.get('/truckOwner/:orderId', verifyToken, verifyRole('truckOwner'), async 
                 orderStatus: order.orderstatus,
                 totalPrice: parseFloat(order.totalprice),
                 scheduledPickupTime: order.scheduledpickuptime,
+                estimatedPreparationMinutes: order.estimatedpreparationminutes,
+                estimatedCompletionTime: order.estimatedcompletiontime,
                 estimatedEarliestPickup: order.estimatedearliestpickup,
                 createdAt: order.createdat,
                 items: orderItems.map(item => ({

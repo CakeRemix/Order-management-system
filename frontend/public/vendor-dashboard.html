@@ -150,13 +150,20 @@
 
         <!-- Orders Section -->
         <section id="orders" class="vendor-section">
-            <h2 style="margin-bottom: 1.5rem;">Order Management</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Order Management</h2>
+                <button onclick="refreshOrders()" class="action-btn" style="padding: 0.5rem 1rem;">
+                    <span class="material-icons" style="font-size: 1.2rem;">refresh</span>
+                    <span>Refresh</span>
+                </button>
+            </div>
             <div class="orders-filters">
                 <button class="filter-btn active" data-status="all">All</button>
                 <button class="filter-btn" data-status="pending">Pending</button>
-                <button class="filter-btn" data-status="preparing">Preparing</button>
+                <button class="filter-btn" data-status="confirmed">Confirmed</button>
                 <button class="filter-btn" data-status="ready">Ready</button>
                 <button class="filter-btn" data-status="completed">Completed</button>
+                <button class="filter-btn" data-status="cancelled">Cancelled</button>
             </div>
 
             <div class="table-container">

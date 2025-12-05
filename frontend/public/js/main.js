@@ -123,26 +123,87 @@ $(document).ready(function(){
 
     // If there's an active order, show order status instead of cart items
     if (currentOrder && currentOrder.status === 'processing') {
-      if (cartItems.length) {
-        cartItems.html(`
-          <div class="order-status-display">
-            <p style="font-weight: 600; color: #22c55e; margin-bottom: 0.5rem;">✓ Order in Progress</p>
-            <p style="color: #64748b; margin-bottom: 0.75rem;">Your order is being prepared.</p>
-            <button class="track-btn" style="width: 100%; padding: 0.6rem; background: #22c55e; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Track Order</button>
-          </div>
-        `);
+      // Fetch real-time order details using v1 API
+      const token = localStorage.getItem('token');
+      $.ajax({
+        url: `http://localhost:5000/api/v1/order/details/${currentOrder.orderId}`,
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function(response) {
+          if (response.success && cartItems.length) {
+            const orderData = response.data;
+            const now = new Date();
+            let timeInfo = '';
+            
+            if (orderData.scheduledPickupTime) {
+              const pickupDate = new Date(orderData.scheduledPickupTime);
+              const remainingMs = pickupDate - now;
+              
+              if (remainingMs > 0) {
+                const remainingMin = Math.ceil(remainingMs / 60000);
+                timeInfo = `<p style="color: #ea580c; margin-bottom: 0.5rem; font-size: 0.9rem;">Ready in ${remainingMin} minutes</p>`;
+              } else if (orderData.orderStatus === 'ready') {
+                timeInfo = `<p style="color: #22c55e; margin-bottom: 0.5rem; font-size: 0.9rem;">✓ Ready for pickup!</p>`;
+              }
+            } else if (orderData.estimatedPreparationMinutes) {
+              timeInfo = `<p style="color: #64748b; margin-bottom: 0.5rem; font-size: 0.9rem;">Estimated: ${orderData.estimatedPreparationMinutes} minutes</p>`;
+            }
+            
+            const statusMap = {
+              'pending': '⏳ Pending Confirmation',
+              'confirmed': '👨‍🍳 Being Prepared',
+              'ready': '✓ Ready for Pickup',
+              'completed': '✓ Completed',
+              'cancelled': '✗ Cancelled'
+            };
+            const statusDisplay = statusMap[orderData.orderStatus] || 'Processing';
+            
+            cartItems.html(`
+              <div class="order-status-display">
+                <p style="font-weight: 600; color: #22c55e; margin-bottom: 0.5rem;">${statusDisplay}</p>
+                ${timeInfo}
+                <p style="color: #64748b; margin-bottom: 0.75rem; font-size: 0.85rem;">Order #${currentOrder.orderId}</p>
+                <button class="track-btn" style="width: 100%; padding: 0.6rem; background: #22c55e; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Track Order</button>
+              </div>
+            `);
 
-        // Track button handler using jQuery
-        cartItems.find('.track-btn').on('click', function() {
-          window.location.href = 'track.html';
-        });
-      }
+            // Track button handler using jQuery
+            cartItems.find('.track-btn').on('click', function() {
+              window.location.href = 'track.html';
+            });
+            
+            estimatedTimeEl.text(orderData.scheduledPickupTime ? 
+              new Date(orderData.scheduledPickupTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : 
+              'ASAP');
+          }
+        },
+        error: function() {
+          // Fallback to localStorage data
+          if (cartItems.length) {
+            cartItems.html(`
+              <div class="order-status-display">
+                <p style="font-weight: 600; color: #22c55e; margin-bottom: 0.5rem;">✓ Order in Progress</p>
+                <p style="color: #64748b; margin-bottom: 0.75rem;">Your order is being prepared.</p>
+                <button class="track-btn" style="width: 100%; padding: 0.6rem; background: #22c55e; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Track Order</button>
+              </div>
+            `);
+
+            // Track button handler using jQuery
+            cartItems.find('.track-btn').on('click', function() {
+              window.location.href = 'track.html';
+            });
+          }
+          
+          estimatedTimeEl.text(currentOrder.pickupTime ? new Date(currentOrder.pickupTime).toLocaleString() : 'ASAP');
+        }
+      });
 
       proceedBtn.hide();
       schedulePickup.hide();
       totalAmount.text(`L.E ${currentOrder.total.toFixed(2)}`);
       grandTotalAmount.text(`L.E ${currentOrder.total.toFixed(2)}`);
-      estimatedTimeEl.text(currentOrder.pickupTime ? new Date(currentOrder.pickupTime).toLocaleString() : 'ASAP');
       return;
     }
 
