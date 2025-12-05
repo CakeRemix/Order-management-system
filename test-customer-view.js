@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 const API_BASE_URL = 'http://localhost:5000/api';
 

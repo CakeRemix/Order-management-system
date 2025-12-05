@@ -3,7 +3,7 @@
  * Simulates what happens when a user adds items to cart and places an order
  */
 
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 // Simulate the cart storage (like localStorage in browser)
 const cartStore = {

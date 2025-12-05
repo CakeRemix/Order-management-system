@@ -4,20 +4,20 @@ const path = require('path');
 require('dotenv').config();
 
 // Import database
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 // Import middleware
 const { errorHandler } = require('./middleware');
 
 // Import routes
-const authRoutes = require('./backend/routes/authRoutes');
-const trucksRoutes = require('./backend/routes/trucksRoutes');
-const adminRoutes = require('./backend/routes/adminRoutes');
-const vendorRoutes = require('./backend/routes/vendorRoutes');
-const orderRoutes = require('./backend/routes/orderRoutes');
-const cartRoutes = require('./backend/routes/cartRoutes');
-const v1Routes = require('./backend/routes/v1');
-// const productRoutes = require('./backend/routes/productRoutes');
+const authRoutes = require('./milestoneBackend/routes/authRoutes');
+const trucksRoutes = require('./milestoneBackend/routes/trucksRoutes');
+const adminRoutes = require('./milestoneBackend/routes/adminRoutes');
+const vendorRoutes = require('./milestoneBackend/routes/vendorRoutes');
+const orderRoutes = require('./milestoneBackend/routes/orderRoutes');
+const cartRoutes = require('./milestoneBackend/routes/cartRoutes');
+const v1Routes = require('./milestoneBackend/routes/v1');
+// const productRoutes = require('./milestoneBackend/routes/productRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;

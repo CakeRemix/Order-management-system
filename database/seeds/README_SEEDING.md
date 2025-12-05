@@ -50,10 +50,10 @@ The following seed files populate the `public` schema with comprehensive sample 
 
 ```bash
 # Seed food trucks (with ALL fields)
-node -e "const db = require('./backend/config/db'); const fs = require('fs'); (async () => { const sql = fs.readFileSync('./database/seeds/seed_trucks_public.sql', 'utf8'); await db.raw(sql); console.log('Trucks seeded!'); await db.destroy(); })()"
+node -e "const db = require('./milestoneBackend/config/db'); const fs = require('fs'); (async () => { const sql = fs.readFileSync('./database/seeds/seed_trucks_public.sql', 'utf8'); await db.raw(sql); console.log('Trucks seeded!'); await db.destroy(); })()"
 
 # Seed menu items (with ALL fields)
-node -e "const db = require('./backend/config/db'); const fs = require('fs'); (async () => { const sql = fs.readFileSync('./database/seeds/seed_menu_items_public.sql', 'utf8'); await db.raw(sql); console.log('Menu items seeded!'); await db.destroy(); })()"
+node -e "const db = require('./milestoneBackend/config/db'); const fs = require('fs'); (async () => { const sql = fs.readFileSync('./database/seeds/seed_menu_items_public.sql', 'utf8'); await db.raw(sql); console.log('Menu items seeded!'); await db.destroy(); })()"
 ```
 
 #### Using PostgreSQL Client

@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 app.use(express.json());
 

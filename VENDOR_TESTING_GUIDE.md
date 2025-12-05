@@ -41,7 +41,7 @@ npm start
 4. Should see success message
 5. Verify in database:
 ```javascript
-node -e "const db = require('./backend/config/db'); (async () => { const items = await db('foodtruck.menuitems').where({truckid: 1}).orderBy('createdat', 'desc').limit(1); console.log(items); await db.destroy(); })()"
+node -e "const db = require('./milestoneBackend/config/db'); (async () => { const items = await db('foodtruck.menuitems').where({truckid: 1}).orderBy('createdat', 'desc').limit(1); console.log(items); await db.destroy(); })()"
 ```
 
 ### 4. Test Busy Mode Toggle
@@ -50,7 +50,7 @@ node -e "const db = require('./backend/config/db'); (async () => { const items =
 3. Should see alert message
 4. Verify in database:
 ```javascript
-node -e "const db = require('./backend/config/db'); (async () => { const truck = await db('foodtruck.trucks').where({truckid: 1}).first(); console.log('Status:', truck.truckstatus); await db.destroy(); })()"
+node -e "const db = require('./milestoneBackend/config/db'); (async () => { const truck = await db('foodtruck.trucks').where({truckid: 1}).first(); console.log('Status:', truck.truckstatus); await db.destroy(); })()"
 ```
 5. Refresh page - checkbox should maintain state
 
@@ -96,15 +96,15 @@ node -e "const db = require('./backend/config/db'); (async () => { const truck =
 
 ### Check if vendor has a truck:
 ```javascript
-node -e "const db = require('./backend/config/db'); (async () => { const truck = await db('foodtruck.trucks').where({ownerid: 1}).first(); console.log(truck); await db.destroy(); })()"
+node -e "const db = require('./milestoneBackend/config/db'); (async () => { const truck = await db('foodtruck.trucks').where({ownerid: 1}).first(); console.log(truck); await db.destroy(); })()"
 ```
 
 ### Check menu items for truck:
 ```javascript
-node -e "const db = require('./backend/config/db'); (async () => { const items = await db('foodtruck.menuitems').where({truckid: 1}); console.log('Count:', items.length); await db.destroy(); })()"
+node -e "const db = require('./milestoneBackend/config/db'); (async () => { const items = await db('foodtruck.menuitems').where({truckid: 1}); console.log('Count:', items.length); await db.destroy(); })()"
 ```
 
 ### Reset truck status:
 ```javascript
-node -e "const db = require('./backend/config/db'); (async () => { await db('foodtruck.trucks').where({truckid: 1}).update({truckstatus: 'available'}); console.log('Reset to available'); await db.destroy(); })()"
+node -e "const db = require('./milestoneBackend/config/db'); (async () => { await db('foodtruck.trucks').where({truckid: 1}).update({truckstatus: 'available'}); console.log('Reset to available'); await db.destroy(); })()"
 ```

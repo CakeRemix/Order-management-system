@@ -1,5 +1,5 @@
-const db = require('./backend/config/db');
-const orderController = require('./backend/controllers/orderController');
+const db = require('./milestoneBackend/config/db');
+const orderController = require('./milestoneBackend/controllers/orderController');
 
 // Mock request and response
 const mockReq = {

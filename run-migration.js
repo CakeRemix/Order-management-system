@@ -1,4 +1,4 @@
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 const fs = require('fs');
 const path = require('path');
 

@@ -57,7 +57,7 @@ async function testCompleteFlow() {
   try {
     // Step 1: Get a test user
     console.log('Step 1: Getting test user from database...');
-    const db = require('./backend/config/db');
+    const db = require('./milestoneBackend/config/db');
     const user = await db('public.users')
       .select('id', 'name', 'email')
       .where({ role: 'customer' })

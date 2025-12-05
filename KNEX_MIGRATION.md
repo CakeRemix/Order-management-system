@@ -339,7 +339,7 @@ DB_NAME=giu_food_truck
 
 You can test Knex queries in isolation:
 ```javascript
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 // Test a query
 db('FoodTruck.Users')
