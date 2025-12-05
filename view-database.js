@@ -3,7 +3,7 @@
  * This script connects to your database and shows you what's inside
  */
 
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 async function viewDatabase() {
     console.log('\n🔍 DATABASE INSPECTION\n');

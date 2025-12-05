@@ -4,7 +4,7 @@
  */
 
 const http = require('http');
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 function createOrder(userId, truckId, items) {
     return new Promise((resolve, reject) => {

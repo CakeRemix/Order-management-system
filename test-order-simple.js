@@ -1,5 +1,5 @@
-const db = require('./backend/config/db');
-const orderModel = require('./backend/models/orderModel');
+const db = require('./milestoneBackend/config/db');
+const orderModel = require('./milestoneBackend/models/orderModel');
 
 (async () => {
     try {

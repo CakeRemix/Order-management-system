@@ -1,4 +1,4 @@
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 async function testStatusUpdate() {
     try {
