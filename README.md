@@ -828,58 +828,58 @@ curl http://localhost:5000/health
 <td align="center" width="25%">
 <br>
 <strong>Hassan Yousef</strong><br>
-<sub>Full Stack Developer</sub><br>
+<sub>Scrum Master</sub><br>
 <code>13006567</code><br>
-<a href="mailto:hassan.yousef@student.giu-uni.de">📧 Email</a>
+<a href="mailto:hassan.moahmed@student.giu-uni.de">📧 Email</a>
 </td>
 <td align="center" width="25%">
 <br>
 <strong>Sara Adel</strong><br>
-<sub>Full Stack Developer</sub><br>
+<sub>Full Stack Engineer</sub><br>
 <code>14003723</code><br>
 <a href="mailto:sara.adel@student.giu-uni.de">📧 Email</a>
 </td>
 <td align="center" width="25%">
 <br>
 <strong>Hana Yasser</strong><br>
-<sub>Full Stack Developer</sub><br>
+<sub>Full Stack Engineer</sub><br>
 <code>13003628</code><br>
-<a href="mailto:hana.yasser@student.giu-uni.de">📧 Email</a>
+<a href="mailto:hana.ghallab@student.giu-uni.de">📧 Email</a>
 </td>
 <td align="center" width="25%">
 <br>
 <strong>Mohamed Walid</strong><br>
-<sub>Full Stack Developer</sub><br>
+<sub>Full Stack Engineer</sub><br>
 <code>13006513</code><br>
-<a href="mailto:mohamed.walid@student.giu-uni.de">📧 Email</a>
+<a href="mailto:mohamed.mahdy@student.giu-uni.de">📧 Email</a>
 </td>
 </tr>
 <tr>
 <td align="center" width="25%">
 <br>
 <strong>Omar Hani</strong><br>
-<sub>Full Stack Developer</sub><br>
+<sub>DevOps Engineer</sub><br>
 <code>13007515</code><br>
 <a href="mailto:omar.hani@student.giu-uni.de">📧 Email</a>
 </td>
 <td align="center" width="25%">
 <br>
 <strong>Abdelhamid ElSharnouby</strong><br>
-<sub>Full Stack Developer</sub><br>
+<sub>Database Engineer</sub><br>
 <code>13006294</code><br>
-<a href="mailto:abdelhamid.el@student.giu-uni.de">📧 Email</a>
+<a href="mailto:abdelhamid.mahmoud@student.giu-uni.de">📧 Email</a>
 </td>
 <td align="center" width="25%">
 <br>
 <strong>Hanin Mohamed</strong><br>
-<sub>Full Stack Developer</sub><br>
+<sub>Full Stack Engineer</sub><br>
 <code>13007010</code><br>
 <a href="mailto:hanin.mohamed@student.giu-uni.de">📧 Email</a>
 </td>
 <td align="center" width="25%">
 <br>
 <strong>Khaled Khaled</strong><br>
-<sub>Full Stack Developer</sub><br>
+<sub>Full Stack Engineer</sub><br>
 <code>14001048</code><br>
 <a href="mailto:khaled.khaled@student.giu-uni.de">📧 Email</a>
 </td>
