@@ -73,7 +73,106 @@ Students and staff can browse menus from multiple food trucks, place orders with
 
 ---
 
-## 🛠 Technology Stack
+## �️ Frontend Pages (Milestone 4)
+
+### Page Overview
+
+| Page | Route | Description | Role |
+|------|-------|-------------|------|
+| **Login** | `/login.html` | User authentication | Public |
+| **Register** | `/register.html` | New user registration | Public |
+| **Dashboard** | `/dashboard.html` | Customer homepage with trucks | Customer |
+| **Restaurant Menu** | `/restaurant.html?id=X` | View truck menu items | Customer |
+| **Order Tracking** | `/track.html` | Track order status | Customer |
+| **Vendor Dashboard** | `/vendor-dashboard.html` | Truck owner management | Truck Owner |
+| **Admin Panel** | `/admin.html` | System administration | Admin |
+
+### Customer Pages
+
+1. **Login Page** (`/login.html`)
+   - Email and password authentication
+   - Form validation
+   - Redirect to dashboard on success
+   - Link to registration
+
+2. **Register Page** (`/register.html`)
+   - Name, email, password, birth date fields
+   - GIU email validation
+   - Password strength requirements
+   - Redirect to login on success
+
+3. **Dashboard** (`/dashboard.html`)
+   - Browse all available food trucks
+   - Quick cart access (sidebar)
+   - Search and filter trucks
+   - Navigate to truck menus
+
+4. **Restaurant Menu** (`/restaurant.html`)
+   - View all menu items for selected truck
+   - Add items to cart with quantity
+   - Category filtering
+   - Real-time cart updates
+
+5. **Order Tracking** (`/track.html`)
+   - View current order status
+   - Order details with items
+   - Estimated pickup time
+   - Status updates (pending → preparing → ready)
+
+### Vendor Pages
+
+6. **Vendor Dashboard** (`/vendor-dashboard.html`)
+   - Overview with statistics
+   - Quick actions (Add Menu Item, Toggle Busy Mode)
+   - Menu Items Management (CRUD)
+   - Order Management with status updates
+   - Settings (truck info, busy mode toggle)
+
+### Screenshots
+
+> **Note:** Screenshots are included in the `docs/screenshots/` folder for submission.
+
+#### Public Pages
+
+| Page | Screenshot |
+|------|------------|
+| Homepage | ![Homepage](docs/screenshots/homepage.png) |
+| Login | ![Login](docs/screenshots/login.png) |
+| Register | ![Register](docs/screenshots/register.png) |
+
+#### Customer Pages
+
+| Page | Screenshot |
+|------|------------|
+| Customer Dashboard | ![Customer Dashboard](docs/screenshots/customer%20dashboard.png) |
+| Restaurant Menu | ![Restaurant Menu](docs/screenshots/restaurant.png) |
+| Cart | ![Cart](docs/screenshots/cart.png) |
+| Order Tracking | ![Order Tracking](docs/screenshots/order%20tracking.png) |
+
+#### Vendor Pages
+
+| Page | Screenshot |
+|------|------------|
+| Vendor Overview | ![Vendor Overview](docs/screenshots/vendor%20overview.png) |
+| Vendor Order Management | ![Vendor Order Management](docs/screenshots/vendor%20order%20management.png) |
+| Vendor Menu Management | ![Vendor Menu Management](docs/screenshots/vendor%20menu%20management.png) |
+| Vendor Settings | ![Vendor Settings](docs/screenshots/vendor%20settings.png) |
+
+#### Admin Pages
+
+| Page | Screenshot |
+|------|------------|
+| Admin Dashboard | ![Admin Dashboard](docs/screenshots/admin%20dashboard.png) |
+| Admin User Management | ![Admin User Management](docs/screenshots/admin%20user%20management.png) |
+| Admin Food Trucks Management | ![Admin Food Trucks Management](docs/screenshots/admin%20food%20trucks%20management.png) |
+
+---
+
+## 🛠 Dashboard | ![Vendor](docs/screenshots/vendor-dashboard.png) |
+
+---
+
+## �🛠 Technology Stack
 
 <table>
 <tr>
@@ -317,6 +416,24 @@ Navigate to: **[http://localhost:5000](http://localhost:5000)**
 
 ## 📊 Database Architecture
 
+### Entity Relationship Diagram (ERD)
+
+![ERD Diagram](docs/SRS/erd.png)
+
+> The complete ERD diagram showing all entities, relationships, and attributes in the GIU Food Truck System.
+
+### Database Tables Summary
+
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **Users** | System users (customers, vendors, admins) | userId, email, role, password |
+| **Trucks** | Food truck information | truckId, truckName, ownerId, status |
+| **MenuItems** | Menu items per truck | itemId, truckId, name, price, category |
+| **Orders** | Customer orders | orderId, userId, truckId, status, totalPrice |
+| **OrderItems** | Line items in orders | orderItemId, name, quantity, price |
+| **Carts** | Shopping cart items | cartId, userId, itemId, quantity |
+| **Sessions** | Authentication tokens | id, userId, token, expiresAt |
+
 ### Schema Overview
 
 <table>
@@ -324,7 +441,7 @@ Navigate to: **[http://localhost:5000](http://localhost:5000)**
 <td width="50%">
 
 #### Core Components
-- **5 Core Tables:** `users`, `food_trucks`, `menu_items`, `orders`, `order_items`
+- **7 Core Tables:** `users`, `trucks`, `menu_items`, `orders`, `order_items`, `carts`, `sessions`
 - **3 Custom ENUMs:** `user_role`, `order_status`, `truck_status`
 - **3 Materialized Views:** `active_orders_view`, `menu_items_with_truck`, `vendor_stats`
 - **Triggers:** Auto-update timestamps, generate order numbers
@@ -500,15 +617,57 @@ cd database
 
 ## 🏗️ API Endpoints
 
-### Authentication Endpoints
+### API v1 Endpoints (Milestone 3 & 4)
+
+#### Public Endpoints
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
 | `POST` | `/api/auth/signup` | Register new user | ❌ |
 | `POST` | `/api/auth/login` | User login | ❌ |
+| `GET` | `/api/v1/trucks/view` | View all available trucks | ❌ |
+| `GET` | `/api/v1/menuItem/truck/:truckId` | View truck menu | ❌ |
+| `GET` | `/api/v1/menuItem/truck/:truckId/category/:category` | Filter menu by category | ❌ |
+
+#### Customer Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
 | `GET` | `/api/auth/me` | Get current user profile | ✅ |
-| `PUT` | `/api/auth/profile` | Update user profile | ✅ |
-| `POST` | `/api/auth/logout` | Logout user | ✅ |
+| `POST` | `/api/v1/cart/new` | Add item to cart | ✅ Customer |
+| `GET` | `/api/v1/cart/view` | View cart | ✅ Customer |
+| `PUT` | `/api/v1/cart/edit/:cartId` | Update cart quantity | ✅ Customer |
+| `DELETE` | `/api/v1/cart/delete/:cartId` | Remove from cart | ✅ Customer |
+| `POST` | `/api/v1/order/new` | Place order | ✅ Customer |
+| `GET` | `/api/v1/order/myOrders` | View my orders | ✅ Customer |
+| `GET` | `/api/v1/order/details/:orderId` | View order details | ✅ Customer |
+
+#### Truck Owner Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/v1/menuItem/new` | Create menu item | ✅ Truck Owner |
+| `GET` | `/api/v1/menuItem/view` | View my menu items | ✅ Truck Owner |
+| `GET` | `/api/v1/menuItem/view/:itemId` | View specific item | ✅ Truck Owner |
+| `PUT` | `/api/v1/menuItem/edit/:itemId` | Edit menu item | ✅ Truck Owner |
+| `DELETE` | `/api/v1/menuItem/delete/:itemId` | Delete menu item | ✅ Truck Owner |
+| `GET` | `/api/v1/trucks/myTruck` | View my truck info | ✅ Truck Owner |
+| `PUT` | `/api/v1/trucks/updateOrderStatus` | Update availability | ✅ Truck Owner |
+| `GET` | `/api/v1/order/truckOwner/:orderId` | View order details | ✅ Truck Owner |
+| `GET` | `/api/v1/order/truckOrders` | View truck orders | ✅ Truck Owner |
+| `PUT` | `/api/v1/order/updateStatus/:orderId` | Update order status | ✅ Truck Owner |
+
+#### Admin Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/admin/users` | Get all users | ✅ Admin |
+| `PATCH` | `/api/admin/users/:id/role` | Update user role | ✅ Admin |
+| `DELETE` | `/api/admin/users/:id` | Delete user | ✅ Admin |
+| `GET` | `/api/admin/trucks` | Get all trucks (admin view) | ✅ Admin |
+| `POST` | `/api/admin/trucks` | Create truck with vendor | ✅ Admin |
+| `DELETE` | `/api/admin/trucks/:id` | Delete truck | ✅ Admin |
+| `GET` | `/api/admin/stats` | Get system statistics | ✅ Admin |
 
 ### Health & Status
 
