@@ -229,7 +229,6 @@ Students and staff can browse menus from multiple food trucks, place orders with
 | **Backend** | Node.js, Express.js | RESTful API server and business logic |
 | **Database** | PostgreSQL 13+ | Relational data persistence with ACID compliance |
 | **Authentication** | JWT + bcrypt | Secure token-based authentication with password hashing |
-| **Development** | Nodemon, dotenv | Hot-reload development and environment configuration |
 
 ---
 
