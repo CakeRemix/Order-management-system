@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+      <link rel='stylesheet' href='/styles/style.css' />
+      <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
+      <script src="/js/bootstrap.min.js" type="text/javascript"></script>
+      <script src="/src/employee.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div>
+       <nav class="navbar navbar-inverse" style="padding-left:130px;">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li ><a href="/search">Search</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li class="active"><a href="/employee">Employee</a></li>
+            <li><a href="/addEmployee">Add</a></li>
+          </ul>
+      </nav>
+    </div>
+
+    <div class="container">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th class="text-center">ID</th>
+            <th class="text-center">FirstName</th>
+            <th class="text-center">MiddleName</th>
+            <th class="text-center">LastName</th>
+            <th class="text-center">Country</th>
+            <th class="text-center">Salary</th>
+            <th class="text-center">Delete</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+
+          {{#emp}}
+            <tr>
+               <td class="text-center">{{id}}</td>
+                <td class="text-center">{{firstname}}</td>
+                <td class="text-center">{{middlename}}</td>
+                <td class="text-center">{{lastname}}</td>
+                <td class="text-center">{{country}}</td>
+                <td class="text-center">{{salary}}</td>
+                <td class="text-center">
+                    <button id={{id}} class="btn btn-danger remove" type="button">Delete</button>
+                </td>           
+            </tr>
+          {{/emp}}
+          
+        </tbody>
+      </table>
+    </div>
+
+  </body>
+</html>

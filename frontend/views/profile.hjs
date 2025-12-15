@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - CampusEats</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <a href="/dashboard.html" style="color: white; text-decoration: none;">
+            <span class="material-icons">restaurant_menu</span>
+          </a>
+        </div>
+        <h2 style="color: white; margin: 0;">My Profile</h2>
+        <div style="flex: 1;"></div>
+        <a href="/dashboard.html" class="button" style="padding: 8px 16px;">Back to Dashboard</a>
+      </div>
+    </header>
+
+
+    <main>
+      <section class="container" style="padding: 40px 20px;">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+          <h2>Profile Information</h2>
+          <div id="profileInfo" style="margin-top: 20px;">
+            <div class="form-group">
+              <label class="form-label">Name</label>
+              <p id="userName" style="padding: 12px; background: #f8f9fa; border-radius: 8px;">Loading...</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <p id="userEmail" style="padding: 12px; background: #f8f9fa; border-radius: 8px;">Loading...</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Role</label>
+              <p id="userRole" style="padding: 12px; background: #f8f9fa; border-radius: 8px;">Loading...</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Member Since</label>
+              <p id="userCreated" style="padding: 12px; background: #f8f9fa; border-radius: 8px;">Loading...</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 30px;">
+            <button id="logoutBtn" class="button button-primary" style="width: 100%;">Logout</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/auth.js"></script>
+    <script>
+      $(document).ready(function() {
+        checkAuth().then(function(isAuth) {
+          if (!isAuth) {
+            window.location.href = '/login';
+            return;
+          }
+
+          const userInfo = getUserInfo();
+          if (userInfo) {
+            $('#userName').text(userInfo.name || 'N/A');
+            $('#userEmail').text(userInfo.email || 'N/A');
+            $('#userRole').text(userInfo.role || 'customer');
+            $('#userCreated').text('Account created');
+          }
+        });
+
+        $('#logoutBtn').on('click', function() {
+          logout();
+        });
+      });
+    </script>
+  </body>
+</html>

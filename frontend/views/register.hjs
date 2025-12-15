@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Join CampusEats Today</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="auth-container">
+      <div class="auth-card signup-card">
+        <div class="form-header">
+          <span class="material-icons form-icon">person_add</span>
+        </div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Join CampusEats and start ordering from your favorite food trucks</p>
+        
+        <div id="alert" class="alert" style="display: none;"></div>
+        
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" id="name" name="name" class="form-input" required autocomplete="name">
+            <div class="error-message" id="nameError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email (must be @giu-uni.de or @student.giu-uni.de)</label>
+            <input type="email" id="email" name="email" class="form-input" required autocomplete="email">
+            <div class="error-message" id="emailError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="birthdate" class="form-label">Birth Date</label>
+            <input type="date" id="birthdate" name="birthdate" class="form-input" required>
+            <div class="error-message" id="birthdateError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-input" required autocomplete="new-password">
+            <div class="password-requirements">
+              <small>At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character</small>
+            </div>
+            <div class="error-message" id="passwordError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required autocomplete="new-password">
+            <div class="error-message" id="confirmPasswordError"></div>
+          </div>
+
+          <button type="submit" class="button" id="submitButton">
+            <span id="spinner" class="spinner" style="display: none;"></span>
+            <span id="buttonText">Create Account</span>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Already have an account? <a href="/login" class="auth-link">Sign in here</a></p>
+          <p><a href="/" class="auth-link">← Back to Home</a></p>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#signupForm').on('submit', function(e) {
+          e.preventDefault();
+          
+          const name = $('#name').val();
+          const email = $('#email').val();
+          const password = $('#password').val();
+          const confirmPassword = $('#confirmPassword').val();
+          const birthdate = $('#birthdate').val();
+          
+          if (password !== confirmPassword) {
+            $('#alert').text('Passwords do not match').show();
+            return;
+          }
+          
+          $('#submitButton').prop('disabled', true);
+          $('#spinner').show();
+          $('#buttonText').text('Creating account...');
+          
+          signup(name, email, password, confirmPassword, birthdate)
+            .done(function(data) {
+              $('#alert').removeClass('alert-error').addClass('alert-success')
+                .text('Account created successfully! Redirecting to login...').show();
+              setTimeout(function() {
+                window.location.href = '/login';
+              }, 2000);
+            })
+            .fail(function(xhr) {
+              $('#alert').removeClass('alert-success').addClass('alert-error')
+                .text(xhr.responseJSON?.message || 'Registration failed').show();
+            })
+            .always(function() {
+              $('#submitButton').prop('disabled', false);
+              $('#spinner').hide();
+              $('#buttonText').text('Create Account');
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

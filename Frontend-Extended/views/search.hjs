@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <link rel='stylesheet' href='/styles/bootstrap.min.css' />
+      <link rel='stylesheet' href='/styles/style.css' />
+      <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
+      <script src="/js/bootstrap.min.js" type="text/javascript"></script>
+      <script src="/src/search.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div>
+      <nav class="navbar navbar-inverse" style="padding-left:130px;">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li class="active"><a href="/search">Search</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li ><a href="/employee">Employee</a></li>
+            <li><a href="/addEmployee">Add</a></li>
+          </ul>
+      </nav>
+    </div>
+     <div class="container">
+            <h1 class="center">Tutorial 10</h1>
+            <br />
+            <br />
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="Country" class="col-sm-2 control-label">Country</label>
+                    <div class="col-sm-10">
+                        <input type="text"  id="countryName" name="countryName" placeholder="Enter Country Name" value="" required >
+                        <input id="search" name="submit" type="button" value="Search" class="btn btn-primary">
+                    </div>
+                </div>
+        
+            </form>
+      <table class="table table-striped" id = "updateTable">
+        <thead id = "thead">
+    
+        </thead>
+        <tbody id="tbody">
+  
+        </tbody>
+      </table>
+      <div class="center" style="display : none" id = "div-btn">
+            <input id="update" name="updateBtn" type="button" value="Update" class="btn btn-primary">
+     </div>
+     <br />
+    </div>
+  </body>
+</html>

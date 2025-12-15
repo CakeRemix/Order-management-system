@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Welcome Back to CampusEats</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="auth-container">
+      <div class="auth-card login-card">
+        <div class="form-header">
+          <span class="material-icons form-icon">lock_open</span>
+        </div>
+        <h1 class="auth-title">Welcome Back!</h1>
+        <p class="auth-subtitle">Sign in to continue your CampusEats experience</p>
+      
+        <div id="alert" class="alert" style="display: none;"></div>
+      
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" id="email" name="email" class="form-input" required autocomplete="email">
+            <div class="error-message" id="emailError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-input" required>
+            <div class="error-message" id="passwordError"></div>
+          </div>
+
+          <button type="submit" class="button" id="submitButton">
+            <span id="spinner" class="spinner" style="display: none;"></span>
+            <span id="buttonText">Sign In</span>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Don't have an account? <a href="/register" class="auth-link">Sign up here</a></p>
+          <p><a href="/" class="auth-link">← Back to Home</a></p>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#loginForm').on('submit', function(e) {
+          e.preventDefault();
+          const email = $('#email').val();
+          const password = $('#password').val();
+          
+          $('#submitButton').prop('disabled', true);
+          $('#spinner').show();
+          $('#buttonText').text('Signing in...');
+          
+          login(email, password)
+            .done(function(data) {
+              const userInfo = getUserInfo();
+              if (userInfo.role === 'admin') {
+                window.location.href = '/admin.html';
+              } else if (userInfo.role === 'truckOwner') {
+                window.location.href = '/vendor-dashboard.html';
+              } else {
+                window.location.href = '/dashboard.html';
+              }
+            })
+            .fail(function(xhr) {
+              $('#alert').text(xhr.responseJSON?.message || 'Login failed').show();
+            })
+            .always(function() {
+              $('#submitButton').prop('disabled', false);
+              $('#spinner').hide();
+              $('#buttonText').text('Sign In');
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

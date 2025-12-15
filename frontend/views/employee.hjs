@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - CampusEats</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <a href="/dashboard.html" style="color: white; text-decoration: none;">
+            <span class="material-icons">restaurant_menu</span>
+          </a>
+        </div>
+        <h2 style="color: white; margin: 0;">My Orders</h2>
+        <div style="flex: 1;"></div>
+        <a href="/dashboard.html" class="button" style="padding: 8px 16px;">Back to Dashboard</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="container" style="padding: 40px 20px;">
+        <div class="card">
+          <h2>Order History</h2>
+          <div id="ordersContainer" style="margin-top: 20px;">
+            <p class="muted">Loading your orders...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/auth.js"></script>
+    <script>
+      $(document).ready(function() {
+        checkAuth().then(function(isAuth) {
+          if (!isAuth) {
+            window.location.href = '/login';
+            return;
+          }
+
+          const token = getToken();
+          $.ajax({
+            url: 'http://localhost:5000/api/v1/order/myOrders',
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + token
+            }
+          })
+          .done(function(result) {
+            if (!result.success || !result.data || result.data.length === 0) {
+              $('#ordersContainer').html('<p class="muted">No orders found</p>');
+              return;
+            }
+
+            const ordersHTML = result.data.map(function(order) {
+              const date = new Date(order.createdAt).toLocaleDateString();
+              const statusClass = order.orderStatus === 'completed' ? 'status-completed' : 
+                                order.orderStatus === 'preparing' ? 'status-preparing' : 'status-pending';
+              
+              return `
+                <div class="order-card" style="margin-bottom: 15px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                      <h3 style="margin: 0 0 10px 0;">Order #${order.orderId}</h3>
+                      <p style="margin: 5px 0; color: #666;"><strong>Truck:</strong> ${order.truckName || 'N/A'}</p>
+                      <p style="margin: 5px 0; color: #666;"><strong>Date:</strong> ${date}</p>
+                      <p style="margin: 5px 0; color: #666;"><strong>Total:</strong> L.E ${parseFloat(order.totalPrice).toFixed(2)}</p>
+                      <p style="margin: 5px 0;"><strong>Status:</strong> <span class="${statusClass}" style="color: ${order.orderStatus === 'completed' ? 'green' : order.orderStatus === 'preparing' ? 'orange' : 'blue'}; font-weight: bold;">${order.orderStatus}</span></p>
+                    </div>
+                    <a href="/track.html?orderId=${order.orderId}" class="button button-primary">View Details</a>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            $('#ordersContainer').html(ordersHTML);
+          })
+          .fail(function(xhr) {
+            $('#ordersContainer').html('<p class="muted" style="color: red;">Error loading orders: ' + (xhr.responseJSON?.message || 'Unknown error') + '</p>');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
