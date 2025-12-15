@@ -462,31 +462,6 @@ Navigate to: **[http://localhost:5000](http://localhost:5000)**
 </td>
 </tr>
 </table>
-
-### Entity Relationship
-
-```
-┌─────────────┐         ┌──────────────┐         ┌─────────────┐
-│    USERS    │         │ FOOD_TRUCKS  │         │ MENU_ITEMS  │
-│─────────────│         │──────────────│         │─────────────│
-│ user_id (PK)│─────────│ truck_id (PK)│────────▶│ item_id (PK)│
-│ email       │         │ truck_name   │         │ truck_id(FK)│
-│ password    │         │ location     │         │ item_name   │
-│ role        │         │ status       │         │ price       │
-└─────────────┘         └──────────────┘         └─────────────┘
-       │                                                  │
-       │                                                  │
-       ▼                                                  ▼
-┌─────────────┐         ┌──────────────┐         ┌─────────────┐
-│   ORDERS    │◀────────│ ORDER_ITEMS  │────────▶│             │
-│─────────────│         │──────────────│         │             │
-│ order_id(PK)│         │ item_id (FK) │         │             │
-│ user_id (FK)│         │ order_id(FK) │         │             │
-│ truck_id(FK)│         │ quantity     │         │             │
-│ status      │         │ price        │         │             │
-└─────────────┘         └──────────────┘         └─────────────┘
-```
-
 ### Quick Database Commands
 
 ```powershell
