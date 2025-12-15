@@ -12,12 +12,12 @@
     <header class="site-header">
       <div class="container header-inner">
         <div class="brand" id="brandMenu">
-          <button class="brand-toggle" aria-haspopup="true" aria-expanded="false">
+          <button class="brand-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="brandMenuDropdown">
             <span class="material-icons">restaurant_menu</span>
           </button>
-          <div class="brand-menu" role="menu">
-            <a href="track.html" class="brand-menu-item">Track Order</a>
-            <a href="#" id="logoutBtn" class="brand-menu-item">Log out</a>
+          <div class="brand-menu" role="menu" id="brandMenuDropdown">
+            <a href="track.html" class="brand-menu-item" role="menuitem">Track Order</a>
+            <a href="#" id="logoutBtn" class="brand-menu-item" role="menuitem">Log out</a>
           </div>
         </div>
         <div style="flex: 1;"></div>

@@ -430,8 +430,6 @@
                         <th>Email</th>
                             <th>Role</th>
                             <th>Birth Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="usersTable"></tbody>
@@ -627,14 +625,6 @@
                     tbody.html('');
 
                     data.data.forEach(function(user) {
-                        // Don't show deactivate button for admin users
-                        const actionButton = user.role === 'admin' 
-                            ? '-' 
-                            : `<button class="btn ${user.is_active ? 'btn-danger' : 'btn-success'}" 
-                                    onclick="toggleUserStatus(${user.id})">
-                                ${user.is_active ? 'Deactivate' : 'Activate'}
-                            </button>`;
-                        
                         // Format birthdate
                         const birthDate = user.birthDate ? new Date(user.birthDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
                         
@@ -645,10 +635,6 @@
                                 <td>${user.email}</td>
                                 <td>${user.role}</td>
                                 <td>${birthDate}</td>
-                                <td>${user.is_active ? 'Active' : 'Inactive'}</td>
-                                <td>
-                                    ${actionButton}
-                                </td>
                             </tr>
                         `;
                         tbody.append(row);
