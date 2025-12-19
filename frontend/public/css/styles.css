@@ -1638,6 +1638,7 @@ html, body {
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
 
@@ -1884,6 +1885,7 @@ textarea.form-control {
   align-items: center;
   gap: 1rem;
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
 }
 
