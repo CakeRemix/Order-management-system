@@ -351,10 +351,6 @@
                         <div class="number" id="totalUsers">0</div>
                     </div>
                 <div class="stat-card">
-                    <h3>Vendors</h3>
-                    <div class="number" id="totalVendors">0</div>
-                </div>
-                <div class="stat-card">
                     <h3>Customers</h3>
                     <div class="number" id="totalCustomers">0</div>
                 </div>
@@ -551,17 +547,14 @@
                     const stats = data.data;
                     
                     let totalUsers = 0;
-                    let vendors = 0;
                     let customers = 0;
                     
                     stats.users.forEach(function(u) {
                         totalUsers += parseInt(u.count);
-                        if (u.role === 'vendor') vendors = parseInt(u.count);
                         if (u.role === 'customer') customers = parseInt(u.count);
                     });
 
                     $('#totalUsers').text(totalUsers);
-                    $('#totalVendors').text(vendors);
                     $('#totalCustomers').text(customers);
                     $('#totalTrucks').text(stats.trucks.total || 0);
                     $('#totalOrders').text(stats.orders.total || 0);
