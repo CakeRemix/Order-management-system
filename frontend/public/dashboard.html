@@ -6,17 +6,18 @@
     <title>Dashboard - CampusEats</title>
     <link rel="stylesheet" href="./css/styles.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
         <div class="brand" id="brandMenu">
-          <button class="brand-toggle" aria-haspopup="true" aria-expanded="false">
+          <button class="brand-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="brandMenuDropdown">
             <span class="material-icons">restaurant_menu</span>
           </button>
-          <div class="brand-menu" role="menu">
-            <a href="track.html" class="brand-menu-item">Track Order</a>
-            <a href="#" id="logoutBtn" class="brand-menu-item">Log out</a>
+          <div class="brand-menu" role="menu" id="brandMenuDropdown">
+            <a href="track.html" class="brand-menu-item" role="menuitem">Track Order</a>
+            <a href="#" id="logoutBtn" class="brand-menu-item" role="menuitem">Log out</a>
           </div>
         </div>
         <div style="flex: 1;"></div>
@@ -122,69 +123,80 @@
     <script src="./js/main.js" defer></script>
     <script>
       // Check authentication and load user data on page load
-      document.addEventListener('DOMContentLoaded', async () => {
-        const isAuthenticated = await checkAuth();
-        if (!isAuthenticated) {
-          window.location.href = '/login.html';
-          return;
-        }
-
-        // Get current user info and display in breadcrumb
-        const user = getUserInfo();
-        if (user) {
-          const breadcrumb = document.getElementById('userBreadcrumb');
-          if (breadcrumb) {
-            // Display name and email (since ID is not in the data)
-            breadcrumb.textContent = `${user.name} > ${user.email}`;
+      $(document).ready(function() {
+        checkAuth().then(function(isAuthenticated) {
+          if (!isAuthenticated) {
+            window.location.href = '/login.html';
+            return;
           }
-        }
 
-        // Load food trucks from API
-        await loadFoodTrucks();
+          // Get current user info and display in breadcrumb
+          const user = getUserInfo();
+          
+          // Prevent admin from accessing dashboard
+          if (user && user.role === 'admin') {
+            window.location.href = '/admin.html';
+            return;
+          }
+          
+          // Prevent vendors/truck owners from accessing customer dashboard
+          if (user && user.role === 'truckOwner') {
+            window.location.href = '/vendor-dashboard.html';
+            return;
+          }
+          if (user) {
+            const breadcrumb = $('#userBreadcrumb');
+            if (breadcrumb.length) {
+              // Display name and email (since ID is not in the data)
+              breadcrumb.text(`${user.name} > ${user.email}`);
+            }
+          }
 
-        // Handle logout button
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-          logoutBtn.addEventListener('click', (e) => {
+          // Load food trucks from API
+          loadFoodTrucks();
+
+          // Handle logout button
+          $('#logoutBtn').on('click', function(e) {
             e.preventDefault();
             logout();
           });
-        }
+        });
       });
 
-      // Function to load food trucks from the backend API
-      async function loadFoodTrucks() {
-        const trucksGrid = document.getElementById('trucksGrid');
+      // Function to load food trucks from the backend API using jQuery AJAX
+      function loadFoodTrucks() {
+        const trucksGrid = $('#trucksGrid');
         
-        try {
-          const response = await fetch('http://localhost:5000/api/trucks');
-          const result = await response.json();
-          
+        $.ajax({
+          url: 'http://localhost:5000/api/v1/trucks/view',
+          method: 'GET'
+        })
+        .done(function(result) {
           if (!result.success || !result.data || result.data.length === 0) {
-            trucksGrid.innerHTML = '<p class="muted">No food trucks available at the moment.</p>';
+            trucksGrid.html('<p class="muted">No food trucks available at the moment.</p>');
             return;
           }
           
           const trucks = result.data;
           
           // Render truck cards
-          trucksGrid.innerHTML = trucks.map(truck => {
-            // Determine status label and class
+          const trucksHTML = trucks.map(function(truck) {
+            // Determine status label and class based on truckStatus and orderStatus
             let statusLabel = 'Closed';
             let statusClass = 'closed';
             
-            if (truck.is_busy) {
-              statusLabel = 'Busy';
-              statusClass = 'busy';
-            } else if (truck.status === 'open') {
+            if (truck.isAvailable) {
               statusLabel = 'Open';
               statusClass = 'open';
+            } else if (truck.truckStatus === 'available' && truck.orderStatus === 'unavailable') {
+              statusLabel = 'Not Taking Orders';
+              statusClass = 'busy';
             }
             
             return `
-              <a href="restaurant.html?truck=${encodeURIComponent(truck.name)}" class="category-item" data-status="${statusClass}">
+              <a href="restaurant.html?truck=${encodeURIComponent(truck.truckName)}&id=${truck.truckId}" class="category-item" data-status="${statusClass}">
                 <div class="category-icon">
-                  <span class="icon-text">${truck.name}</span>
+                  <span class="icon-text">${truck.truckName}</span>
                 </div>
                 <div class="truck-status" data-status="${statusClass}">
                   <span class="status-dot" aria-hidden="true"></span>
@@ -194,10 +206,12 @@
             `;
           }).join('');
           
-        } catch (error) {
+          trucksGrid.html(trucksHTML);
+        })
+        .fail(function(error) {
           console.error('Error loading food trucks:', error);
-          trucksGrid.innerHTML = '<p class="muted">Unable to load food trucks. Please try again later.</p>';
-        }
+          trucksGrid.html('<p class="muted">Unable to load food trucks. Please try again later.</p>');
+        });
       }
     </script>
   </body>

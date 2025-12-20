@@ -1,27 +1,77 @@
-// Food web interactive behaviors and a shared cart API
-document.addEventListener('DOMContentLoaded', function(){
-  const cartToggle = document.getElementById('cartToggle');
-  const cartSidebar = document.getElementById('cartSidebar');
-  const closeCart = document.getElementById('closeCart');
-  const proceedBtn = document.getElementById('proceedBtn');
-  const schedulePickup = document.getElementById('schedulePickup');
+// Food web interactive behaviors and a shared cart API using jQuery
+$(document).ready(function(){
+  const cartToggle = $('#cartToggle');
+  const cartSidebar = $('#cartSidebar');
+  const closeCart = $('#closeCart');
+  const proceedBtn = $('#proceedBtn');
+  const schedulePickup = $('#schedulePickup');
 
-  // Order structure: { truck, items, total, pickupTime, status, createdAt }
-  // Cart structure: { owner: null|string, items: [ {name,price,quantity} ] }
-  let cartStore = { owner: null, items: [] };
-  let currentOrder = null;
-
-  // Load from localStorage
-  try {
-    cartStore = JSON.parse(localStorage.getItem('cartStore') || JSON.stringify(cartStore));
-    currentOrder = JSON.parse(localStorage.getItem('currentOrder') || 'null');
-  } catch (e) {
-    cartStore = { owner: null, items: [] };
-    currentOrder = null;
+  // Get current user ID for user-specific storage keys
+  function getCurrentUserId() {
+    try {
+      const userInfo = localStorage.getItem('userInfo');
+      if (userInfo) {
+        const user = JSON.parse(userInfo);
+        return user.id || user.userid || user.userId || null;
+      }
+    } catch (e) {
+      console.error('Error getting user ID:', e);
+    }
+    return null;
   }
 
-  function saveCart() { localStorage.setItem('cartStore', JSON.stringify(cartStore)); }
-  function saveOrder() { localStorage.setItem('currentOrder', JSON.stringify(currentOrder)); }
+  // Generate user-specific storage keys
+  function getCartKey() {
+    const userId = getCurrentUserId();
+    return userId ? `cartStore_${userId}` : 'cartStore_guest';
+  }
+
+  function getOrderKey() {
+    const userId = getCurrentUserId();
+    return userId ? `currentOrder_${userId}` : 'currentOrder_guest';
+  }
+
+  // Order structure: { truck, items, total, pickupTime, status, createdAt }
+  // Cart structure: { owner: null|string, truckId: null|number, items: [ {name,price,quantity,itemId} ] }
+  let cartStore = { owner: null, truckId: null, items: [] };
+  let currentOrder = null;
+
+  // Load from localStorage using user-specific keys
+  function loadUserCart() {
+    try {
+      cartStore = JSON.parse(localStorage.getItem(getCartKey()) || JSON.stringify({ owner: null, truckId: null, items: [] }));
+      currentOrder = JSON.parse(localStorage.getItem(getOrderKey()) || 'null');
+      
+      // Migrate old cart items: remove items without itemId
+      if (cartStore.items && cartStore.items.length > 0) {
+        const validItems = cartStore.items.filter(item => item.itemId);
+        if (validItems.length !== cartStore.items.length) {
+          console.warn('Removed', cartStore.items.length - validItems.length, 'items without itemId from cart');
+          cartStore.items = validItems;
+          if (cartStore.items.length === 0) {
+            cartStore.owner = null;
+            cartStore.truckId = null;
+          }
+          saveCart();
+        }
+      }
+    } catch (e) {
+      cartStore = { owner: null, truckId: null, items: [] };
+      currentOrder = null;
+    }
+  }
+
+  // Initial load
+  loadUserCart();
+
+  function saveCart() { localStorage.setItem(getCartKey(), JSON.stringify(cartStore)); }
+  function saveOrder() { localStorage.setItem(getOrderKey(), JSON.stringify(currentOrder)); }
+
+  // Expose reload function for when user logs in/out
+  window.reloadUserCart = function() {
+    loadUserCart();
+    updateCart();
+  };
 
   // Public API to add items to the cart from other pages
   window.addToCart = function(item) {
@@ -29,68 +79,143 @@ document.addEventListener('DOMContentLoaded', function(){
     const qty = parseInt(item.quantity || 1, 10) || 1;
     const price = parseFloat(item.price) || 0;
     const truck = item.truck || null;
+    const truckId = item.truckId || null;
+    const itemId = item.itemId || null;
 
     // If cart has an owner and it's different from current truck, confirm
     if (cartStore.owner && truck && cartStore.owner !== truck) {
       const ok = window.confirm('You are ordering from a different truck. This will clear your current cart. Continue?');
       if (!ok) return false;
       cartStore.items = [];
+      cartStore.truckId = null;
     }
 
     if (truck) cartStore.owner = truck;
+    if (truckId) {
+      cartStore.truckId = truckId;
+      console.log('Setting truckId in cart:', truckId);
+    }
+    
     const existing = cartStore.items.find(i => i.name === item.name);
-    if (existing) existing.quantity += qty;
-    else cartStore.items.push({ name: item.name, price: price, quantity: qty });
+    if (existing) {
+      existing.quantity += qty;
+    } else {
+      cartStore.items.push({ 
+        name: item.name, 
+        price: price, 
+        quantity: qty,
+        itemId: itemId
+      });
+    }
 
     saveCart();
+    console.log('Cart saved:', JSON.stringify(cartStore));
     updateCart();
     return true;
   };
 
   function updateCart() {
-    const cartItems = document.querySelector('.cart-items');
-    const totalAmount = document.querySelector('.total-amount');
-    const grandTotalAmount = document.querySelector('.grand-total-amount');
-    const estimatedTimeEl = document.querySelector('.estimated-time');
-    const cartCount = document.querySelector('.cart-count');
+    const cartItems = $('.cart-items');
+    const totalAmount = $('.total-amount');
+    const grandTotalAmount = $('.grand-total-amount');
+    const estimatedTimeEl = $('.estimated-time');
+    const cartCount = $('.cart-count');
 
     // If there's an active order, show order status instead of cart items
     if (currentOrder && currentOrder.status === 'processing') {
-      if (cartItems) {
-        cartItems.innerHTML = `
-          <div class="order-status-display">
-            <p style="font-weight: 600; color: #22c55e; margin-bottom: 0.5rem;">✓ Order in Progress</p>
-            <p style="color: #64748b; margin-bottom: 0.75rem;">Your order is being prepared.</p>
-            <button class="track-btn" style="width: 100%; padding: 0.6rem; background: #22c55e; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Track Order</button>
-          </div>
-        `;
+      // Fetch real-time order details using v1 API
+      const token = localStorage.getItem('token');
+      $.ajax({
+        url: `http://localhost:5000/api/v1/order/details/${currentOrder.orderId}`,
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function(response) {
+          if (response.success && cartItems.length) {
+            const orderData = response.data;
+            const now = new Date();
+            let timeInfo = '';
+            
+            if (orderData.scheduledPickupTime) {
+              const pickupDate = new Date(orderData.scheduledPickupTime);
+              const remainingMs = pickupDate - now;
+              
+              if (remainingMs > 0) {
+                const remainingMin = Math.ceil(remainingMs / 60000);
+                timeInfo = `<p style="color: #ea580c; margin-bottom: 0.5rem; font-size: 0.9rem;">Ready in ${remainingMin} minutes</p>`;
+              } else if (orderData.orderStatus === 'ready') {
+                timeInfo = `<p style="color: #22c55e; margin-bottom: 0.5rem; font-size: 0.9rem;">✓ Ready for pickup!</p>`;
+              }
+            } else if (orderData.estimatedPreparationMinutes) {
+              timeInfo = `<p style="color: #64748b; margin-bottom: 0.5rem; font-size: 0.9rem;">Estimated: ${orderData.estimatedPreparationMinutes} minutes</p>`;
+            }
+            
+            const statusMap = {
+              'pending': '⏳ Pending Confirmation',
+              'confirmed': '👨‍🍳 Being Prepared',
+              'ready': '✓ Ready for Pickup',
+              'completed': '✓ Completed',
+              'cancelled': '✗ Cancelled'
+            };
+            const statusDisplay = statusMap[orderData.orderStatus] || 'Processing';
+            
+            cartItems.html(`
+              <div class="order-status-display">
+                <p style="font-weight: 600; color: #22c55e; margin-bottom: 0.5rem;">${statusDisplay}</p>
+                ${timeInfo}
+                <p style="color: #64748b; margin-bottom: 0.75rem; font-size: 0.85rem;">Order #${currentOrder.orderId}</p>
+                <button class="track-btn" style="width: 100%; padding: 0.6rem; background: #22c55e; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Track Order</button>
+              </div>
+            `);
 
-        // Track button handler
-        const trackBtn = cartItems.querySelector('.track-btn');
-        if (trackBtn) {
-          trackBtn.addEventListener('click', () => {
-            window.location.href = 'track.html';
-          });
+            // Track button handler using jQuery
+            cartItems.find('.track-btn').on('click', function() {
+              window.location.href = 'track.html';
+            });
+            
+            estimatedTimeEl.text(orderData.scheduledPickupTime ? 
+              new Date(orderData.scheduledPickupTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : 
+              'ASAP');
+          }
+        },
+        error: function() {
+          // Fallback to localStorage data
+          if (cartItems.length) {
+            cartItems.html(`
+              <div class="order-status-display">
+                <p style="font-weight: 600; color: #22c55e; margin-bottom: 0.5rem;">✓ Order in Progress</p>
+                <p style="color: #64748b; margin-bottom: 0.75rem;">Your order is being prepared.</p>
+                <button class="track-btn" style="width: 100%; padding: 0.6rem; background: #22c55e; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Track Order</button>
+              </div>
+            `);
+
+            // Track button handler using jQuery
+            cartItems.find('.track-btn').on('click', function() {
+              window.location.href = 'track.html';
+            });
+          }
+          
+          estimatedTimeEl.text(currentOrder.pickupTime ? new Date(currentOrder.pickupTime).toLocaleString() : 'ASAP');
         }
-      }
+      });
 
-      if (proceedBtn) proceedBtn.style.display = 'none';
-      if (schedulePickup) schedulePickup.style.display = 'none';
-      if (totalAmount) totalAmount.textContent = `L.E ${currentOrder.total.toFixed(2)}`;
-      if (grandTotalAmount) grandTotalAmount.textContent = `L.E ${currentOrder.total.toFixed(2)}`;
-      if (estimatedTimeEl) estimatedTimeEl.textContent = currentOrder.pickupTime ? new Date(currentOrder.pickupTime).toLocaleString() : 'ASAP';
+      proceedBtn.hide();
+      schedulePickup.hide();
+      totalAmount.text(`L.E ${currentOrder.total.toFixed(2)}`);
+      grandTotalAmount.text(`L.E ${currentOrder.total.toFixed(2)}`);
       return;
     }
 
     // Normal cart display
-    if (proceedBtn) proceedBtn.style.display = 'block';
-    if (schedulePickup) schedulePickup.style.display = 'block';
+    proceedBtn.show();
+    schedulePickup.show();
 
     const totalQty = cartStore.items.reduce((sum, item) => sum + item.quantity, 0);
-    if (cartCount) cartCount.textContent = totalQty;
+    cartCount.text(totalQty);
 
-    if (cartItems) {
-      cartItems.innerHTML = cartStore.items.map(item => `
+    if (cartItems.length) {
+      const cartHTML = cartStore.items.map(item => `
         <div class="cart-item">
           <div class="item-info">
             <span class="cart-item-title">${item.quantity} x ${item.name}</span>
@@ -98,73 +223,154 @@ document.addEventListener('DOMContentLoaded', function(){
           </div>
         </div>
       `).join('') || '<p class="muted">Your cart is empty.</p>';
+      cartItems.html(cartHTML);
     }
 
     const subtotal = cartStore.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-    if (totalAmount) totalAmount.textContent = `L.E ${subtotal.toFixed(2)}`;
-    if (grandTotalAmount) grandTotalAmount.textContent = `L.E ${subtotal.toFixed(2)}`;
+    totalAmount.text(`L.E ${subtotal.toFixed(2)}`);
+    grandTotalAmount.text(`L.E ${subtotal.toFixed(2)}`);
 
-    if (estimatedTimeEl) {
-      const minMinutes = 10 + totalQty * 3;
-      const maxMinutes = minMinutes + 10;
-      estimatedTimeEl.textContent = totalQty > 0 ? `${minMinutes} - ${maxMinutes} min` : '--';
-    }
+    const minMinutes = 10 + totalQty * 3;
+    const maxMinutes = minMinutes + 10;
+    estimatedTimeEl.text(totalQty > 0 ? `${minMinutes} - ${maxMinutes} min` : '--');
   }
 
-  // Proceed button click handler
-  if (proceedBtn) {
-    proceedBtn.addEventListener('click', () => {
-      if (cartStore.items.length === 0) {
-        alert('Your cart is empty!');
-        return;
+  // Proceed button click handler using jQuery
+  proceedBtn.on('click', async function() {
+    if (cartStore.items.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+
+    // Validate all items have itemId
+    const invalidItems = cartStore.items.filter(item => !item.itemId);
+    if (invalidItems.length > 0) {
+      alert('Some items in your cart are invalid. Please clear your cart and add items again.');
+      console.error('Invalid cart items:', invalidItems);
+      return;
+    }
+
+    // Get user info and token from localStorage
+    const userInfo = localStorage.getItem('userInfo');
+    const token = localStorage.getItem('token');
+    if (!userInfo || !token) {
+      alert('Please log in to place an order');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const user = JSON.parse(userInfo);
+    const userId = user.id || user.userid || user.userId;
+
+    if (!userId) {
+      alert('User information is incomplete. Please log in again.');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    if (!cartStore.truckId) {
+      console.error('Missing truckId. Cart state:', JSON.stringify(cartStore));
+      alert('Truck information is missing. Please add items to cart again.');
+      return;
+    }
+    
+    console.log('Order proceeding with truckId:', cartStore.truckId);
+
+    const pickupTime = $('#pickupTime').val() || null;
+
+    // Prepare order data for backend
+    const orderData = {
+      userId: userId,
+      truckId: cartStore.truckId,
+      items: cartStore.items.map(item => ({
+        itemId: item.itemId,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      scheduledPickupTime: pickupTime
+    };
+
+    console.log('Sending order data:', JSON.stringify(orderData, null, 2));
+    console.log('Cart items:', JSON.stringify(cartStore.items, null, 2));
+
+    try {
+      // Show loading state
+      proceedBtn.prop('disabled', true);
+      proceedBtn.text('Processing...');
+
+      // Send order to backend using jQuery AJAX
+      const result = await $.ajax({
+        url: 'http://localhost:5000/api/orders',
+        method: 'POST',
+        contentType: 'application/json',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        data: JSON.stringify(orderData)
+      });
+
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to create order');
       }
 
-      const pickupTimeInput = document.getElementById('pickupTime');
-      const pickupTime = pickupTimeInput ? pickupTimeInput.value : null;
-
-      // Create order
+      // Store order info locally for tracking
       const total = cartStore.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
       currentOrder = {
+        orderId: result.data.orderId,
         truck: cartStore.owner,
+        truckId: cartStore.truckId,
         items: cartStore.items,
         total: total,
-        pickupTime: pickupTime,
+        pickupTime: result.data.scheduledPickupTime,
         status: 'processing',
-        createdAt: new Date().toISOString()
+        createdAt: result.data.createdAt
       };
 
       saveOrder();
 
       // Show success message
-      alert('Order has been processed!');
+      alert('Order placed successfully! Order ID: ' + result.data.orderId);
 
       // Clear cart and update UI
       cartStore.items = [];
       cartStore.owner = null;
+      cartStore.truckId = null;
       saveCart();
 
       updateCart();
-    });
-  }
 
-  // Toggle cart sidebar
-  if (cartToggle) cartToggle.addEventListener('click', () => {
-    if (cartSidebar) cartSidebar.classList.add('open');
+    } catch (error) {
+      console.error('Error creating order:', error);
+      alert('Failed to place order: ' + (error.responseJSON?.message || error.message));
+    } finally {
+      // Reset button state
+      proceedBtn.prop('disabled', false);
+      proceedBtn.text('Proceed to Checkout');
+    }
+  });
+
+  // Toggle cart sidebar using jQuery
+  cartToggle.on('click', function() {
+    cartSidebar.addClass('open');
     updateCart();
   });
-  if (closeCart) closeCart.addEventListener('click', () => {
-    if (cartSidebar) cartSidebar.classList.remove('open');
+  
+  closeCart.on('click', function() {
+    cartSidebar.removeClass('open');
   });
 
-  // Header brand dropdown toggle
-  const brandToggle = document.querySelector('.brand-toggle');
-  const brandMenu = document.querySelector('.brand-menu');
-  if (brandToggle && brandMenu) {
-    brandToggle.addEventListener('click', function(e){
+  // Header brand dropdown toggle using jQuery
+  const brandToggle = $('.brand-toggle');
+  const brandMenu = $('.brand-menu');
+  if (brandToggle.length && brandMenu.length) {
+    brandToggle.on('click', function(e){
       e.stopPropagation();
-      brandMenu.classList.toggle('open');
+      brandMenu.toggleClass('open');
     });
-    document.addEventListener('click', function(){ brandMenu.classList.remove('open'); });
+    $(document).on('click', function(){ 
+      brandMenu.removeClass('open'); 
+    });
   }
 
   // Initialize

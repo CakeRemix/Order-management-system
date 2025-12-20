@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - CampusEats</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body class="vendor-dashboard">
+    <!-- Header Navigation -->
+    <header class="vendor-header">
+        <div class="header-inner">
+            <a href="#" class="vendor-logo">
+                <span class="material-icons">restaurant_menu</span>
+                <span>CampusEats Vendor</span>
+            </a>
+            <nav class="vendor-nav">
+                <a href="#overview" class="nav-link active">
+                    <span class="material-icons">dashboard</span>
+                    Overview
+                </a>
+                <a href="#menu" class="nav-link">
+                    <span class="material-icons">restaurant</span>
+                    Menu Items
+                </a>
+                <a href="#orders" class="nav-link">
+                    <span class="material-icons">receipt_long</span>
+                    Orders
+                </a>
+                <a href="#settings" class="nav-link">
+                    <span class="material-icons">settings</span>
+                    Settings
+                </a>
+            </nav>
+            <div class="vendor-user">
+                <div class="user-info">
+                    <div class="user-name" id="vendorName">Loading...</div>
+                    <div class="user-role">Vendor</div>
+                </div>
+                <button id="logoutBtn" class="logout-btn">
+                    <span class="material-icons">logout</span>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="vendor-main">
+        <!-- Overview Section -->
+        <section id="overview" class="vendor-section active">
+            <h1>Welcome back, <span id="truckName">Vendor</span>!</h1>
+            <p style="color: var(--muted); margin-bottom: 2rem;">Here's what's happening with your food truck today</p>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon primary">
+                        <span class="material-icons">receipt</span>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="todayOrders">-</h3>
+                        <p>Today's Orders</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon warning">
+                        <span class="material-icons">restaurant_menu</span>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="menuItemsCount">-</h3>
+                        <p>Menu Items</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon success">
+                        <span class="material-icons">schedule</span>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="pendingOrders">-</h3>
+                        <p>Pending Orders</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <h2 style="margin: 2rem 0 1rem 0;">Quick Actions</h2>
+            <div class="action-buttons">
+                <button class="action-btn" id="addMenuItem">
+                    <span class="material-icons">add_circle</span>
+                    <span>Add Menu Item</span>
+                </button>
+                <button class="action-btn" id="toggleBusyMode">
+                    <span class="material-icons">local_fire_department</span>
+                    <span>Toggle Busy Mode</span>
+                </button>
+                <button class="action-btn" id="manageOrders">
+                    <span class="material-icons">list_alt</span>
+                    <span>Manage Orders</span>
+                </button>
+            </div>
+
+            <!-- Recent Orders -->
+            <div style="margin-top: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>Recent Orders</h2>
+                    <a href="#orders" style="color: var(--vendor-primary); text-decoration: none; font-weight: 600;">View All →</a>
+                </div>
+                <div class="table-container">
+                    <table class="vendor-table" id="recentOrdersTable">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem; color: var(--muted);">Loading recent orders...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Management Section -->
+        <section id="menu" class="vendor-section">
+            <div class="menu-header">
+                <h2>Menu Management</h2>
+                <button class="add-item-btn" id="addMenuItemBtn">
+                    <span class="material-icons">add</span>
+                    Add New Item
+                </button>
+            </div>
+
+            <!-- Menu Items Grid -->
+            <div class="menu-items-grid" id="menuItemsGrid">
+                <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--muted);">Loading menu items...</div>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="vendor-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Order Management</h2>
+                <button onclick="refreshOrders()" class="action-btn" style="padding: 0.5rem 1rem;">
+                    <span class="material-icons" style="font-size: 1.2rem;">refresh</span>
+                    <span>Refresh</span>
+                </button>
+            </div>
+            <div class="orders-filters">
+                <button class="filter-btn active" data-status="all">All</button>
+                <button class="filter-btn" data-status="pending">Pending</button>
+                <button class="filter-btn" data-status="confirmed">Confirmed</button>
+                <button class="filter-btn" data-status="ready">Ready</button>
+                <button class="filter-btn" data-status="completed">Completed</button>
+                <button class="filter-btn" data-status="cancelled">Cancelled</button>
+            </div>
+
+            <div class="table-container">
+                <table class="vendor-table" id="ordersGrid">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--muted);">Loading orders...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="vendor-section">
+            <h2 style="margin-bottom: 2rem;">Truck Settings</h2>
+
+            <div class="settings-container">
+                <div class="settings-card">
+                    <h3>Truck Information</h3>
+                    <form id="truckInfoForm">
+                        <div class="form-group">
+                            <label>Truck Name</label>
+                            <input type="text" id="truckNameInput" class="form-control" placeholder="Enter truck name">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="truckDescription" class="form-control" rows="3" placeholder="Describe your food truck"></textarea>
+                        </div>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </form>
+                </div>
+
+                <div class="settings-card">
+                    <h3>Operating Status</h3>
+                    <div class="status-toggle">
+                        <div class="toggle-item">
+                            <label class="toggle-label">
+                                <span>Busy Mode</span>
+                                <input type="checkbox" id="busyMode">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Menu Item Modal -->
+    <div id="menuItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Menu Item</h2>
+                <button class="modal-close" type="button">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <form id="menuItemForm">
+                <div class="form-group">
+                    <label>Item Name *</label>
+                    <input type="text" id="itemName" class="form-control" required placeholder="e.g., Chicken Burger">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="itemDescription" class="form-control" rows="3" placeholder="Describe the item"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Price (EGP) *</label>
+                    <input type="number" id="itemPrice" class="form-control" required min="0" step="0.01" placeholder="0.00">
+                </div>
+                <!-- Image field removed - not in database schema
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="itemImage" class="form-control" placeholder="https://example.com/image.jpg">
+                </div>
+                -->
+                <div class="form-group">
+                    <label class="toggle-label">
+                        <span>Available</span>
+                        <input type="checkbox" id="itemAvailable" checked>
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./js/vendor-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to CampusEats - Order Fresh Food from Campus Trucks</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body class="auth-body">
+    <div class="auth-container homepage-container">
+      <div class="auth-card homepage-card">
+        <div class="homepage-logo">
+          <span class="material-icons" style="font-size: 3.5rem; color: #e67e22;">restaurant</span>
+        </div>
+        
+        <h1 class="auth-title homepage-title">Welcome to CampusEats</h1>
+        <p class="auth-subtitle homepage-subtitle">Your favorite campus food trucks, just a tap away</p>
+        
+        <div class="homepage-features">
+          <div class="feature-item">
+            <span class="material-icons">local_dining</span>
+            <span>Fresh Food</span>
+          </div>
+          <div class="feature-item">
+            <span class="material-icons">schedule</span>
+            <span>Fast Service</span>
+          </div>
+          <div class="feature-item">
+            <span class="material-icons">place</span>
+            <span>Campus Wide</span>
+          </div>
+        </div>
+        
+        <div class="welcome-message">
+          <p class="homepage-description">
+            🍕 Discover delicious meals from the best food trucks on campus. 
+            Fresh ingredients, quick preparation, and delivered right to your favorite spot. 
+            <strong>Start your culinary journey today!</strong>
+          </p>
+        </div>
+
+        <div class="homepage-buttons">
+          <a href="/register" class="button button-primary homepage-btn-primary">
+            <span class="material-icons">person_add</span>
+            Create New Account
+          </a>
+          
+          <a href="/login" class="button button-secondary homepage-btn-secondary">
+            <span class="material-icons">login</span>
+            Already Have Account
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+  </body>
+</html>

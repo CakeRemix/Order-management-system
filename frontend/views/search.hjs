@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Food Trucks - CampusEats</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <a href="/dashboard.html" style="color: white; text-decoration: none;">
+            <span class="material-icons">restaurant_menu</span>
+          </a>
+        </div>
+        <h2 style="color: white; margin: 0;">Search Food Trucks</h2>
+        <div style="flex: 1;"></div>
+        <a href="/dashboard.html" class="button" style="padding: 8px 16px;">Back to Dashboard</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="container" style="padding: 40px 20px;">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+          <h2>Search Food Trucks</h2>
+          <form id="searchForm" style="margin-bottom: 30px;">
+            <div class="form-group">
+              <label for="searchQuery" class="form-label">Search by truck name or category</label>
+              <div style="display: flex; gap: 10px;">
+                <input type="text" id="searchQuery" class="form-input" placeholder="Enter truck name..." style="flex: 1;">
+                <button type="submit" class="button button-primary">Search</button>
+              </div>
+            </div>
+          </form>
+
+          <div id="resultsContainer">
+            <p class="muted">Enter a search term to find food trucks</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/auth.js"></script>
+    <script>
+      $(document).ready(function() {
+        checkAuth().then(function(isAuth) {
+          if (!isAuth) {
+            window.location.href = '/login';
+            return;
+          }
+        });
+
+        $('#searchForm').on('submit', function(e) {
+          e.preventDefault();
+          const query = $('#searchQuery').val().trim();
+          
+          if (!query) {
+            $('#resultsContainer').html('<p class="muted">Please enter a search term</p>');
+            return;
+          }
+
+          $('#resultsContainer').html('<p class="muted">Searching...</p>');
+
+          $.ajax({
+            url: 'http://localhost:5000/api/v1/trucks/view',
+            method: 'GET'
+          })
+          .done(function(result) {
+            if (!result.success || !result.data || result.data.length === 0) {
+              $('#resultsContainer').html('<p class="muted">No food trucks found</p>');
+              return;
+            }
+            
+            const filteredTrucks = result.data.filter(function(truck) {
+              return truck.truckName.toLowerCase().includes(query.toLowerCase());
+            });
+
+            if (filteredTrucks.length === 0) {
+              $('#resultsContainer').html('<p class="muted">No results found for "' + query + '"</p>');
+              return;
+            }
+
+            const trucksHTML = filteredTrucks.map(function(truck) {
+              let statusLabel = truck.isAvailable ? 'Open' : 'Closed';
+              let statusClass = truck.isAvailable ? 'open' : 'closed';
+              
+              return `
+                <div class="category-item" style="margin-bottom: 15px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <h3 style="margin: 0 0 10px 0;">${truck.truckName}</h3>
+                      <p style="margin: 0; color: #666;">Status: <span style="color: ${statusClass === 'open' ? 'green' : 'red'};">${statusLabel}</span></p>
+                    </div>
+                    <a href="/restaurant.html?truck=${encodeURIComponent(truck.truckName)}&id=${truck.truckId}" class="button button-primary">View Menu</a>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            $('#resultsContainer').html('<h3 style="margin-bottom: 20px;">Results for "' + query + '"</h3>' + trucksHTML);
+          })
+          .fail(function() {
+            $('#resultsContainer').html('<p class="muted" style="color: red;">Error searching food trucks. Please try again.</p>');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -4,16 +4,20 @@ const path = require('path');
 require('dotenv').config();
 
 // Import database
-const db = require('./backend/config/db');
+const db = require('./milestoneBackend/config/db');
 
 // Import middleware
 const { errorHandler } = require('./middleware');
 
 // Import routes
-const authRoutes = require('./backend/routes/authRoutes');
-const trucksRoutes = require('./backend/routes/trucksRoutes');
-const orderRoutes = require('./backend/routes/orderRoutes');
-// const productRoutes = require('./backend/routes/productRoutes');
+const authRoutes = require('./milestoneBackend/routes/authRoutes');
+const trucksRoutes = require('./milestoneBackend/routes/trucksRoutes');
+const adminRoutes = require('./milestoneBackend/routes/adminRoutes');
+const vendorRoutes = require('./milestoneBackend/routes/vendorRoutes');
+const orderRoutes = require('./milestoneBackend/routes/orderRoutes');
+const cartRoutes = require('./milestoneBackend/routes/cartRoutes');
+const v1Routes = require('./milestoneBackend/routes/v1');
+// const productRoutes = require('./milestoneBackend/routes/productRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -37,7 +41,7 @@ app.use('/images', express.static(path.join(__dirname, 'frontend/public/images')
 // Health check route
 app.get('/health', async (req, res) => {
   try {
-    await db.query('SELECT NOW()');
+    await db.raw('SELECT NOW()');
     res.json({ 
       status: 'healthy',
       database: 'connected',
@@ -55,7 +59,11 @@ app.get('/health', async (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/trucks', trucksRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/vendor', vendorRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/v1', v1Routes);
 // app.use('/api/products', productRoutes);
 
 // Error handling middleware (must be last)

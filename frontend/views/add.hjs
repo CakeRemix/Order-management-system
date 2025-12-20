@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserved - CampusEats</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body class="auth-body">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="form-header">
+          <span class="material-icons form-icon">construction</span>
+        </div>
+        <h1 class="auth-title">Feature Coming Soon</h1>
+        <p class="auth-subtitle">This page is reserved for future features</p>
+        <div style="margin-top: 30px;">
+          <a href="/dashboard.html" class="button button-primary">Back to Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </body>
+  </html>

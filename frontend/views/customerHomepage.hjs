@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - CampusEats</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand" id="brandMenu">
+          <button class="brand-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="brandMenuDropdown">
+            <span class="material-icons">restaurant_menu</span>
+          </button>
+          <div class="brand-menu" role="menu" id="brandMenuDropdown">
+            <a href="/track.html" class="brand-menu-item" role="menuitem">Track Order</a>
+            <a href="#" id="logoutBtn" class="brand-menu-item" role="menuitem">Log out</a>
+          </div>
+        </div>
+        <div style="flex: 1;"></div>
+        <button class="cart-toggle" id="cartToggle">
+          <span class="material-icons">shopping_cart</span>
+          <span class="cart-count">0</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="breadcrumb">
+        <div class="container">
+          <p id="userBreadcrumb">Welcome, {{ name }}</p>
+        </div>
+      </section>
+
+      <section class="page-header">
+        <div class="container">
+          <div class="header-content">
+            <div class="title-section">
+              <h1>CampusEats</h1>
+              <p>Order from your favorite campus food trucks — quick and fresh!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="categories">
+        <div class="container">
+          <div class="category-grid" id="trucksGrid">
+            <div class="loading-message">Loading food trucks...</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="cart-sidebar" id="cartSidebar">
+      <div class="cart-header">
+        <h2>My Cart</h2>
+        <button class="close-cart" id="closeCart">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="cart-items"></div>
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total</span>
+          <span class="total-amount">L.E 0.00</span>
+        </div>
+        <button class="proceed-btn" id="proceedBtn">Proceed</button>
+      </div>
+    </aside>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>
