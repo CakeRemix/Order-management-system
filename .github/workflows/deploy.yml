@@ -1,0 +1,34 @@
+name: Deployment
+
+on:
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download frontend build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: frontend-build
+        path: frontend/build
+
+    - name: Deploy to production
+      run: |
+        echo "Deployment steps would go here"
+        echo "Examples:"
+        echo "  - Push to Heroku"
+        echo "  - Deploy to AWS/Azure/GCP"
+        echo "  - Update server via SSH/deployment script"
+
+    - name: Notify deployment status
+      if: always()
+      run: echo "Deployment completed with status: ${{ job.status }}"
+
