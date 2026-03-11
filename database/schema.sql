@@ -76,6 +76,7 @@ CREATE TABLE FoodTruck.MenuItems (
     price NUMERIC(10,2) NOT NULL,
     category TEXT NOT NULL, -- 'Main Course', 'Sides', 'Beverages', etc.
     status TEXT DEFAULT 'available', -- 'available', 'unavailable'
+    imageUrl TEXT, -- Path to menu item image
     preparationTimeMinutes INTEGER DEFAULT 10, -- Base preparation time in minutes
     complexity TEXT DEFAULT 'medium', -- 'simple', 'medium', 'complex'
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
