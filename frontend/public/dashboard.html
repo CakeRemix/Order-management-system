@@ -45,18 +45,13 @@
             
             <div class="stats-bar">
               <div class="stat-item">
-                <span class="number">24</span>
+                <span class="number" id="statActiveTrucks">--</span>
                 <span class="label">Active Trucks</span>
               </div>
               <div class="stat-divider"></div>
               <div class="stat-item">
-                <span class="number">09</span>
+                <span class="number" id="statMenuItems">--</span>
                 <span class="label">Menu Items</span>
-              </div>
-              <div class="stat-divider"></div>
-              <div class="stat-item">
-                <span class="number">04</span>
-                <span class="label">New Added Items</span>
               </div>
             </div>
           </div>
@@ -178,6 +173,27 @@
           }
           
           const trucks = result.data;
+
+          // Update Active Trucks stat dynamically
+          const activeTrucks = trucks.filter(t => t.isAvailable).length;
+          $('#statActiveTrucks').text(String(activeTrucks).padStart(2, '0'));
+
+          // Fetch total available menu items across all active trucks
+          const menuRequests = trucks
+            .filter(t => t.isAvailable)
+            .map(t => $.ajax({ url: `http://localhost:5000/api/v1/menuItem/truck/${t.truckId}`, method: 'GET' }));
+
+          $.when(...menuRequests).done(function(...responses) {
+            // $.when with multiple deferreds passes [data, status, xhr] per call
+            const results = menuRequests.length === 1 ? [responses] : responses;
+            const totalItems = results.reduce((sum, r) => {
+              const data = Array.isArray(r) ? r[0] : r;
+              return sum + (data && data.count ? data.count : 0);
+            }, 0);
+            $('#statMenuItems').text(String(totalItems).padStart(2, '0'));
+          }).fail(function() {
+            $('#statMenuItems').text('--');
+          });
           
           // Render truck cards
           const trucksHTML = trucks.map(function(truck) {

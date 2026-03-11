@@ -352,7 +352,8 @@ router.get('/truck/:truckId', async (req, res, next) => {
                 price: parseFloat(item.price),
                 category: item.category,
                 status: item.status,
-                isAvailable: item.status === 'available'
+                isAvailable: item.status === 'available',
+                image_url: item.imageurl ? item.imageurl.replace(/ /g, '%20') : null
             }))
         });
     } catch (error) {
@@ -405,7 +406,8 @@ router.get('/truck/:truckId/category/:category', async (req, res, next) => {
                 price: parseFloat(item.price),
                 category: item.category,
                 status: item.status,
-                isAvailable: item.status === 'available'
+                isAvailable: item.status === 'available',
+                image_url: item.imageurl ? item.imageurl.replace(/ /g, '%20') : null
             }))
         });
     } catch (error) {

@@ -22,11 +22,16 @@ INSERT INTO public.menu_items (
     food_truck_id, name, description, price, image_url, category, prep_time_minutes, 
     is_available, is_active, stock_quantity, calories, allergens
 ) VALUES
-(2, 'Grilled Chicken Bowl', 'Quinoa base with grilled chicken breast, roasted vegetables, and tahini dressing', 65.00, '/images/menu/chicken-bowl.jpg', 'Bowls', 15, true, true, 40, 520, ARRAY['sesame']::text[]),
-(2, 'Greek Salad', 'Fresh tomatoes, cucumbers, olives, feta cheese with olive oil and oregano', 50.00, '/images/menu/greek-salad.jpg', 'Salads', 8, true, true, 45, 280, ARRAY['dairy']::text[]),
-(2, 'Veggie Wrap', 'Grilled zucchini, bell peppers, eggplant with hummus in whole wheat tortilla', 45.00, '/images/menu/veggie-wrap.jpg', 'Wraps', 10, true, true, 50, 350, ARRAY['gluten', 'sesame']::text[]),
-(2, 'Sweet Potato Fries', 'Crispy baked sweet potato fries with sea salt and herbs', 25.00, '/images/menu/sweet-fries.jpg', 'Sides', 12, true, true, 60, 180, ARRAY[]::text[]),
-(2, 'Smoothie Bowl', 'Acai berry base topped with fresh fruits, granola, and honey', 55.00, '/images/menu/smoothie-bowl.jpg', 'Bowls', 10, true, true, 30, 320, ARRAY['gluten', 'nuts']::text[]);
+(2, 'Classic Beef Burger', 'Juicy beef patty with lettuce, tomato, cheese, and special sauce', 65.00, '/images/Container/Classic Beef Burger.jpg', 'Main Course', 15, true, true, 40, 720, ARRAY['gluten', 'dairy', 'eggs']::text[]),
+(2, 'Crispy Chicken Burger', 'Breaded chicken breast with coleslaw and mayo', 60.00, '/images/Container/Crispy Chicken Burger.jpg', 'Main Course', 12, true, true, 45, 580, ARRAY['gluten', 'eggs']::text[]),
+(2, 'Mushroom Swiss Burger', 'Beef patty with sautéed mushrooms and Swiss cheese', 75.00, '/images/Container/Mushroom Swiss Burger.jpg', 'Main Course', 15, true, true, 35, 680, ARRAY['gluten', 'dairy']::text[]),
+(2, 'Chicken Caesar Wrap', 'Grilled chicken with romaine, parmesan, and Caesar dressing', 55.00, '/images/Container/Chicken Caesar Wrap.jpg', 'Main Course', 10, true, true, 45, 480, ARRAY['gluten', 'dairy', 'eggs', 'fish']::text[]),
+(2, 'BBQ Sandwich', 'Slow-cooked pork with BBQ sauce and coleslaw', 70.00, '/images/Container/BBQ Sandwich.jpg', 'Sandwiches', 12, false, true, 30, 620, ARRAY['gluten']::text[]),
+(2, 'Mediterranean Quinoa Bowl', 'Quinoa with roasted vegetables, feta, and lemon dressing', 65.00, '/images/Container/Mediterranean Quinoa Bowl.jpg', 'Main Course', 12, true, true, 40, 450, ARRAY['dairy']::text[]),
+(2, 'Sweet Potato Fries', 'Crispy sweet potato fries with chipotle mayo', 30.00, '/images/Container/Sweet Potato Fries.jpg', 'Sides', 10, true, true, 60, 280, ARRAY[]::text[]),
+(2, 'Loaded Nachos', 'Tortilla chips with cheese, jalapeños, and sour cream', 45.00, '/images/Container/Loaded Nachos.jpg', 'Sides', 8, true, true, 50, 520, ARRAY['dairy']::text[]),
+(2, 'Iced Coffee', 'Cold brew coffee with milk', 25.00, '/images/Container/iced coffe.jpg', 'Beverages', 3, true, true, 80, 120, ARRAY['dairy']::text[]),
+(2, 'Chocolate Brownie', 'Rich chocolate brownie with walnuts', 30.00, '/images/Container/Chocolate Brownie.jpg', 'Sides', 5, true, true, 55, 380, ARRAY['gluten', 'nuts', 'dairy']::text[]);
 
 -- Insert Menu Items for Essens (id=3)
 INSERT INTO public.menu_items (

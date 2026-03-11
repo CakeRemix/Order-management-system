@@ -54,14 +54,15 @@ const getMyMenuItems = async (req, res, next) => {
         
         // Get menu items for this truck
         const menuItems = await db('foodtruck.menuitems')
-            .select('itemid', 'name', 'price', 'description', 'category', 'status', 'createdat')
+            .select('itemid', 'name', 'price', 'description', 'category', 'status', 'imageurl', 'createdat')
             .where({ truckid: truck.truckid })
             .orderBy('createdat', 'desc');
         
         // Map status to isavailable for frontend compatibility
         const items = menuItems.map(item => ({
             ...item,
-            isavailable: item.status === 'available'
+            isavailable: item.status === 'available',
+            image_url: item.imageurl ? item.imageurl.replace(/ /g, '%20') : null
         }));
         
         res.json({

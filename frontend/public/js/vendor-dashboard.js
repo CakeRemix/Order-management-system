@@ -384,7 +384,7 @@ async function loadMenuItems() {
             grid.innerHTML = menuItems.map(item => `
                 <div class="menu-item-card">
                     <div class="menu-item-image">
-                        <img src="${item.image || './images/placeholder.jpg'}" alt="${item.name}">
+                        <img src="${item.image_url || './images/images (3).jpeg'}" alt="${item.name}">
                         <span class="availability-badge ${item.isavailable ? 'available' : 'unavailable'}">
                             ${item.isavailable ? 'Available' : 'Unavailable'}
                         </span>
