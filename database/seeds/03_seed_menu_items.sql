@@ -25,17 +25,17 @@ INSERT INTO FoodTruck.MenuItems (truckId, name, description, price, category, st
 -- =====================================================
 -- Container Menu (Fusion/Burgers)
 -- =====================================================
-INSERT INTO FoodTruck.MenuItems (truckId, name, description, price, category, status) VALUES
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Classic Beef Burger', 'Juicy beef patty with lettuce, tomato, cheese, and special sauce', 65.00, 'Main Course', 'available'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Crispy Chicken Burger', 'Breaded chicken breast with coleslaw and mayo', 60.00, 'Main Course', 'available'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Mushroom Swiss Burger', 'Beef patty with sautéed mushrooms and Swiss cheese', 75.00, 'Main Course', 'available'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Chicken Caesar Wrap', 'Grilled chicken with romaine, parmesan, and Caesar dressing', 55.00, 'Main Course', 'available'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'BBQ Pulled Pork Sandwich', 'Slow-cooked pork with BBQ sauce and coleslaw', 70.00, 'Sandwiches', 'unavailable'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Mediterranean Quinoa Bowl', 'Quinoa with roasted vegetables, feta, and lemon dressing', 65.00, 'Main Course', 'available'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Sweet Potato Fries', 'Crispy sweet potato fries with chipotle mayo', 30.00, 'Sides', 'available'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Loaded Nachos', 'Tortilla chips with cheese, jalapeños, and sour cream', 45.00, 'Sides', 'available'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Iced Coffee', 'Cold brew coffee with milk', 25.00, 'Beverages', 'available'),
-((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Chocolate Brownie', 'Rich chocolate brownie with walnuts', 30.00, 'Sides', 'available');
+INSERT INTO FoodTruck.MenuItems (truckId, name, description, price, category, status, imageUrl) VALUES
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Classic Beef Burger', 'Juicy beef patty with lettuce, tomato, cheese, and special sauce', 65.00, 'Main Course', 'available', '/images/Container/Classic Beef Burger.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Crispy Chicken Burger', 'Breaded chicken breast with coleslaw and mayo', 60.00, 'Main Course', 'available', '/images/Container/Crispy Chicken Burger.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Mushroom Swiss Burger', 'Beef patty with sautéed mushrooms and Swiss cheese', 75.00, 'Main Course', 'available', '/images/Container/Mushroom Swiss Burger.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Chicken Caesar Wrap', 'Grilled chicken with romaine, parmesan, and Caesar dressing', 55.00, 'Main Course', 'available', '/images/Container/Chicken Caesar Wrap.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'BBQ Sandwich', 'Slow-cooked pork with BBQ sauce and coleslaw', 70.00, 'Sandwiches', 'unavailable', '/images/Container/BBQ Sandwich.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Mediterranean Quinoa Bowl', 'Quinoa with roasted vegetables, feta, and lemon dressing', 65.00, 'Main Course', 'available', '/images/Container/Mediterranean Quinoa Bowl.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Sweet Potato Fries', 'Crispy sweet potato fries with chipotle mayo', 30.00, 'Sides', 'available', '/images/Container/Sweet Potato Fries.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Loaded Nachos', 'Tortilla chips with cheese, jalapeños, and sour cream', 45.00, 'Sides', 'available', '/images/Container/Loaded Nachos.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Iced Coffee', 'Cold brew coffee with milk', 25.00, 'Beverages', 'available', '/images/Container/iced coffe.jpg'),
+((SELECT truckId FROM FoodTruck.Trucks WHERE truckName = 'Container'), 'Chocolate Brownie', 'Rich chocolate brownie with walnuts', 30.00, 'Sides', 'available', '/images/Container/Chocolate Brownie.jpg');
 
 -- =====================================================
 -- Essens Menu (Healthy Food)
